@@ -17,13 +17,14 @@ class Layer_Dense:
 
 layer1 = Layer_Dense(4,5)
 layer2 = Layer_Dense(5,2)
+layer3 = Layer_Dense(2, 3)
 
 layer1.forward(X)
 print(layer1.output)
-layer2.forward(layer2.output)
+layer2.forward(layer1.output)
 print(layer2.output)
-
-
+layer3.forward(layer2.output)
+print(layer3.output)
 
 
 
