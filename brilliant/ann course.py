@@ -1,19 +1,22 @@
 import numpy as np
 
 
+tel = '426869889'
+
+if not tel.startswith('42'):
+    print(tel)
 
 
 
 
-
-
-
-
-
-
-
-
-
+# def gradient_descent(point, step_size, threshold):
+#     "pseudocode for gradient descent"
+#     value = f(point)
+#     new_point = point - step_size * gradient(point)
+#     new_value = f(new_point)
+#     if abs(new_value - value) < threshold:
+#         return value
+#     return gradient_descent(new_point, step_size, threshold)
 
 
 
