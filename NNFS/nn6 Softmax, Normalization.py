@@ -34,15 +34,21 @@ norm_values = numpy_exp_values / np.sum(numpy_exp_values)
 # print(norm_values)
 # print('\n\n\n')
 
-
-# Get unnormalized probabilities
+# Euler Expotentiation and Normalization in raw p
+li = [[1, 2, 3]]
+print(np.mean(li, axis=1), sum(li[0]) / len(li[0]))
 
 inputs = np.array([[4.8, 1.21, 2.385],
                    [8.9, -1.81, 0.2],
                    [1.41, 1.051, 0.026]])
 
-exp_values = np.exp(inputs)
+ex = np.exp(li - np.max(li, axis=1, keepdims=True))
+pro = ex / np.sum(ex, axis=1, keepdims=True)
+print(pro)
 
+
+exp_values = np.exp(inputs)
+print(np.exp(0))
 # np sum axis=0 sumuje kolumny
 # np sum axis=1 sumuje rzędy
 sum = np.sum(inputs, axis=1, keepdims=True)

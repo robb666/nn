@@ -11,8 +11,7 @@ target_output = [1, 0, 0]
 #          math.log(softmax_output[2])*target_output[2])
 
 loss = - math.log(softmax_output[0])
-# print(loss)
-
+print(loss)
 
 print(math.log(1))
 print(math.log(0.95))
@@ -21,11 +20,12 @@ print(math.log(0.8))
 print(math.log(0.7))
 print('\n\n\n')
 
+
 import numpy as np
 
 b = 5.2
-print(np.log(b))
-print(math.e ** 1.6486586255873816)
+print(np.log(20.085536923187664))
+print(math.e ** 3)
 print('\n\n\n')
 
 
@@ -55,15 +55,18 @@ print('\n\n\n')
 class_targets = np.array([[1, 0, 0],
                           [0, 1, 0],
                           [0, 1, 0]])
-
+print(len(class_targets.shape))
 # Probabilities for target values only if categorical labels
 correct_confidences = 0
 if len(class_targets.shape) == 1:
     correct_confidences = softmax_outputs[range(len(softmax_outputs)), class_targets]
+    print(correct_confidences)
 
 # Mask values - only for one-hot encoded labels
 elif len(class_targets.shape) == 2:
     correct_confidences = np.sum(softmax_outputs * class_targets, axis=1)
+    print(correct_confidences)
+
 
 # Losses
 neg_log = - np.log(correct_confidences)
@@ -74,20 +77,36 @@ print(average_loss)
 
 # print(- np.log(0))
 print(np.e ** (- np.inf))
+print(-np.log(1+1e-7))
+# y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
 
 
+print(np.mean([10, 5, 4, 7, 1, 3]))
+print(len(class_targets.shape))
+print(correct_confidences)
 
 
+# class Loss:
+#     def calcylate(self, output, y):
+#         sample_losses = self.forward(output, y)
+#         data_loss = np.mean(sample_losses)
+#         return data_loss
+#
+#
+# class Loss_CategoricalCrossentropy(Loss):
+#     samples = len(y_pred)
+#     y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
+#
+#     if len(y_true.shape) == 1:
+#         correct_confidences = y_pred_clipped[range(samples), y_true]
+#     elif len(y_true.shape) == 1:
+#         correct_confidences = np.sum(y_pred_clipped * y_true, axis=1)
+#
+#     negative_log_likelihoods = - np.log(correct_confidences)
+#
+#     return negative_log_likelihoods
 
-
-
-
-
-
-
-
-
-
+print(np.exp(0), np.exp(-0.1))
 
 
 

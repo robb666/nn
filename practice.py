@@ -2,27 +2,77 @@ import numpy as np
 import math
 
 
-# Euler Expotentiation and Normalization in raw p
-li = [[1, 2, 3]]
-inputs = np.array([[4.8, 1.21, 2.385],
-                   [8.9, -1.81, 0.2],
-                   [1.41, 1.051, 0.026]])
-
-ex = np.exp(li - np.max(li, axis=1, keepdims=True))
-pro = ex / np.sum(ex, axis=1, keepdims=True)
-print(pro)
 
 
-li1 = [1, 2, 3]
-l = []
-l1 = []
-for i in li1:
-    exp1 = math.e ** (i - max(li1))
-    l.append(exp1)
+softmax_outputs = np.array([[0.7, 0.1, 0.2],
+                            [0.1, 0.5, 0.4],
+                            [0.02, 0.9, 0.08]])
 
-for j in l:
-    l1.append(j / sum(l))
-print(l1)
+class_t = [0, 1, 1]
+
+class_targets = np.array([[1, 0, 0],
+                          [0, 1, 0],
+                          [0, 1, 0]])
+
+
+print(np.mean(- np.log(np.sum(softmax_outputs * class_targets, axis=1))))
+
+
+
+
+
+# print(sum([1, 2, 3]) / len([1, 2, 3]))
+# print(np.mean([1, 2, 3]))
+# print(sum(np.array([1, 2, 3]) / sum([1, 2, 3])))
+# print(-np.log())
+
+
+
+
+
+# inputs = np.array([[4.8, 1.21, 2.385],
+#                    [8.9, -1.81, 0.2],
+#                    [1.41, 1.051, 0.026]])
+#
+# class_targets = [0, 1, 1]
+#
+# print(inputs[[0, 1, 2], class_targets])
+
+
+
+
+# CLIP
+# y_pred = 0.000009
+# y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
+# print(y_pred_clipped)
+
+
+
+
+
+
+
+# # Euler Expotentiation and Normalization in raw p
+# li = [[1, 2, 3]]
+# inputs = np.array([[4.8, 1.21, 2.385],
+#                    [8.9, -1.81, 0.2],
+#                    [1.41, 1.051, 0.026]])
+#
+# ex = np.exp(li - np.max(li, axis=1, keepdims=True))
+# pro = ex / np.sum(ex, axis=1, keepdims=True)
+# print(pro)
+#
+#
+# li1 = [1, 2, 3]
+# l = []
+# l1 = []
+# for i in li1:
+#     exp1 = math.e ** (i - max(li1))
+#     l.append(exp1)
+#
+# for j in l:
+#     l1.append(j / sum(l))
+# print(l1)
 
 
 
