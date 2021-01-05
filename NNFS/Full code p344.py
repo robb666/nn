@@ -53,6 +53,34 @@ class Layer_Dense:
         self.dinputs = np.dot(dvalues, self.weights.T)
 
 
+# Dropout
+class Layer_Dropout:
+    # Init
+    def __init__(self, rate):
+        # Store rate, we invert it as for example for dropout
+        # of 0.1 we need success rate of 0.9
+        self.rate = 1 - rate
+    # Forward pass
+    def forward(self, inputs):
+        # Save input values
+        self.inputs = inputs
+        # Generate and save scaled mask
+        self.binary_mask = np.random.binomial(1, self.rate, size=inputs.shape) / self.rate
+        # Apply mask to output values
+        self.output = inputs * self.binary_mask
+    # Backward pass
+    def backward(self, dvalues):
+        # Gradient on values
+        self.dinputs = dvalues * self.binary_mask
+        # Let’s take this new dropout layer, and add it between our two dense layers. First defining it:
+        # Create Dense layer with 2 input features and 64 output values
+        dense1 = Layer_Dense(2, 64, weight_regularizer_l2=5e-4, bias_regularizer_l2=5e-4)
+        # Create ReLU activation (to be used with Dense layer):
+        activation1 = Activation_ReLU()
+        # Create dropout layer
+        dropout1 = Layer_Dropout(0.1)
+
+
 class Activation_ReLU:
 
     # Forward pass
@@ -392,39 +420,10 @@ class Activation_Softmax_Loss_CategoricalCrossentropy():
         self.dinputs = self.dinputs / samples
 
 
-# Dropout
-class Layer_Dropout:
-    # Init
-    def __init__(self, rate):
-        # Store rate, we invert it as for example for dropout
-        # of 0.1 we need success rate of 0.9
-        self.rate = 1 - rate
-    # Forward pass
-    def forward(self, inputs):
-        # Save input values
-        self.inputs = inputs
-        # Generate and save scaled mask
-        self.binary_mask = np.random.binomial(1, self.rate, size=inputs.shape) / self.rate
-        # Apply mask to output values
-        self.output = inputs * self.binary_mask
-    # Backward pass
-    def backward(self, dvalues):
-        # Gradient on values
-        self.dinputs = dvalues * self.binary_mask
-        # Let’s take this new dropout layer, and add it between our two dense layers. First defining it:
-        # Create Dense layer with 2 input features and 64 output values
-        dense1 = Layer_Dense(2, 64, weight_regularizer_l2=5e-4, bias_regularizer_l2=5e-4)
-        # Create ReLU activation (to be used with Dense layer):
-        activation1 = Activation_ReLU()
-        # Create dropout layer
-        dropout1 = Layer_Dropout(0.1)
-
-
-
 
 
 # Create dataset
-X, y = spiral_data(samples=100, classes=3)
+X, y = spiral_data(samples=1000, classes=3)
 # Create Dense layer with 2 input features and 64 output values
 dense1 = Layer_Dense(2, 64, weight_regularizer_l2=5e-4, bias_regularizer_l2=5e-4)
 # Create ReLU activation (to be used with Dense layer):
