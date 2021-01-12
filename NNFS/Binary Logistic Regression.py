@@ -544,7 +544,7 @@ activation3 = Activation_Linear()
 # Create loss function
 loss_function = Loss_MeanSquaredError()
 # Create optimizer
-optimizer = Optimizer_Adam()
+optimizer = Optimizer_Adam(learning_rate=0.005, decay=1e-3)
 # Accuracy precision for accuracy calculation
 # There are no really accuracy factor for regression problem,
 # but we can simulate/approximate it. We'll calculate it by checking
