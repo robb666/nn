@@ -488,6 +488,7 @@ for epoch in range(10001):
 # Validate the model
 # Create test dataset
 X_test, y_test = spiral_data(samples=100, classes=3)
+print(X_test, y_test)
 # Perform a forward pass of our testing data through this layer
 dense1.forward(X_test)
 # Perform a forward pass through activation function
