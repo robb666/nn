@@ -2,6 +2,8 @@ import numpy as np
 import nnfs
 import os
 import cv2
+import pickle
+import copy
 
 
 nnfs.init()
@@ -54,6 +56,18 @@ class Layer_Dense:
 
         # Gradient on values
         self.dinputs = np.dot(dvalues, self.weights.T)
+
+    # Retrieve layer parameters
+    def get_parameters(self):
+        return self.weights, self.biases
+
+    # Set weights and biases in a layer instance
+    def set_parameters(self, weights, biases):
+        self.weights = weights
+        self.biases = biases
+
+
+
 
 
 # Dropout
@@ -701,11 +715,15 @@ class Model:
     def add(self, layer):
         self.layers.append(layer)
 
-    # Set loss and optimizer
-    def set(self, *, loss, optimizer, accuracy):
-        self.loss = loss
-        self.optimizer = optimizer
-        self.accuracy = accuracy
+    # Set loss, optimizer and accuracy
+    def set(self, *, loss=None, optimizer=None, accuracy=None):
+
+        if loss is not None:
+            self.loss = loss
+        if loss is not None:
+            self.optimizer = optimizer
+        if loss is not None:
+            self.accuracy = accuracy
 
     # Finalize the model
     def finalize(self):
@@ -745,8 +763,9 @@ class Model:
             if hasattr(self.layers[i], 'weights'):
                 self.trainable_layers.append(self.layers[i])
 
-        # Update loss object with trainable layers
-        self.loss.remember_trainable_layers(self.trainable_layers)
+        if self.loss is not None:
+            # Update loss object with trainable layers
+            self.loss.remember_trainable_layers(self.trainable_layers)
 
         # If output activation is Softmax and
         # loss function is Categorical Cross-Entropy
@@ -926,9 +945,6 @@ class Model:
             layer.backward(layer.next.dinputs)
 
 
-
-
-
     # Evaluates the model using passed-in dataset
     def evaluate(self, X_val, y_val, *, batch_size=None):
 
@@ -983,6 +999,65 @@ class Model:
               f'loss: {validation_loss:.3f}')
 
 
+    # Retrieves and returns parameters of trainable layers
+    def get_parameters(self):
+
+        # Create and returns parameters of trainable layers
+        parameters = []
+
+        # Iterable trainable layers and get their parameters
+        for layer in self.trainable_layers:
+            parameters.append(layer.get_parameters())
+
+        # Return a list
+        return parameters
+
+    # Updates the model with new parameters
+    def set_parameters(self, parameters):
+
+        # Iterate over the parameters and layers
+        # and update each layers with each set of the parameters
+        for parameter_set, layer in zip(parameters, self.trainable_layers):
+            layer.set_parameters(*parameter_set)
+
+    # Saves the parameters to a file
+    def save_parameters(self, path):
+
+        # Open a file in the binary-write mode
+        # and save parameters to it
+        with open(path, 'wb') as f:
+            pickle.dump(self.get_parameters(), f)
+
+    # Loads the weights and updates a model instance with them
+    def load_parameters(self, path):
+
+        # Open file in the binary-read mode,
+        # load weights and update trainable layers
+        with open(path, 'rb') as f:
+            self.set_parameters(pickle.load(f))
+
+    # Saves the model
+    def save(self, path):
+        # Make a deep copy of current model instance
+        model = copy.deepcopy(self)
+
+        # Reset accumulated values in loss and accuracy objects
+        model.loss.new_pass()
+        model.accuracy.new_pass()
+
+        # Remove data from the input layer
+        # and gradients from the loss object
+        model.input_layer.__dict__.pop('output', None)
+        model.loss.__dict__.pop('dinputs', None)
+
+        # For each layer remove inputs, output and dinputs properties
+        for layer in model.layers:
+            for property in ['inputs', 'output', 'dinputs', 'dweights', 'dbiases']:
+                layer.__dict__.pop(property, None)
+
+        # Open a file in the binary-write mode and save the model
+        with open(path, 'wb') as f:
+            pickle.dump(model, f)
 
 
 
@@ -1022,6 +1097,7 @@ def create_data_mnist(path):
     return X, y, X_test, y_test
 
 
+
 # Create dataset
 X, y, X_test, y_test = create_data_mnist('fashion_mnist_images')
 
@@ -1053,18 +1129,28 @@ model.set(loss=Loss_CategoricalCrossentropy(), optimizer=Optimizer_Adam(decay=1e
 # Finalize the model
 model.finalize()
 
-# Train the model
-model.train(X, y, validation_data=(X_test, y_test), epochs=10, batch_size=128, print_every=100)
+# # Train the model
+# model.train(X, y, validation_data=(X_test, y_test), epochs=5, batch_size=128, print_every=100)
+
+
+# parameters = model.get_parameters()
+# print(parameters)
 
 
 
+# model.save_parameters('fashion_mnist.params')
+
+# Set model with parameters instead of training it
+model.load_parameters(os.getcwd() + r'\fashion_mnist.params')
+
+# Evaluate the model
+model.evaluate(X_test, y_test)
 
 
 
-
-
-
-
+# step: 468, acc: 0.917, loss: 0.171 (data_loss: 0.171, reg_loss: 0.000), lr: 0.0002990430622009569
+# training, acc: 0.898, loss: 0.279 (data_loss: 0.279, reg_loss: 0.000), lr: 0.0002990430622009569
+# validation, acc: 0.898, loss: 0.279
 
 
 
