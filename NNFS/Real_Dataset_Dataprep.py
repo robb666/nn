@@ -1038,7 +1038,7 @@ class Model:
 
     # Saves the model
     def save(self, path):
-        # Make a deep copy of current model instance
+        # Make a deep copy of current model instancer
         model = copy.deepcopy(self)
 
         # Reset accumulated values in loss and accuracy objects
@@ -1058,6 +1058,51 @@ class Model:
         # Open a file in the binary-write mode and save the model
         with open(path, 'wb') as f:
             pickle.dump(model, f)
+
+    # Loads and returns a model
+    @staticmethod
+    def load(path):
+
+        # Open file in the binary-read mode, load a model
+        with open(path, 'rb') as f:
+            model = pickle.load(f)
+        # Return a model
+        return model
+
+    # Predicts on the samples
+    def predict(self, X, *, batch_size=None):
+
+        # Default value if batch size is not being set
+        prediction_steps = 1
+
+        # Calculate number of steps
+        if batch_size is not None:
+            prediction_steps = len(X) // batch_size
+            # Dividing rounds down. If there are some remaining
+            # data, but not a full batch, this won't include it
+            # Add `1` to include this not full batch
+            if prediction_steps * batch_size < len(X):
+                prediction_steps += 1
+
+        # Model outputs
+        output = []
+        # Iterate over steps
+        for step in range(prediction_steps):
+            # If batch size is not set -
+            # train using one step and full dataset
+            if batch_size is None:
+                batch_X = X
+            # Otherwise slice a batch
+            else:
+                batch_X = X[step * batch_size:(step + 1) * batch_size]
+            # Perform the forward pass
+            batch_output = self.forward(batch_X, training=False)
+            # Append batch prediction to the list of predictions
+            output.append(batch_output)
+
+        # Stack and return results
+        return np.vstack(output)
+
 
 
 
@@ -1101,34 +1146,34 @@ def create_data_mnist(path):
 # Create dataset
 X, y, X_test, y_test = create_data_mnist('fashion_mnist_images')
 
-# Shuffle the training dataset
-keys = np.array(range(X.shape[0]))
-np.random.shuffle(keys)
-X = X[keys]
-y = y[keys]
+# # Shuffle the training dataset
+# keys = np.array(range(X.shape[0]))
+# np.random.shuffle(keys)
+# X = X[keys]
+# y = y[keys]
 
 # Scale and reshape samples
 X = (X.reshape(X.shape[0], -1).astype(np.float32) - 127.5) / 127.5
 X_test = (X_test.reshape(X_test.shape[0], -1).astype(np.float32) - 127.5) / 127.5
 
-# Instantiate the model
-model = Model()
-
-# Add layers
-model.add(Layer_Dense(X.shape[1], 128))
-model.add(Activation_ReLU())
-model.add(Layer_Dense(128, 128))
-model.add(Activation_ReLU())
-model.add(Layer_Dense(128, 10))
-model.add(Activation_Softmax())
-
-# Set loss, optimizer and accuracy objects
-model.set(loss=Loss_CategoricalCrossentropy(), optimizer=Optimizer_Adam(decay=1e-3),
-                                                accuracy=Accuracy_Categorical())
-
-# Finalize the model
-model.finalize()
-
+# # Instantiate the model
+# model = Model()
+#
+# # Add layers
+# model.add(Layer_Dense(X.shape[1], 128))
+# model.add(Activation_ReLU())
+# model.add(Layer_Dense(128, 128))
+# model.add(Activation_ReLU())
+# model.add(Layer_Dense(128, 10))
+# model.add(Activation_Softmax())
+#
+# # Set loss, optimizer and accuracy objects
+# model.set(loss=Loss_CategoricalCrossentropy(), optimizer=Optimizer_Adam(decay=1e-3),
+#                                                 accuracy=Accuracy_Categorical())
+#
+# # Finalize the model
+# model.finalize()
+#
 # # Train the model
 # model.train(X, y, validation_data=(X_test, y_test), epochs=5, batch_size=128, print_every=100)
 
@@ -1140,26 +1185,74 @@ model.finalize()
 
 # model.save_parameters('fashion_mnist.params')
 
-# Set model with parameters instead of training it
-model.load_parameters(os.getcwd() + r'\fashion_mnist.params')
+# # Set model with parameters instead of training it
+# model.load_parameters(os.getcwd() + r'\fashion_mnist.params')
 
-# Evaluate the model
-model.evaluate(X_test, y_test)
-
+# model.save('fashion_mnist.model')
 
 
-# step: 468, acc: 0.917, loss: 0.171 (data_loss: 0.171, reg_loss: 0.000), lr: 0.0002990430622009569
-# training, acc: 0.898, loss: 0.279 (data_loss: 0.279, reg_loss: 0.000), lr: 0.0002990430622009569
-# validation, acc: 0.898, loss: 0.279
+# # Evaluate the model
+# model.evaluate(X_test, y_test)
 
 
 
+fashion_mnist_labels = {
+                        0: 'T-shirt/top',
+                        1: 'Trouser',
+                        2: 'Pullover',
+                        3: 'Dress',
+                        4: 'Coat',
+                        5: 'Sandal',
+                        6: 'Shirt',
+                        7: 'Sneaker',
+                        8: 'Bag',
+                        9: 'Ankle boot'
+                        }
+
+image_data = cv2.imread(os.getcwd() + '\\tshirt.png', cv2.IMREAD_GRAYSCALE)
+
+# Resize to the same size as Fashion MNIST images
+image_data = cv2.resize(image_data, (28, 28))
+
+# color inversion
+image_data = 255 - image_data
+
+image_data = (image_data.reshape(1, -1).astype(np.float32) - 127.5) / 127.5
+
+# Load the model
+model = Model.load('fashion_mnist.model')
+
+confidences = model.predict(image_data)
+predictions = model.output_layer_activation.predictions(confidences)
+prediction = fashion_mnist_labels[predictions[0]]
+
+print(prediction)
 
 
 
-URL = 'https://nnfs.io/datasets/fashion_mnist_images.zip'
-FILE = 'fashion_mnist_images.zip'
-FOLDER = 'fashion_mnist_images'
+import matplotlib.pyplot as plt
+
+mnist_image = cv2.imread('fashion_mnist_images/train/0/0000.png', cv2.IMREAD_UNCHANGED)
+
+plt.imshow(mnist_image, cmap='gray')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# URL = 'https://nnfs.io/datasets/fashion_mnist_images.zip'
+# FILE = 'fashion_mnist_images.zip'
+# FOLDER = 'fashion_mnist_images'
 
 
 # if not os.path.isfile(FILE):
