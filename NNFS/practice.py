@@ -3,9 +3,74 @@ import math
 import os
 
 
-cwd = os.getcwd()
+class Layer_Dense:
 
-print(cwd)
+    # Layer initialization
+    def __init__(self, n_inputs, n_neurons):
+        # Initialize weights and biases
+        self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
+        self.biases = np.zeros((1, n_neurons))
+        # # Set regularization strength
+        # self.weight_regularizer_l1 = weight_regularizer_l1
+        # self.weight_regularizer_l2 = weight_regularizer_l2
+        # self.bias_regularizer_l1 = bias_regularizer_l1
+        # self.bias_regularizer_l2 = bias_regularizer_l2
+
+    # Forward pass
+    def forward(self, inputs, training):
+        # Remember input values
+        self.inputs = inputs
+        # Calculate output values from inputs, weights and biases
+        self.output = np.dot(inputs, self.weights) + self.biases
+
+
+
+
+class Optimizer_Adam:
+
+    # Initialize optimizer - set settings
+    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7, beta_1=0.9, beta_2=0.999):
+        self.learning_rate = learning_rate
+        self.current_learning_rate = learning_rate
+        self.decay = decay
+        self.iterations = 0
+        self.epsilon = epsilon
+        self.beta_1 = beta_1
+        self.beta_2 = beta_2
+
+
+dweights = 5.3
+n_neurons = 4
+n_inputs = 3
+
+
+weights = 0.1 * np.random.randn(n_inputs, n_neurons)
+print(weights)
+
+weight_momentums = np.zeros_like(weights)
+print(weight_momentums)
+
+
+beta_1 = 0.9
+
+
+
+weight_momentums = beta_1 * weight_momentums + (1 - beta_1) * dweights
+
+
+print(weight_momentums)
+
+
+
+
+
+
+
+
+
+model = Layer_Dense
+print(model)
+# fp = model.forward(n_inputs, n_neurons, training=False)
 
 
 

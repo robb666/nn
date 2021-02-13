@@ -1209,6 +1209,8 @@ fashion_mnist_labels = {
                         9: 'Ankle boot'
                         }
 
+
+
 image_data = cv2.imread(os.getcwd() + '\\tshirt.png', cv2.IMREAD_GRAYSCALE)
 
 # Resize to the same size as Fashion MNIST images
@@ -1232,7 +1234,7 @@ print(prediction)
 
 import matplotlib.pyplot as plt
 
-mnist_image = cv2.imread('fashion_mnist_images/train/0/0000.png', cv2.IMREAD_UNCHANGED)
+mnist_image = cv2.imread('fashion_mnist_images/train/9/0000.png', cv2.IMREAD_UNCHANGED)
 
 plt.imshow(mnist_image, cmap='gray')
 plt.show()
