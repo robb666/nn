@@ -16,10 +16,10 @@ def inform_winner():
     while orzeł < 1000 or reszka < 1000:
         roll = rollCoin()
         if roll == 1:
-            reszka += 1
-            # reszka_won.append(reszka)
-        else:
             orzeł += 1
+            # reszka_won.append(reszka)
+        if roll == 2:
+            reszka += 1
             # orzeł_won.append(orzeł)
 
     if reszka > orzeł:
@@ -37,4 +37,4 @@ for f in range(1, 4001):
         o += inform_winner()[1]
 
 
-    print(f'Reszka wygrała {r/o}x, orzel wygrał {o/r}x')
+    print(f' orzel wygrała {r}x, Reszka wygrał {o}x')
