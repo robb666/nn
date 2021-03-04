@@ -11,4 +11,8 @@ biases = [2, 3, 0.5]
 output = np.dot(weights, inputs) + biases
 print(output)
 
+print(np.dot(4, 2))
 
+n_inputs = 4
+n_neurons = 2
+print(np.random.randn(n_inputs, n_neurons))
