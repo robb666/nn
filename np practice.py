@@ -153,7 +153,7 @@ print('Zad. 5')
 dzielenie = np.divide([Fraction(-16, 1), -Fraction(12, 1), Fraction(3 - 7, 1)], [Fraction(-24, 1), 5, -5 + 8])
 print(dzielenie)
 
-
+"""cd jupyter"""
 
 
 
