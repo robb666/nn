@@ -159,8 +159,10 @@ print(dzielenie)
 
 
 
-
-
+print()
+temperatura = np.array([[-2, -5, -2, 0, 2, 5, 7], [4, 3, -8, -10, -4, 0, 8], [6, 3, 3, 2, -4, -4, -5]])
+print(np.argmax([np.mean(temperatura[0]), np.mean(temperatura[1]), np.mean(temperatura[2])]))
+# temp = np.argmax(np.mean(temperatura[0]), np.mean(temperatura[1]), np.mean(temperatura[2]))
 
 
 
