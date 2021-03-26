@@ -79,6 +79,10 @@ soup = BeautifulSoup(driver.page_source, features="lxml")
 #     print(link['id'])
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 for link in soup.findAll('a', attrs={"id": re.compile("(?!.*collapseEl.*)", re.I)}):
     print(link.text)
 
@@ -88,7 +92,10 @@ for link in soup.findAll('a', attrs={"id": re.compile("(?!.*collapseEl.*)", re.I
 
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 def find_all(tag):
     for link in soup.findAll(tag, attrs={"id": re.compile("(?!.*collapseEl.*)", re.I)}):
         print(link.text)
@@ -108,28 +115,14 @@ def find_all(tag):
 
 
 
-# print('divy !!!')
-# find_all('div')
-# print('tr !!!')
-# find_all('tr')
-# print('td !!!')
-# find_all('td')
-# print('table !!!')
-# find_all('table')
-# print('form !!!')
-# find_all('form')
-# print('tbody !!!')
-# find_all('tbody')
-# print('input !!!')
-# find_all('input')
-# print('a !!!')
-# find_all('a')
-# print('span !!!')
-# find_all('span')
-# print('id !!!')
-# find_all('id')
-# print('img !!!')
-# find_all('img')
+
+tags = ['div', 'tr', 'td', 'table', 'form', 'tbody', 'input', 'a', 'span', 'id', 'img']
+
+for tag in tags:
+    find_all(tag)
+
+
+
 
 
 """Buttons"""
