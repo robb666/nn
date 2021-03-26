@@ -8,6 +8,11 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+from skimage import io
+import matplotlib.pyplot as plt
+
+
+
 
 np.random.seed(0)
 
@@ -74,20 +79,10 @@ soup = BeautifulSoup(driver.page_source, features="lxml")
 #     print(link['id'])
 
 
-
-
-
-
-
 for link in soup.findAll('a', attrs={"id": re.compile("(?!.*collapseEl.*)", re.I)}):
     print(link.text)
 
     # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.ID, link.text))).click()
-
-
-
-
-
 
 
 
