@@ -17,7 +17,7 @@ from wand.image import Image as wi
 import pytesseract
 import io
 
-print(pytesseract.get_tesseract_version)
+print(pytesseract.get_tesseract_version())
 
 # np.random.seed(0)
 #
@@ -74,17 +74,17 @@ def pzu_log(driver):
 
 def find_all(tag, tasks):
     phrase = {phrase.text for phrase in soup.findAll(tag) if not re.search('[\xa0\n]', phrase.text)}
-    print(phrase)
+    # print(phrase)
 
     for link in phrase:
 
         for j, task in enumerate(tasks):
-            print(task, link)
+            # print(task, link)
             if link not in ('', None, 'NoneType', 'None') and re.search(task, link, re.I):
-                print(link)
+                # print(link)
                 WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='{link}']"))).click()
                 WebDriverWait(driver, 4).until(EC.visibility_of_all_elements_located)
-
+                time.sleep(1)
                 driver.save_screenshot(f"screenshot.png")
                 tasks.pop(j)
                 find_all(tag, tasks)
@@ -103,52 +103,99 @@ def find_all(tag, tasks):
 
 
 def ocr_text(png, extension, p):
-    pdfImage = png.convert(extension)
+    pngImage = png.convert(extension)
     imgBlobs = []
-    for img in pdfImage.sequence[:p]:
+    for img in pngImage.sequence[:p]:
         page = wi(image=img)
         imgBlobs.append(page.make_blob(extension))
 
     all_pages = []
     for img in imgBlobs:
         im = Image.open(io.BytesIO(img))
-        text_ocr = pytesseract.image_to_string(im, lang='pol')
+        text_ocr = pytesseract.image_to_data(im, lang='pol')
         # words_separatly = re.compile(r"((?:(?<!'|\w)(?:\w-?'?)+(?<!-))|(?:(?<='|\w)(?:\w-?'?)+(?=')))")
         # data = words_separatly.findall(text_ocr.lower())
         # for i in data:
         #     all_pages.append(i)
 
-        return all_pages, text_ocr
+        return text_ocr
+
+
+import cv2
+from skimage import data, color
+from skimage.transform import rescale, resize, downscale_local_mean
+
+# np.set_printoptions(linewidth=2000)
+
 
 
 """ PZU """
-options = Options()
-options.add_argument('--start-maximized')
-driver = webdriver.Chrome(options=options)
-
-pzu_log(driver)
-
-soup = BeautifulSoup(driver.page_source, features="lxml")
-
-tags = ['div', 'tr', 'td', 'table', 'form', 'tbody', 'input', 'a', 'span', 'id', 'img']
-
-
-
-task = ['konta', 'edycja konta']
-# task = ['pulpit']
-tag = find_all('tbody', task)
+# options = Options()
+# options.add_argument('--start-maximized')
+# driver = webdriver.Chrome(options=options)
+#
+# pzu_log(driver)
+#
+# soup = BeautifulSoup(driver.page_source, features="lxml")
+#
+# tags = ['div', 'tr', 'td', 'table', 'form', 'tbody', 'input', 'a', 'span', 'id', 'img']
+#
+#
+#
+# task = ['konta', 'edycja konta']
+# # task = ['pulpit']
+# tag = find_all('tbody', task)
 
 
 # png = find_all(tag)
-png = wi(filename=os.getcwd() + '\screenshot.png', resolution=250)
+# png = wi(filename=os.getcwd() + '\screenshot.png', resolution=300)
+png = cv2.imread(os.getcwd() + "/screenshot.png",0)
 # try:
 #     data, text_ocr = ocr_text(png, 'tiff', 1)
 # except:
-data, text_ocr = ocr_text(png, 'png', 1)
+text_ocr = ocr_text(png, 'png', 0)
 print(text_ocr)
-photo = in_out.imread(os.getcwd() + f"/screenshot.png")
-plt.imshow(photo)
-plt.show()
+
+
+
+
+# photo = cv2.imread(os.getcwd() + "/screenshot.png",0)
+# # img = cv2.medianBlur(photo,5)
+# ret, thresh4 = cv2.threshold(photo, 127, 255, cv2.THRESH_TOZERO)
+# # print(thresh4)
+# # th4 = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
+# #
+# #
+# #
+# #
+# plt.imshow(thresh4, 'gray')
+# plt.axis("off")
+# plt.show()
+
+
+
+
+
+
+
+
+
+
+# photo_PIL = Image.open(os.getcwd() + f"/screenshot.png").convert('RGBA')
+# arr = np.array(photo_PIL)
+
+# print(arr.shape)
+# print(arr)
+
+
+
+
+# photo = in_out.imread(os.getcwd() + f"/screenshot.png")
+#
+#
+# print(photo.shape)
+# plt.imshow(photo)
+# plt.show()
 
 
 
