@@ -8,35 +8,40 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
-from skimage import io
+from skimage import io as in_out
 import matplotlib.pyplot as plt
+import webp
+import os
+from PIL import Image
+from wand.image import Image as wi
+import pytesseract
+import io
 
+print(pytesseract.get_tesseract_version)
 
-
-
-np.random.seed(0)
-
-X = [[1, 2, 3, 2.5],
-     [2.0, 5.0, -1.0, 2.0],
-     [-1.5, 2.7, 3.3, -0.8]]
-
-
-class Layer_Dense:
-    def __init__(self, n_inputs, n_neurons):
-        self.weights = 0.10 * np.random.randn(n_inputs, n_neurons)
-        self.biases = np.zeros((1, n_neurons))
-
-    def forward(self, inputs):
-        self.output = np.dot(inputs, self.weights) + self.biases
-        # return self.output
-
-
-class Activation_ReLU:
-    def forward(self, inputs):
-        # Remember input values
-        self.inputs = inputs
-        self.output = np.maximum(0, inputs)
-        return self.output
+# np.random.seed(0)
+#
+# X = [[1, 2, 3, 2.5],
+#      [2.0, 5.0, -1.0, 2.0],
+#      [-1.5, 2.7, 3.3, -0.8]]
+#
+#
+# class Layer_Dense:
+#     def __init__(self, n_inputs, n_neurons):
+#         self.weights = 0.10 * np.random.randn(n_inputs, n_neurons)
+#         self.biases = np.zeros((1, n_neurons))
+#
+#     def forward(self, inputs):
+#         self.output = np.dot(inputs, self.weights) + self.biases
+#         # return self.output
+#
+#
+# class Activation_ReLU:
+#     def forward(self, inputs):
+#         # Remember input values
+#         self.inputs = inputs
+#         self.output = np.maximum(0, inputs)
+#         return self.output
 
 
 # layer1 = Layer_Dense(4, 3)
@@ -45,15 +50,13 @@ class Activation_ReLU:
 # print(activation1.forward(layer1.output))
 
 
-""" PZU """
 
-### DOM ###
-driver = webdriver.Chrome()
 
-url = driver.get('https://everest.pzu.pl/pc/PolicyCenter.do')
+
 
 """Sprawdza logowanie"""
-def pzu_log():
+def pzu_log(driver):
+    url = driver.get('https://everest.pzu.pl/pc/PolicyCenter.do')
     log = driver.find_element_by_id('input_1')
     log.send_keys('macgrzelak')
     pas = driver.find_element_by_id('input_2')
@@ -65,61 +68,99 @@ def pzu_log():
     pas.send_keys('02^27_Sb#cT')
     driver.find_element_by_id('Login:LoginScreen:LoginDV:submit').click()
     time.sleep(2)
-    return driver
+
+    # return driver
 
 
-driver = pzu_log()
-# print(driver.page_source)
+def find_all(tag, tasks):
+    phrase = {phrase.text for phrase in soup.findAll(tag) if not re.search('[\xa0\n]', phrase.text)}
+    print(phrase)
 
+    for link in phrase:
+
+        for j, task in enumerate(tasks):
+            print(task, link)
+            if link not in ('', None, 'NoneType', 'None') and re.search(task, link, re.I):
+                print(link)
+                WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='{link}']"))).click()
+                WebDriverWait(driver, 4).until(EC.visibility_of_all_elements_located)
+
+                driver.save_screenshot(f"screenshot.png")
+                tasks.pop(j)
+                find_all(tag, tasks)
+
+                # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
+                # plt.imshow(photo)
+                # plt.show()
+                # print(photo.shape)
+                # pdf = wi(filename=photo, resolution=250)
+                # return scr
+                # break
+
+            # webp.save_image(scr, 'image.webp', quality=50)
+            # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Ofert')]"))).click()
+
+
+
+def ocr_text(png, extension, p):
+    pdfImage = png.convert(extension)
+    imgBlobs = []
+    for img in pdfImage.sequence[:p]:
+        page = wi(image=img)
+        imgBlobs.append(page.make_blob(extension))
+
+    all_pages = []
+    for img in imgBlobs:
+        im = Image.open(io.BytesIO(img))
+        text_ocr = pytesseract.image_to_string(im, lang='pol')
+        # words_separatly = re.compile(r"((?:(?<!'|\w)(?:\w-?'?)+(?<!-))|(?:(?<='|\w)(?:\w-?'?)+(?=')))")
+        # data = words_separatly.findall(text_ocr.lower())
+        # for i in data:
+        #     all_pages.append(i)
+
+        return all_pages, text_ocr
+
+
+""" PZU """
+options = Options()
+options.add_argument('--start-maximized')
+driver = webdriver.Chrome(options=options)
+
+pzu_log(driver)
 
 soup = BeautifulSoup(driver.page_source, features="lxml")
-# print(' '.join(soup.text))
-
-# for link in soup:
-#     print(link['id'])
-
-
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-for link in soup.findAll('a', attrs={"id": re.compile("(?!.*collapseEl.*)", re.I)}):
-    print(link.text)
-
-    # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.ID, link.text))).click()
-
-
-
-
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-def find_all(tag):
-    for link in soup.findAll(tag, attrs={"id": re.compile("(?!.*collapseEl.*)", re.I)}):
-        print(link.text)
-        # re.search('(Polisy)', link.text, re.I)
-        # if txt := link.text:
-        #     print(txt)
-        # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[contains(text(), 'Konta')]"))).click()
-        # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.ID, "ext-element-1"))).click()
-
-        try:
-            WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.ID, link.text))).click()
-            # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Polisy')]"))).click()
-
-
-        except Exception:
-            WebDriverWait(driver, 9).until(EC.element_to_be_clickable((By.ID, 'TabBar:DesktopTab-btnInnerEl'))).click()
-
-
-
 
 tags = ['div', 'tr', 'td', 'table', 'form', 'tbody', 'input', 'a', 'span', 'id', 'img']
 
-for tag in tags:
-    find_all(tag)
+
+
+task = ['konta', 'edycja konta']
+# task = ['pulpit']
+tag = find_all('tbody', task)
+
+
+# png = find_all(tag)
+png = wi(filename=os.getcwd() + '\screenshot.png', resolution=250)
+# try:
+#     data, text_ocr = ocr_text(png, 'tiff', 1)
+# except:
+data, text_ocr = ocr_text(png, 'png', 1)
+print(text_ocr)
+photo = in_out.imread(os.getcwd() + f"/screenshot.png")
+plt.imshow(photo)
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -135,19 +176,4 @@ for tag in tags:
 """Wyszukanie po tekście"""
 # WebDriverWait(driver, 4).until(EC.element_to_be_clickable
 #                                ((By.XPATH, f"//*[contains(text(), '{text}')]")))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
