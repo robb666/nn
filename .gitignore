@@ -2,3 +2,5 @@
 *.png
 *.whl
 *.pyc
+venv/
+Reinforcement Learning/zdj.jpg
