@@ -70,25 +70,30 @@ def pzu_log(driver):
     # return driver
 
 
-def find_all(tag, tasks):
-    phrase = {phrase.text for phrase in soup.findAll(tag) if not re.search('[\xa0\n]', phrase.text)}
-    print(phrase)
+def find_all(tasks):
+    # phrase = {phrase.text for phrase in soup.findAll(tag) if not re.search('[\xa0\n]', phrase.text)}
+
+    time.sleep(2)
+    driver.save_screenshot(f"screenshot {1}.png")
+    png = cv2.imread(os.getcwd() + f'/screenshot.png')
+    ocr = ocr_text(png)
+    print(ocr)
+
     print(tasks)
 
-    for i, task in enumerate(tasks):
-        for link in phrase:
+    for i, task in enumerate(tasks, 2):
 
-            if link not in ('', None, 'NoneType', 'None') and re.search(task, link, re.I):
-                print(link)
+            if text not in ('', None, 'NoneType', 'None') and re.search(task, text, re.I):
+                print(text)
                 time.sleep(1)
-                WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='{link}']"))).click()
+                WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='{text}']"))).click()
                 WebDriverWait(driver, 4).until(EC.visibility_of_all_elements_located)
                 time.sleep(1)
 
-                driver.save_screenshot(f"screenshot.png")
+                driver.save_screenshot(f"screenshot {i}.png")
+                tasks.pop(0)
+                find_all(tasks)
 
-                tasks.pop(i)
-                find_all(tag, tasks)
 
                 # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
                 # plt.imshow(photo)
@@ -98,6 +103,9 @@ def find_all(tag, tasks):
                 # return scr
                 # break
 
+            # tasks.pop(0)
+            # tag = 'tbody'
+            # find_all(tag, tasks)
             # webp.save_image(scr, 'image.webp', quality=50)
             # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Ofert')]"))).click()
 
@@ -112,21 +120,38 @@ def ocr_text(png):
 
 # np.set_printoptions(linewidth=2000)
 
+import difflib
 
 
 """ PZU """
 options = Options()
-options.add_argument('--start-maximized')
+# options.add_argument('--start-maximized')
+options.add_argument('--window-size=2220,1080')
 driver = webdriver.Chrome(options=options)
 pzu_log(driver)
-
+WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='Konta']"))).click()
+time.sleep(3)
 soup = BeautifulSoup(driver.page_source, features="lxml")
+# print(soup.text)
+driver.save_screenshot(f"screenshot.png")
+
+png = cv2.imread(os.getcwd() + f'/screenshot.png')
+gray = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
+ocr = ocr_text(gray)
+# print(ocr)
+
+print([i for i in difflib.ndiff(soup.text, ocr)])
+
 
 tags = ['div', 'tr', 'td', 'table', 'form', 'tbody', 'input', 'a', 'span', 'id', 'img']
 
-task = ['konta', 'transakcje', 'podmioty']
+tasks = ['konta', 'transakcje', 'podmioty', 'dytuj podmiot']
 
-find_all('span', task)
+
+# find_all(tasks)
+
+# print(driver.page_source)
+
 
 
 # for path in find_all('tbody', task):
