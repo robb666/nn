@@ -64,49 +64,55 @@ class BoT:
     def __init__(self, cv2):
         self.cv2 = cv2
 
-    def pzu_log(self):
-        self.driver.get('https://everest.pzu.pl/pc/PolicyCenter.do')
-        log = self.driver.find_element_by_id('input_1')
-        log.send_keys('macgrzelak')
-        pas = self.driver.find_element_by_id('input_2')
-        pas.send_keys('03*29_Ps&bY')
-        self.driver.find_element_by_css_selector('.credentials_input_submit').click()
-        log = self.driver.find_element_by_id('Login:LoginScreen:LoginDV:username-inputEl')
-        log.send_keys('macgrzelak')
-        pas = self.driver.find_element_by_id('Login:LoginScreen:LoginDV:password-inputEl')
-        pas.send_keys('03*29_Ps&bY')
-        self.driver.find_element_by_id('Login:LoginScreen:LoginDV:submit').click()
-        time.sleep(2)
-        WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='Konta']"))).click()
-        time.sleep(3)
-        return self.driver
+    def get_url(self, url):
+        self.driver.get(url)
+
+    def find_id(self, element):
+        self.locator = self.driver.find_element_by_id(element)
+        return self.locator
+
+    def find_css(self, element):
+        self.locator = self.driver.find_element_by_css_selector(element)
+        return self.locator
+
+    def find_xpath(self, element):
+        self.locator = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, element)))
+        return self.locator
+
+    def send_keys(self, keys):
+        self.locator.send_keys(keys)
+
+    def sleep(self, s):
+        time.sleep(s)
 
     def page_source(self):
-        soup = BeautifulSoup(self.driver.page_source, features="lxml")
-        return soup.get_text()
+        return BeautifulSoup(self.driver.page_source, features="lxml").get_text()
 
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
 
-    def image_manipulation(self):
+    @staticmethod
+    def image_manipulation():
         png = cv2.imread(os.getcwd() + f'/screenshot.png')
         return cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
 
-    def ocr_text(self):
+    @staticmethod
+    def ocr_text():
         return pytesseract.image_to_string(grey, lang='pol')
 
     def find_all(self, ocr, page_source):
         for phrase in ocr.split('\n'):
         # for phrase in tasks:
-            # print(phrase)
+            print(phrase)
             if phrase not in ('\n', '', ' ') and re.search(phrase, page_source, re.I):
                 print(phrase)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                    f"//*[contains(text(), '{phrase.title()}')]"))).click()
+                                                                f"//*[contains(text(), '{phrase.title()}')]"))).click()
                 except Exception as e:
                     print(f'{e} - exception!')
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='Konta']"))).click()
+                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                                                    f"//*[text()='Konta']"))).click()
 
 
                     # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
@@ -125,12 +131,29 @@ class BoT:
 
 
 bot = BoT(cv2)
-print(bot.__dict__)
-bot.pzu_log()
+print(bot)
+bot.get_url('https://everest.pzu.pl/pc/PolicyCenter.do')
+
+bot.find_id('input_1')
+
+bot.send_keys(keys='macgrzelak')
+bot.find_id('input_2')
+bot.send_keys(keys='03*29_Ps&bY')
+bot.find_css('.credentials_input_submit').click()
+bot.find_id('Login:LoginScreen:LoginDV:username-inputEl')
+bot.send_keys(keys='macgrzelak')
+bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
+bot.send_keys(keys='03*29_Ps&bY')
+bot.find_id('Login:LoginScreen:LoginDV:submit').click()
+bot.sleep(2)
+bot.find_xpath("//*[text()='Konta']").click()
+bot.sleep(3)
+
 page_source = bot.page_source()
 bot.screen_shot()
 grey = bot.image_manipulation()
 ocr = bot.ocr_text()
+# print(ocr)
 bot.find_all(ocr, page_source)
 
 
@@ -139,8 +162,20 @@ bot.find_all(ocr, page_source)
 
 
 
-
-
+# self.driver.get('https://everest.pzu.pl/pc/PolicyCenter.do')
+# log = self.driver.find_element_by_id('input_1')
+# log.send_keys('macgrzelak')
+# pas = self.driver.find_element_by_id('input_2')
+# pas.send_keys('03*29_Ps&bY')
+# self.driver.find_element_by_css_selector('.credentials_input_submit').click()
+# log = self.driver.find_element_by_id('Login:LoginScreen:LoginDV:username-inputEl')
+# log.send_keys('macgrzelak')
+# pas = self.driver.find_element_by_id('Login:LoginScreen:LoginDV:password-inputEl')
+# pas.send_keys('03*29_Ps&bY')
+# self.driver.find_element_by_id('Login:LoginScreen:LoginDV:submit').click()
+# time.sleep(2)
+# WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='Konta']"))).click()
+# time.sleep(3)
 
 
 
