@@ -109,6 +109,12 @@ class BoT:
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                 f"//*[contains(text(), '{phrase.title()}')]"))).click()
+
+                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                f"//*[contains(@type, 'text') and @role='textbox']"))).send_keys('Robert')
+
+
+
                 except Exception as e:
                     print(f'{e} - exception!')
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
@@ -146,7 +152,7 @@ bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
 bot.send_keys(keys='03*29_Ps&bY')
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 bot.sleep(2)
-bot.find_xpath("//*[text()='Konta']").click()
+bot.find_xpath("//*[text()='Pulpit']").click()
 bot.sleep(3)
 
 page_source = bot.page_source()
@@ -154,6 +160,11 @@ bot.screen_shot()
 grey = bot.image_manipulation()
 ocr = bot.ocr_text()
 # print(ocr)
+
+tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
+personal_data = {'imię': 'robert', 'nazwisko': 'grzelak', 'pesel': '82082407038'}
+
+
 bot.find_all(ocr, page_source)
 
 
@@ -198,7 +209,7 @@ import difflib
 
 
 
-tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
+
 
 
 
