@@ -100,25 +100,21 @@ class BoT:
     def ocr_text():
         return pytesseract.image_to_string(grey, lang='pol')
 
-    def find_all(self, ocr, page_source):
-        for phrase in ocr.split('\n'):
-        # for phrase in tasks:
-            print(phrase)
-            if phrase not in ('\n', '', ' ') and re.search(phrase, page_source, re.I):
-                print(phrase)
+    def find_all(self, personal_data, tasks):
+        # for phrase in ocr.split('\n'):
+        for k, v in personal_data.items():
+            # print(k)
+            # if k not in ('\n', '', ' ') and re.search(k, page_source, re.I):
+                print(k)
                 try:
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                f"//*[contains(text(), '{phrase.title()}')]"))).click()
-
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                f"//*[contains(@type, 'text') and @role='textbox']"))).send_keys('Robert')
-
-
+                    txt = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                    f"//*[contains(text(), '{k}')]/following::input[1]"))).send_keys(v)
+                    # txt.send_keys(v)
 
                 except Exception as e:
                     print(f'{e} - exception!')
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                                    f"//*[text()='Konta']"))).click()
+                                                                            f"//*[text()='Wyszukiwanie']"))).click()
 
 
                     # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
@@ -152,7 +148,7 @@ bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
 bot.send_keys(keys='03*29_Ps&bY')
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 bot.sleep(2)
-bot.find_xpath("//*[text()='Pulpit']").click()
+bot.find_xpath("//*[text()='Wyszukiwanie']").click()
 bot.sleep(3)
 
 page_source = bot.page_source()
@@ -162,10 +158,11 @@ ocr = bot.ocr_text()
 # print(ocr)
 
 tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
-personal_data = {'imię': 'robert', 'nazwisko': 'grzelak', 'pesel': '82082407038'}
+personal_data = {'Imię': 'robert', 'Nazwisko': 'grzelak', 'PESEL': '82082407038',
+                 'Numer rejestracyjny': 'EL4C079', 'VIN': 'WWWZZZ456SD8'}
 
 
-bot.find_all(ocr, page_source)
+bot.find_all(personal_data, page_source)
 
 
 
