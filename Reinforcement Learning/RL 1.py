@@ -61,8 +61,10 @@ class BoT:
     options.add_argument('--window-size=2220,1080')
     driver = webdriver.Chrome(options=options)
 
-    def __init__(self, cv2):
-        self.cv2 = cv2
+    def __init__(self, tasks, personal_data):
+        self.tasks = tasks
+        self.personal_data = personal_data
+        # self.cv2 = cv2
 
     def get_url(self, url):
         self.driver.get(url)
@@ -100,21 +102,31 @@ class BoT:
     def ocr_text():
         return pytesseract.image_to_string(grey, lang='pol')
 
-    def find_all(self, personal_data, tasks):
+    def find_all(self):
         # for phrase in ocr.split('\n'):
         for k, v in personal_data.items():
             # print(k)
-            # if k not in ('\n', '', ' ') and re.search(k, page_source, re.I):
-                print(k)
+            if k not in ('\n', '', ' ') and (k := re.search(re.escape(k), page_source, re.I)):
+                re_k = k.group()
+                print(re_k)
                 try:
-                    txt = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                    f"//*[contains(text(), '{k}')]/following::input[1]"))).send_keys(v)
-                    # txt.send_keys(v)
+                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                                           f"//*[contains(text(), '{re_k}')]"))).click()
+                    try:
+                        WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                    f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
+                    except:
+                        print('Brak BOXa')
+                        pass
 
                 except Exception as e:
-                    print(f'{e} - exception!')
+                    # print(f'{e} - exception!')
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                             f"//*[text()='Wyszukiwanie']"))).click()
+
+
+
+
 
 
                     # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
@@ -132,7 +144,17 @@ class BoT:
                 # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Ofert')]"))).click()
 
 
-bot = BoT(cv2)
+
+
+
+tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
+
+personal_data = {'imię': 'robert', 'nazwisko': 'grzelak', 'PESEL': '82082407038', 'REGON': '123456789', 'PIN': '1568',
+                 'numer rejestracyjny': 'EL4C079', 'VIN': 'WWWZZZ456SD8'}
+
+
+
+bot = BoT(tasks, personal_data)
 print(bot)
 bot.get_url('https://everest.pzu.pl/pc/PolicyCenter.do')
 
@@ -157,12 +179,10 @@ grey = bot.image_manipulation()
 ocr = bot.ocr_text()
 # print(ocr)
 
-tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
-personal_data = {'Imię': 'robert', 'Nazwisko': 'grzelak', 'PESEL': '82082407038',
-                 'Numer rejestracyjny': 'EL4C079', 'VIN': 'WWWZZZ456SD8'}
 
 
-bot.find_all(personal_data, page_source)
+
+bot.find_all()
 
 
 
