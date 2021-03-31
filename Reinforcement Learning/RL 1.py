@@ -102,32 +102,47 @@ class BoT:
     def ocr_text():
         return pytesseract.image_to_string(grey, lang='pol')
 
-    def find_all(self):
-        # for phrase in ocr.split('\n'):
-        for k, v in personal_data.items():
-            # print(k)
-            if k not in ('\n', '', ' ') and (k := re.search(re.escape(k), page_source, re.I)):
-                re_k = k.group()
-                print(re_k)
+    def task_execution(self):
+        for phrase in tasks:
+            if phrase := re.search(phrase, page_source, re.I):
+                re_phrase = phrase.group()
+                print(re_phrase)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                           f"//*[contains(text(), '{re_k}')]"))).click()
-                    try:
-                        WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                    f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
-                    except:
-                        print('Brak BOXa')
-                        pass
+                                                                   f"//*[contains(text(), '{re_phrase}')]"))).click()
+                except:
+                    print('Problem z wykonaniem zadania !')
+                    pass
+                    # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                    #                                                             f"//*[text()='Wyszukiwanie']"))).click()
 
-                except Exception as e:
-                    # print(f'{e} - exception!')
+    def form_fill(self):
+        for k, v in personal_data.items():
+            if key := re.search(re.escape(k), page_source, re.I):
+                re_k = key.group()
+                try:
+                    self.fill = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
+                    # return self.fill
+                except:
+                    print('Brak BOXa !')
+                    pass
+                    # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                    #                                                             f"//*[text()='Wyszukiwanie']"))).click()
+
+    def wysiwyg(self):
+        for ocr_txt in ocr.split('\n'):
+            if ocr_txt not in ('\n', '', ' ') and (ocr_txt := re.search(re.escape(ocr_txt), page_source, re.I)):
+                ocr_phrase = ocr_txt.group()
+                print(ocr_phrase)
+                try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                            f"//*[text()='Wyszukiwanie']"))).click()
-
-
-
-
-
+                                                                   f"//*[contains(text(), '{ocr_phrase}')]"))).click()
+                    self.form_fill()
+                except:
+                    pass
+                    # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                    #                                                             f"//*[text()='Wyszukiwanie']"))).click()
 
                     # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
                     # plt.imshow(photo)
@@ -170,8 +185,8 @@ bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
 bot.send_keys(keys='03*29_Ps&bY')
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 bot.sleep(2)
-bot.find_xpath("//*[text()='Wyszukiwanie']").click()
-bot.sleep(3)
+# bot.find_xpath("//*[text()='Wyszukiwanie']").click()
+# bot.sleep(3)
 
 page_source = bot.page_source()
 bot.screen_shot()
@@ -180,9 +195,8 @@ ocr = bot.ocr_text()
 # print(ocr)
 
 
-
-
-bot.find_all()
+bot.task_execution()
+bot.form_fill()
 
 
 
