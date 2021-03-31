@@ -88,25 +88,29 @@ class BoT:
         time.sleep(s)
 
     def page_source(self):
-        return BeautifulSoup(self.driver.page_source, features="lxml").get_text()
+        self.next_page_source = BeautifulSoup(self.driver.page_source, features="lxml").get_text()
+        return self.next_page_source
 
+    # @staticmethod
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
 
-    @staticmethod
-    def image_manipulation():
+    # @staticmethod
+    def image_manipulation(self):
         png = cv2.imread(os.getcwd() + f'/screenshot.png')
-        return cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
+        self.grey = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
+        return self.grey
 
-    @staticmethod
-    def ocr_text():
-        return pytesseract.image_to_string(grey, lang='pol')
+    # @staticmethod
+    def ocr_text(self):
+        self.ocr = pytesseract.image_to_string(self.grey, lang='pol')
+        return self.ocr
 
     def task_execution(self):
         for phrase in tasks:
             if phrase := re.search(phrase, page_source, re.I):
                 re_phrase = phrase.group()
-                print(re_phrase)
+                # print(re_phrase)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                    f"//*[contains(text(), '{re_phrase}')]"))).click()
@@ -118,7 +122,7 @@ class BoT:
 
     def form_fill(self):
         for k, v in personal_data.items():
-            if key := re.search(re.escape(k), page_source, re.I):
+            if key := re.search(k, self.next_page_source, re.I):
                 re_k = key.group()
                 try:
                     self.fill = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
@@ -131,15 +135,27 @@ class BoT:
                     #                                                             f"//*[text()='Wyszukiwanie']"))).click()
 
     def wysiwyg(self):
-        for ocr_txt in ocr.split('\n'):
-            if ocr_txt not in ('\n', '', ' ') and (ocr_txt := re.search(re.escape(ocr_txt), page_source, re.I)):
+        for ocr_txt in self.ocr.split():
+            print(self.ocr.split())
+            print(self.next_page_source)
+            if ocr_txt not in ('\n', '', ' ') and (ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I)):
                 ocr_phrase = ocr_txt.group()
                 print(ocr_phrase)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                    f"//*[contains(text(), '{ocr_phrase}')]"))).click()
-                    self.form_fill()
+                    try:
+                        self.form_fill()
+                    except:
+                        pass
+
                 except:
+                    print('Brak screena !')
+                    self.page_source()
+                    self.screen_shot()
+                    self.image_manipulation()
+                    self.ocr_text()
+                    self.wysiwyg()
                     pass
                     # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                     #                                                             f"//*[text()='Wyszukiwanie']"))).click()
@@ -195,9 +211,9 @@ ocr = bot.ocr_text()
 # print(ocr)
 
 
-bot.task_execution()
-bot.form_fill()
-
+# bot.task_execution()
+# bot.form_fill()
+bot.wysiwyg()
 
 
 
