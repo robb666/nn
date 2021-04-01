@@ -61,13 +61,14 @@ class BoT:
     options.add_argument('--window-size=2220,1080')
     driver = webdriver.Chrome(options=options)
 
-    def __init__(self, tasks, personal_data):
+    def __init__(self, url, tasks, personal_data):
+        self.url = url
         self.tasks = tasks
         self.personal_data = personal_data
         # self.cv2 = cv2
 
-    def get_url(self, url):
-        self.driver.get(url)
+    def get_url(self):
+        self.driver.get(self.url)
 
     def find_id(self, element):
         self.locator = self.driver.find_element_by_id(element)
@@ -173,7 +174,7 @@ class BoT:
 
 
 
-
+url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
 tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
 
@@ -181,13 +182,9 @@ personal_data = {'imię': 'robert', 'nazwisko': 'grzelak', 'PESEL': '82082407038
                  'numer rejestracyjny': 'EL4C079', 'VIN': 'WWWZZZ456SD8'}
 
 
-
-bot = BoT(tasks, personal_data)
-print(bot)
-bot.get_url('https://everest.pzu.pl/pc/PolicyCenter.do')
-
+bot = BoT(url, tasks, personal_data)
+bot.get_url()
 bot.find_id('input_1')
-
 bot.send_keys(keys='macgrzelak')
 bot.find_id('input_2')
 bot.send_keys(keys='03*29_Ps&bY')
