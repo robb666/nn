@@ -10,6 +10,16 @@ import re
 
 
 
+arr = ['CTZA', 'DZ', 'Konta', None, 'Polisy', 'Podmioty', 'Wyszukiwanie', 'Zespół', 'Reporrowanie', 'Administracja', 'osx-pc-o-', 'Wiadomości', 'PZUWiem', 'PZUSA', 'WITAJ', 'MACIEJ', 'PESEL/REGON', 'Nazwisko/Nazwa', 'Oferta/Polisa', 'ZĄ', 'Everest', 'Zadania', 'Kema', 'SZYBKA', 'SPRZEDAŻ', 'BUDŻET', 'ZNIŻEK', 'MOJA', 'PROWIZJA', 'GOTÓWKA', 'DO', 'WPŁATY', 'oferty', 'Polisy', 'Wykorzystane:', 'Pozostało:', ')', '', '/', '', 'Transakcje', 'pozopała:', 'oBudżet', '', 'Kolejki', 'Ś', 'Rozliczenia', 'Plany', 'prowizyjne', 'OFWCA', 'u', 'u', 'Budżet', 'zniżek', 'Promokody', 'Moje', 'raporty', 'Szybkie', 'wyszukiwanie', 'ZALEGŁE', 'ó', 'ZADANIA', 'POLISY', 'DO', 'ZADANIA', 'KTÓRE', 'MOJE', 'WNIOSKI', 'Dokumenty', 'organizacji', 'WZNOWIENIA', 'NOWE', 'OFERTY', 'BY', 'OPŁACENIA', 'LECIŁEM', 'PRZYPISANE', 'DO', '', '', '', '', 'B', '', '', '', '', '', 'Wersja', 'zplikacji:', '--', ':']
+
+ocr = list(filter(None, arr))
+print(ocr)
+
+
+
+print('Konta|'.replace('|', ''))
+
+
 # options = Options()
 # options.add_argument('--window-size=2220,1080')
 # driver = webdriver.Chrome(options=options)

@@ -61,7 +61,7 @@ class BoT:
     options.add_argument('--window-size=2220,1080')
     driver = webdriver.Chrome(options=options)
 
-    def __init__(self, url, tasks, personal_data):
+    def __init__(self, url: str, tasks: list, personal_data: dict):
         self.url = url
         self.tasks = tasks
         self.personal_data = personal_data
@@ -100,11 +100,20 @@ class BoT:
 
     # @staticmethod
     def ocr_text(self):
+        self.ocr_excluded_items = []
         self.ocr = []
         ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
+        self.to_replace = ('Nr', 'rej.', 'H', 'w', 'ic', 'c', 'u', 'Ś', 'E', 'v', 'V',
+                           'p', 'T', 'ZŁ', '-MM-dd', 'E#', '.')
         for raw in ocr_raw:
-            if raw not in ('_', '|', '-', '—', '*', '=', 'E', 'v', 'V', 'p', 'T', 'ZŁ', '©', '-MM-dd', 'E#', '?', '.'):
-                self.ocr.append(raw)
+            if raw not in self.to_replace:
+                self.ocr_excluded_items.append(raw)
+
+        for word in self.ocr_excluded_items:
+            no_meta = re.sub(r'[)\]"|=_,*?©—-]|[0-9]', '', word)
+            self.ocr.append(no_meta)
+            self.ocr = list(filter(None, self.ocr))
+
         return self.ocr
 
     def task_execution(self):
@@ -123,9 +132,12 @@ class BoT:
             print('!page source: ' + self.next_page_source)
             if key := re.search(k, self.next_page_source, re.I):
                 re_k = key.group()
+                # print(re_k)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                 f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
+
+                    """Dorobić klikniecie do przesłania formularza."""
                 except:
                     print('Brak BOXa !')
                     pass
@@ -133,28 +145,31 @@ class BoT:
                     #                                                             f"//*[text()='Wyszukiwanie']"))).click()
 
     def wysiwyg(self):
-        for ocr_txt in self.ocr:
-            print('!ocr: ', self.ocr)
-            ocr_txt = re.sub('[|]', '', ocr_txt)
-            if ocr_txt not in ('\n', '', ' ') and (ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I)):
-                ocr_phrase = ocr_txt.group()
-                print(ocr_phrase)
-                try:
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                   f"//*[contains(text(), '{ocr_phrase}')]"))).click()
-                    try:
-                        self.form_fill()
-                    except:
-                        pass
+        popped_items = []
+        for i, ocr_txt in enumerate(self.ocr):
+            # print('!ocr: ', self.ocr)
+            if ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I):
+                ocr_token = ocr_txt.group()
+                print(ocr_token)
+                # try:
+                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                               f"//*[contains(text(), '{ocr_token}')]"))).click()
+                """Nie uzupełnia formularza"""
+                self.form_fill()
+                time.sleep(1.5)
+                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                                                    "//*[text()='Wyszukiwanie']"))).click()
 
-                except:
-                    print('Brak screena !')
-                    # self.page_source()
-                    self.screen_shot()
-                    self.image_manipulation()
-                    self.ocr_text()
-                    self.wysiwyg()
-                    pass
+                popped_items.append(self.ocr.pop(i))
+                print(popped_items, '\n')
+                # except:
+                #     print('Brak screena !')
+                #     # self.page_source()
+                #     self.screen_shot()
+                #     self.image_manipulation()
+                #     self.ocr_text()
+                #     self.wysiwyg()
+                #     pass
                     # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                     #                                                             f"//*[text()='Wyszukiwanie']"))).click()
 
@@ -178,8 +193,13 @@ url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
 tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
 
-personal_data = {'imię': 'robert', 'nazwisko': 'grzelak', 'PESEL': '82082407038', 'REGON': '123456789', 'PIN': '1568',
-                 'numer rejestracyjny': 'EL4C079', 'VIN': 'WWWZZZ456SD8'}
+personal_data = {'imię': 'robert',
+                 'nazwisko': 'grzelak',
+                 'PESEL': '82082407038',
+                 'REGON': '123456789',
+                 'PIN': '1568',
+                 'numer rejestracyjny': 'EL4C079',
+                 'VIN': 'WWWZZZ456SD8'}
 
 
 bot = BoT(url, tasks, personal_data)
