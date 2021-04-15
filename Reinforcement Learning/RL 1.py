@@ -10,16 +10,19 @@ import re
 import time
 from skimage import io as in_out
 import matplotlib.pyplot as plt
-import webp
+# import webp
 import os
 from PIL import Image
-from wand.image import Image as wi
+# from wand.image import Image as wi
 import pytesseract
 import io
 import cv2
+import sys
 
 
 print(pytesseract.get_tesseract_version())
+print(pytesseract.get_languages(config=''))
+print(sys.platform)
 
 # np.random.seed(0)
 #
@@ -95,14 +98,14 @@ class BoT:
     # @staticmethod
     def image_manipulation(self):
         png = cv2.imread(os.getcwd() + f'/screenshot.png')
-        self.grey = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
-        return self.grey
+        self.img_rgb = cv2.cvtColor(png, cv2.COLOR_BGR2RGB)  # COLOR_BGR2GRAY
+        return self.img_rgb
 
     # @staticmethod
     def ocr_text(self):
         self.ocr_excluded_items = []
         self.ocr = []
-        ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
+        ocr_raw = pytesseract.image_to_string(self.img_rgb, lang='pol').split()
         self.to_replace = ('Nr', 'rej.', 'H', 'w', 'ic', 'c', 'u', 'Ś', 'E', 'v', 'V',
                            'p', 'T', 'ZŁ', '-MM-dd', 'E#', '.')
         for raw in ocr_raw:
@@ -110,7 +113,7 @@ class BoT:
                 self.ocr_excluded_items.append(raw)
 
         for word in self.ocr_excluded_items:
-            no_meta = re.sub(r'[)\]"|=_,*?©—-]|[0-9]', '', word)
+            no_meta = re.sub(r'[)\]"”»+|=_,*?©—-]|[0-9]', '', word)
             self.ocr.append(no_meta)
             self.ocr = list(filter(None, self.ocr))
 
@@ -128,8 +131,9 @@ class BoT:
                     print('Problem z wykonaniem zadania !')
 
     def form_fill(self):
+        time.sleep(.2)
         for k, v in personal_data.items():
-            print('!page source: ' + self.next_page_source)
+            # print('!page source: ' + self.next_page_source)
             if key := re.search(k, self.next_page_source, re.I):
                 re_k = key.group()
                 # print(re_k)
@@ -146,6 +150,7 @@ class BoT:
 
     def wysiwyg(self):
         popped_items = []
+        print(self.ocr)
         for i, ocr_txt in enumerate(self.ocr):
             # print('!ocr: ', self.ocr)
             if ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I):
