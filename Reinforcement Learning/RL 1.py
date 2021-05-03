@@ -2,7 +2,7 @@ import numpy as np
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 import requests
 from bs4 import BeautifulSoup
@@ -20,6 +20,8 @@ import cv2
 
 
 print(pytesseract.get_tesseract_version())
+print(pytesseract.pytesseract)
+
 
 # np.random.seed(0)
 #
@@ -86,8 +88,8 @@ class BoT:
         self.locator.send_keys(keys)
 
     def page_source(self):
-        self.next_page_source = BeautifulSoup(self.driver.page_source, features="lxml").get_text()
-        return self.next_page_source
+        self.page_source = BeautifulSoup(self.driver.page_source, features="lxml").get_text()
+        return self.page_source
 
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
@@ -105,6 +107,7 @@ class BoT:
         ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
         self.to_replace = ('Nr', 'rej.', 'H', 'w', 'ic', 'c', 'u', 'Ś', 'E', 'v', 'V',
                            'p', 'T', 'ZŁ', '-MM-dd', 'E#', '.')
+
         for raw in ocr_raw:
             if raw not in self.to_replace:
                 self.ocr_excluded_items.append(raw)
@@ -118,7 +121,7 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            if phrase := re.search(phrase, page_source, re.I):  # Make case insensitive.
+            if phrase := re.search(phrase, self.page_source, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 # print(re_phrase)
                 try:
@@ -129,8 +132,8 @@ class BoT:
 
     def form_fill(self):
         for k, v in personal_data.items():
-            print('!page source: ' + self.next_page_source)
-            if key := re.search(k, self.next_page_source, re.I):
+            # print('!page source: ' + self.next_page_source)
+            if key := re.search(k, self.page_source, re.I):
                 re_k = key.group()
                 # print(re_k)
                 try:
@@ -141,52 +144,30 @@ class BoT:
                 except:
                     print('Brak BOXa !')
                     pass
-                    # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                    #                                                             f"//*[text()='Wyszukiwanie']"))).click()
 
     def wysiwyg(self):
         popped_items = []
         for i, ocr_txt in enumerate(self.ocr):
-            # print('!ocr: ', self.ocr)
-            if ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I):
-                ocr_token = ocr_txt.group()
-                print(ocr_token)
-                # try:
-                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                               f"//*[contains(text(), '{ocr_token}')]"))).click()
-                """Nie uzupełnia formularza"""
-                self.form_fill()
-                time.sleep(1.5)
-                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                                    "//*[text()='Wyszukiwanie']"))).click()
+            print('!ocr: ', self.ocr, ocr_txt)
+            print('!page_source: ', self.page_source)
+            # if ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I):
+            # ocr_token = ocr_txt.group()
+            print(ocr_txt)
+            # try:
+            WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+                                                           f"//*[contains(text(), '{ocr_txt}')]"))).click()
 
-                popped_items.append(self.ocr.pop(i))
-                print(popped_items, '\n')
-                # except:
-                #     print('Brak screena !')
-                #     # self.page_source()
-                #     self.screen_shot()
-                #     self.image_manipulation()
-                #     self.ocr_text()
-                #     self.wysiwyg()
-                #     pass
-                    # WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                    #                                                             f"//*[text()='Wyszukiwanie']"))).click()
-
-                    # photo = in_out.imread(os.getcwd() + f"/screenshot.png")
-                    # plt.imshow(photo)
-                    # plt.show()
-                    # print(photo.shape)
-                    # pdf = wi(filename=photo, resolution=250)
-                    # return scr
-                    # break
-
-                # tasks.pop(0)
-                # tag = 'tbody'
-                # find_all(tag, tasks)
-                # webp.save_image(scr, 'image.webp', quality=50)
-                # WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Ofert')]"))).click()
-
+            row = WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.CLASS_NAME, f"row"))).text
+            print(row)
+            """Nie uzupełnia formularza"""
+            # self.form_fill()
+            time.sleep(1.5)
+            self.screen_shot()
+            popped_items.append(self.ocr.pop(i))
+            print(popped_items, '\n')
+            # except:
+            WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+                                                                                "//*[text()='Pulpit']"))).click()
 
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
@@ -218,10 +199,10 @@ time.sleep(2)
 # bot.find_xpath("//*[text()='Wyszukiwanie']").click()
 # bot.sleep(3)
 
-page_source = bot.page_source()
+bot.page_source()
 bot.screen_shot()
-grey = bot.image_manipulation()
-ocr = bot.ocr_text()
+bot.image_manipulation()
+bot.ocr_text()
 # print(ocr)
 
 

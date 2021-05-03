@@ -7,17 +7,63 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
+import cv2
+import numpy as np
+import pyautogui
 
 
 
-arr = ['CTZA', 'DZ', 'Konta', None, 'Polisy', 'Podmioty', 'Wyszukiwanie', 'Zespół', 'Reporrowanie', 'Administracja', 'osx-pc-o-', 'Wiadomości', 'PZUWiem', 'PZUSA', 'WITAJ', 'MACIEJ', 'PESEL/REGON', 'Nazwisko/Nazwa', 'Oferta/Polisa', 'ZĄ', 'Everest', 'Zadania', 'Kema', 'SZYBKA', 'SPRZEDAŻ', 'BUDŻET', 'ZNIŻEK', 'MOJA', 'PROWIZJA', 'GOTÓWKA', 'DO', 'WPŁATY', 'oferty', 'Polisy', 'Wykorzystane:', 'Pozostało:', ')', '', '/', '', 'Transakcje', 'pozopała:', 'oBudżet', '', 'Kolejki', 'Ś', 'Rozliczenia', 'Plany', 'prowizyjne', 'OFWCA', 'u', 'u', 'Budżet', 'zniżek', 'Promokody', 'Moje', 'raporty', 'Szybkie', 'wyszukiwanie', 'ZALEGŁE', 'ó', 'ZADANIA', 'POLISY', 'DO', 'ZADANIA', 'KTÓRE', 'MOJE', 'WNIOSKI', 'Dokumenty', 'organizacji', 'WZNOWIENIA', 'NOWE', 'OFERTY', 'BY', 'OPŁACENIA', 'LECIŁEM', 'PRZYPISANE', 'DO', '', '', '', '', 'B', '', '', '', '', '', 'Wersja', 'zplikacji:', '--', ':']
-
-ocr = list(filter(None, arr))
-print(ocr)
 
 
 
-print('Konta|'.replace('|', ''))
+
+"""Nagranie pulpitu"""
+
+# display screen resolution, get it from your OS settings
+SCREEN_SIZE = (1920, 1080)
+# define the codec
+fourcc = cv2.VideoWriter_fourcc(*"XVID")
+# create the video write object
+out = cv2.VideoWriter("output.avi", fourcc, 20.0, (SCREEN_SIZE))
+
+
+while True:
+    # make a screenshot
+    img = pyautogui.screenshot()
+    # convert these pixels to a proper numpy array to work with OpenCV
+    frame = np.array(img)
+    # convert colors from BGR to RGB
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # write the frame
+    out.write(frame)
+    # show the frame
+    cv2.imshow("screenshot", frame)
+    # if the user clicks q, it exits
+    if cv2.waitKey(1) == ord("q"):
+        break
+
+# make sure everything is closed when exited
+cv2.destroyAllWindows()
+out.release()
+
+for i in range(200):
+    # make a screenshot
+    img = pyautogui.screenshot()
+    # the rest of the code...
+
+
+
+
+
+
+# arr = ['CTZA', 'DZ', 'Konta', None, 'Polisy', 'Podmioty', 'Wyszukiwanie', 'Zespół', 'Reporrowanie', 'Administracja', 'osx-pc-o-', 'Wiadomości', 'PZUWiem', 'PZUSA', 'WITAJ', 'MACIEJ', 'PESEL/REGON', 'Nazwisko/Nazwa', 'Oferta/Polisa', 'ZĄ', 'Everest', 'Zadania', 'Kema', 'SZYBKA', 'SPRZEDAŻ', 'BUDŻET', 'ZNIŻEK', 'MOJA', 'PROWIZJA', 'GOTÓWKA', 'DO', 'WPŁATY', 'oferty', 'Polisy', 'Wykorzystane:', 'Pozostało:', ')', '', '/', '', 'Transakcje', 'pozopała:', 'oBudżet', '', 'Kolejki', 'Ś', 'Rozliczenia', 'Plany', 'prowizyjne', 'OFWCA', 'u', 'u', 'Budżet', 'zniżek', 'Promokody', 'Moje', 'raporty', 'Szybkie', 'wyszukiwanie', 'ZALEGŁE', 'ó', 'ZADANIA', 'POLISY', 'DO', 'ZADANIA', 'KTÓRE', 'MOJE', 'WNIOSKI', 'Dokumenty', 'organizacji', 'WZNOWIENIA', 'NOWE', 'OFERTY', 'BY', 'OPŁACENIA', 'LECIŁEM', 'PRZYPISANE', 'DO', '', '', '', '', 'B', '', '', '', '', '', 'Wersja', 'zplikacji:', '--', ':']
+#
+# ocr = list(filter(None, arr))
+# print(ocr)
+#
+#
+#
+# print('Konta|'.replace('|', ''))
 
 
 # options = Options()
