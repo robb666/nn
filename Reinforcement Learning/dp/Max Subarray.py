@@ -4,47 +4,45 @@
 
 def maxContSubarr(arr):
 
-    print(arr)
-    print(max(arr))
     arr2 = []
-    # max_subsequence = 0
     for i in arr:
         if i > 0:
             arr2.append(i)
-
     if sum(arr2) > 0:
         max_subsequence = sum(arr2)
     else:
-
         max_subsequence = max(arr)
 
-
-    s = 0
-    dp_arr = []
-    start = 0
-    stop = 0
-    for i in arr[:]:
-        s += i
-        mx = max(i, s)
-        dp_arr.append(mx)
-        stop = dp_arr.index(max(dp_arr)) + 1
-
-    dp_arr1 = []
+    dp_start = []
     s1 = 0
-    for j in list(reversed(arr[start:stop])):
-        s1 += j
-        mx1 = max(j, s1)
-        dp_arr1.append(mx1)
+    for i in list(reversed(arr)):
+        s1 += i
+        mx1 = max(i, s1)
+        dp_start.append(mx1)
 
-    start = len(arr[start:stop]) - dp_arr1.index(max(dp_arr1)) - 1
-    print(arr[start:stop])
-    return sum(arr[start:stop]), max_subsequence
+    dp_stop = []
+    s2 = 0
+    for j in arr:
+        s2 += j
+        mx2 = max(j, s2)
+        dp_stop.append(mx2)
+
+    start = (len(arr) - 1) - dp_start.index(max(dp_start))
+    stop = dp_stop.index(max(dp_stop)) + 1
+    max_subarray = sum(arr[start:stop])
+
+    return max_subarray, max_subsequence
 
 
-arr = [-1, 2, 3, -4, 5, 10]
+# arr = [-1, 2, 3, -4, 5, 10]
 # arr = [1, 2, 3, 4]
 # arr = [-2, -3, -1, -4, -6]
-print(maxContSubarr(arr))
+
+# print(len(arr), arr.index(max(arr)), arr[len(arr) - arr.index(max(arr)):-1])
+
+with open('test_maxsubarr.txt') as arr:
+    arr = list(map(int, arr.read()[9:].split()))
+    print(maxContSubarr(arr))
 
 
 
