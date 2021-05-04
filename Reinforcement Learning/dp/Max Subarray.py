@@ -5,6 +5,18 @@
 def maxContSubarr(arr):
 
     print(arr)
+    print(max(arr))
+    arr2 = []
+    # max_subsequence = 0
+    for i in arr:
+        if i > 0:
+            arr2.append(i)
+
+    if sum(arr2) > 0:
+        max_subsequence = sum(arr2)
+
+    max_subsequence = max(arr)
+
 
     s = 0
     dp_arr = []
@@ -26,10 +38,12 @@ def maxContSubarr(arr):
 
     start = len(arr[start:stop]) - dp_arr1.index(max(dp_arr1)) - 1
 
-    return 'max subarr: ', arr[start:stop]
+    return sum(arr[start:stop]), max_subsequence
 
 
-arr = [-1, -1, 2, 3, -4, 5, -2]
+arr = [-1, 2, 3, -4, 5, 10]
+# arr = [1, 2, 3, 4]
+# arr = [-2, -3, -1, -4, -6]
 print(maxContSubarr(arr))
 
 
@@ -83,8 +97,3 @@ def maxSubarray(arr):
 
 
 
-# arr2 = []
-# for i in arr:
-#     if i > 0:
-#         arr2.append(i)
-# return sum(arr2)
