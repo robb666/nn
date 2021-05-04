@@ -14,8 +14,9 @@ def maxContSubarr(arr):
 
     if sum(arr2) > 0:
         max_subsequence = sum(arr2)
+    else:
 
-    max_subsequence = max(arr)
+        max_subsequence = max(arr)
 
 
     s = 0
@@ -26,7 +27,6 @@ def maxContSubarr(arr):
         s += i
         mx = max(i, s)
         dp_arr.append(mx)
-        start = 0
         stop = dp_arr.index(max(dp_arr)) + 1
 
     dp_arr1 = []
@@ -37,7 +37,7 @@ def maxContSubarr(arr):
         dp_arr1.append(mx1)
 
     start = len(arr[start:stop]) - dp_arr1.index(max(dp_arr1)) - 1
-
+    print(arr[start:stop])
     return sum(arr[start:stop]), max_subsequence
 
 
