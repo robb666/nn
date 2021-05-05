@@ -1,5 +1,10 @@
 
 
+
+
+
+
+
 def maxContSubarr(arr):
 
     for _ in range(len(arr)):
@@ -10,29 +15,17 @@ def maxContSubarr(arr):
             t = max(t, n, t + n)
             h = max(n, h + n)
             m = max(m, h)
-        print(m, t)
-
-
+        return m, t
 
 
 with open('test_maxsubarr.txt') as arr:
     arr = arr.read()[9:]
-    ma
-    # for i in arr:
     print(maxContSubarr(arr))
 
 
 
 
-
-
-
-
-
-
-
-
-def maxContSubarr(arr):
+def maxSubarr(arr):
 
     arr2 = []
     for i in arr:
@@ -64,46 +57,11 @@ def maxContSubarr(arr):
     return max_subarray, max_subsequence
 
 
-# arr = [-1, 2, 3, -4, 5, 10]
-# arr = [1, 2, 3, 4]
-# arr = [-2, -3, -1, -4, -6]
+with open('test_maxsubarr.txt') as arr:
+    arr = list(map(int, arr.read()[9:].split()))
 
-# print(len(arr), arr.index(max(arr)), arr[len(arr) - arr.index(max(arr)):-1])
+    print(maxSubarr(arr))
 
-# with open('test_maxsubarr.txt') as arr:
-#     arr = list(map(int, arr.read()[9:].split()))
-#     # for i in arr:
-#     print(maxContSubarr(arr))
-
-
-
-
-
-
-
-def maxSubarray(arr):
-    matrix = [[0 for _ in range(len(arr))] for _ in range(len(arr) + 1)]
-    for i, j in enumerate(arr):
-        matrix[0][i] = j
-
-    ref = sum(arr)
-    max_arr = []
-    # print(arr)
-    for row in range(1, len(arr) + 1):
-        for column in range(len(arr)):
-            matrix[row][column] += matrix[row][column - 1] + arr[column]
-            matrix[row][column - 1] = 0
-            # matrix[row].insert(0, 0)
-            # max_arr.append(i)
-
-    print(matrix, '\n')
-    # return max_arr
-
-
-
-
-
-# print(maxSubarray(arr))
 
 
 
