@@ -1,5 +1,35 @@
 
 
+def maxContSubarr(arr):
+
+    for _ in range(len(arr)):
+        _, arr = arr, [int(n) for n in arr.split()]
+        h = m = t = arr[0]
+        for ind, n in enumerate(arr):
+            if ind == 0: continue
+            t = max(t, n, t + n)
+            h = max(n, h + n)
+            m = max(m, h)
+        print(m, t)
+
+
+
+
+with open('test_maxsubarr.txt') as arr:
+    arr = arr.read()[9:]
+    ma
+    # for i in arr:
+    print(maxContSubarr(arr))
+
+
+
+
+
+
+
+
+
+
 
 
 def maxContSubarr(arr):
@@ -40,9 +70,10 @@ def maxContSubarr(arr):
 
 # print(len(arr), arr.index(max(arr)), arr[len(arr) - arr.index(max(arr)):-1])
 
-with open('test_maxsubarr.txt') as arr:
-    arr = list(map(int, arr.read()[9:].split()))
-    print(maxContSubarr(arr))
+# with open('test_maxsubarr.txt') as arr:
+#     arr = list(map(int, arr.read()[9:].split()))
+#     # for i in arr:
+#     print(maxContSubarr(arr))
 
 
 
