@@ -5,7 +5,7 @@ import timeit
 
 
 
-setup = '''
+
 def maxContSubarr(arr):
 
     for _ in range(len(arr)):
@@ -22,16 +22,11 @@ def maxContSubarr(arr):
 with open('test_maxsubarr.txt') as arr:
     arr = arr.read()[9:]
     maxContSubarr(arr)
-'''
-
-times = timeit.repeat(setup = setup,
-                          repeat = 100,
-                          number = 10000)
-print(sum(times))
 
 
 
-setup2 = '''
+
+
 def maxSubarr(arr):
 
     arr2 = []
@@ -69,15 +64,6 @@ with open('test_maxsubarr.txt') as arr:
     arr = list(map(int, arr.read()[9:].split()))
 
     maxSubarr(arr)
-'''
-
-
-
-
-times = timeit.repeat(setup = setup2,
-                          repeat = 100,
-                          number = 10000)
-print(sum(times))
 
 
 
