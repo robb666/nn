@@ -9,19 +9,28 @@ import timeit
 def maxContSubarr(arr):
 
     for _ in range(len(arr)):
-        _, arr = arr, [int(n) for n in arr.split()]
-        h = m = t = arr[0]
+        _, arr = arr, [int(n) for n in arr]
+        t = h = m = arr[0]
         for ind, n in enumerate(arr):
-            if ind == 0: continue
+            if ind == 0:
+                continue
             t = max(t, n, t + n)
             h = max(n, h + n)
             m = max(m, h)
+
+            print(t, h, m)
         return m, t
 
 
-with open('test_maxsubarr.txt') as arr:
-    arr = arr.read()[9:]
-    maxContSubarr(arr)
+arr = [4, 3, 2, 1]
+print(maxContSubarr(arr))
+
+
+# with open('test_maxsubarr.txt') as arr:
+#     arr = arr.read()[9:]
+#     maxContSubarr(arr)
+
+
 
 
 
@@ -60,10 +69,10 @@ def maxSubarr(arr):
         return max_subarray, max_subsequence
 
 
-with open('test_maxsubarr.txt') as arr:
-    arr = list(map(int, arr.read()[9:].split()))
-
-    maxSubarr(arr)
+# with open('test_maxsubarr.txt') as arr:
+#     arr = list(map(int, arr.read()[9:].split()))
+#
+#     maxSubarr(arr)
 
 
 
