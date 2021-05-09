@@ -10,33 +10,12 @@ def MaximumSumIncreasingSubsequence(arr):
                 max_sub[i] = max(max_sub[j] + arr[i], max_sub[i])
                 ind_arr[i] = max_sub.index(max_sub[j])
 
+
     return arr, max_sub, ind_arr
 
 
 arr = [4, 6, 1, 3, 8, 4, 6]
 print(MaximumSumIncreasingSubsequence(arr))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
