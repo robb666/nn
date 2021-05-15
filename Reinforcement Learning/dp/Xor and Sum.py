@@ -6,18 +6,21 @@ def xorAndSum(a, b):
 
     sum_modulo = 10 ** 9 + 7
 
+    x = int(str(a), 2)
+    y = int(str(b), 2)
+    p = 0
+    for i in range(0, 314160):
+        # p += x ^ (y << i)
+        p += xor(x, y << i)
+    return p % ((10 ** 9) + 7)
 
-    sum_ab = 0
-    for i in range(314159):
-        sum_ab = xor(a, b << i)
-        if sum_ab == sum_modulo:
-            return sum_modulo, sum_ab
+
+
 
 
 a = 10
 b = 1010
 
 print(xorAndSum(a, b))
-
 
 
