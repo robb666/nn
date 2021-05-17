@@ -5,6 +5,7 @@ def xorAndSum(a, b):
     # Write your code here
 
     sum_modulo = 10 ** 9 + 7
+<<<<<<< Updated upstream
 
     x = int(str(a), 2)
     y = int(str(b), 2)
@@ -16,6 +17,16 @@ def xorAndSum(a, b):
 
 
 
+=======
+    a = int(str(a), 2)
+    b = int(str(b), 2)
+
+    sum_ab = 0
+    for i in range(314160):
+        sum_ab += xor(a, b << i)
+        # sum_ab += a ^ (b << i)
+    return sum_ab % sum_modulo
+>>>>>>> Stashed changes
 
 
 a = 10
