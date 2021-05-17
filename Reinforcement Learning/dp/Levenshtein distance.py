@@ -13,22 +13,19 @@ def L_matrix(str1, str2):
     return np.array(matrix)
 
 
-
-
 def L_dist(str1, str2):
     matrix = L_matrix(str1, str2)
-    for row in range(2, len(str1) + 2):
-        for column in range(2, len(str2) + 2):
-            pass
-            # matrix[row - 1][1] = row
-            # matrix[1][column] = row
-
-
-            # print(str1[column-2], str2[column-2])
-            # if str1[column - 2] == str2[column - 2]:
-            #     matrix[row-1][column] = matrix[row-1][column-1]
-            # else:
-            #     pass
+    for row in range(2, len(str2)+2):
+        for column in range(2, len(str2)+2):
+            print(matrix)
+            print(row, column)
+            if str1[row - 2] == str2[column - 2]:
+                matrix[row][column] = matrix[row - 1][column - 1]
+                print()
+            elif str1[row - 2] != str2[column - 2]:
+                matrix[row][column] = min(int(matrix[row][column - 1]),
+                                          int(matrix[row - 1][column - 1]),
+                                          int(matrix[row - 1][column])) + 1
 
     return matrix
 
@@ -39,3 +36,21 @@ str2 = 'azced'
 
 print(L_dist(str1, str2))
 # print(~1)
+# print(min(1, 0, 3, 5))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
