@@ -4,12 +4,11 @@ import numpy as np
 def L_matrix(str1, str2):
     matrix = [[0 for _ in range(len(str1) + 2)] for _ in range(len(str2) + 2)]
     for row in range(len(str1)):
-        matrix[0][row + 2] = str1[row]
-        matrix[1][row + 1] = row
-
-    for column in range(len(str2)):
-        matrix[column + 2][0] = str2[column]
-        matrix[column + 1][1] = column
+        for column in range(len(str2)):
+            matrix[0][2 + row] = str1[row]
+            matrix[1][2 + row] = row + 1
+            matrix[2 + column][0] = str2[column]
+            matrix[2 + column][1] = column + 1
 
     return np.array(matrix)
 
@@ -32,16 +31,6 @@ def L_dist(str1, str2):
             #     pass
 
     return matrix
-
-
-
-
-
-
-
-
-
-
 
 
 

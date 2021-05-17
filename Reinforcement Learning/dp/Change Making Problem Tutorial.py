@@ -20,10 +20,10 @@ def change_making(coins, change):
                 matrix[r][c] = matrix[r - 1][c]
 
             elif coins[r - 1] < c:
-                print(matrix[r][c - coins[r - 1]])
+                # print(matrix[r][c - coins[r - 1]])
                 matrix[r][c] = min(matrix[r - 1][c], 1 + matrix[r][c - coins[r - 1]])
 
-        print(matrix)
+    print(matrix)
     return matrix[-1][-1]
 
 
