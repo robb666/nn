@@ -2,7 +2,7 @@ import numpy as np
 
 
 def L_matrix(str1, str2):
-    matrix = [[0 for _ in range(len(str1) + 2)] for _ in range(len(str2) + 2)]
+    matrix = [[0 for _ in range(len(str1) + 2)] for _ in range(len(str1) + 2)]
     for row in range(len(str1)):
         for column in range(len(str2)):
             matrix[0][2 + row] = str1[row]
@@ -15,10 +15,10 @@ def L_matrix(str1, str2):
 
 def L_dist(str1, str2):
     matrix = L_matrix(str1, str2)
-    for row in range(2, len(str2)+2):
-        for column in range(2, len(str2)+2):
-            print(matrix)
-            print(row, column)
+    for row in range(2, len(str1)+2):
+        for column in range(2, len(str1)+2):
+            # print(matrix)
+            # print(row, column)
             if str1[row - 2] == str2[column - 2]:
                 matrix[row][column] = matrix[row - 1][column - 1]
                 print()
@@ -27,12 +27,17 @@ def L_dist(str1, str2):
                                           int(matrix[row - 1][column - 1]),
                                           int(matrix[row - 1][column])) + 1
 
+    for i in matrix:
+        for j in i:
+            print(j)
+            if j == ' ':
+                matrix = matrix[:-1]
+
     return matrix
 
 
-
 str1 = 'abcdef'
-str2 = 'azced'
+str2 = 'azced '
 
 print(L_dist(str1, str2))
 # print(~1)
