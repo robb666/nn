@@ -58,12 +58,12 @@ def minimum_edit_dist(str1, str2):
             else:
                 matrix[row][column] = min(int(matrix[row][column - 1]),
                                           int(matrix[row - 1][column - 1]),
-                                          int(matrix[row - 1][column])) + 2
+                                          int(matrix[row - 1][column])) + 1
     return np.array(matrix)
 
 
-str1 = 'intetion'
-str2 = 'exceution'
+str1 = 'kitten'
+str2 = 'sitting'
 
 print(minimum_edit_dist(str1, str2))
 # print(~1)
