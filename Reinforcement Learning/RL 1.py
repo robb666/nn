@@ -102,6 +102,9 @@ class BoT:
 
     # @staticmethod
     def ocr_text(self):
+        """!!!"""
+        # nazwa = driver.find_element_by_xpath("(//div/h1)").text
+        # dane = driver.find_element_by_xpath("(//div/h3)").text
         self.ocr_excluded_items = []
         self.ocr = []
         ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
@@ -181,6 +184,14 @@ personal_data = {'imię': 'robert',
                  'PIN': '1568',
                  'numer rejestracyjny': 'EL4C079',
                  'VIN': 'WWWZZZ456SD8'}
+
+
+
+nazwa = driver.find_element_by_xpath("(//div/h1)").text
+dane = driver.find_element_by_xpath("(//div/h3)").text
+
+
+
 
 
 bot = BoT(url, tasks, personal_data)
