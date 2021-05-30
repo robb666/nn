@@ -27,20 +27,21 @@ def L_distance(X, Y):
 X = 'kitten'
 Y = 'sitting'
 
-print(L_distance(X, Y))
+print(L_distance(X, Y), '\n')
 
 
 #########################
 # Minimum Edit Distance #
 #########################
 def minimum_edit_matrix(str1, str2):
-    matrix = [[0 for _ in range(len(str1) + 2)] for _ in range(len(str2) + 2)]
+    x, y = len(str1), len(str2)
+    matrix = [[0 for _ in range(x + 2)] for _ in range(y + 2)]
 
-    for row in range(len(str1)):
+    for row in range(x):
         matrix[0][row + 2] = str1[row]
         matrix[1][row + 2] = row + 1
 
-    for column in range(len(str2)):
+    for column in range(y):
         matrix[column + 2][0] = str2[column]
         matrix[column + 2][1] = column + 1
 
@@ -48,13 +49,13 @@ def minimum_edit_matrix(str1, str2):
 
 
 def minimum_edit_dist(str1, str2):
+    x, y = len(str1), len(str2)
     matrix = minimum_edit_matrix(str1, str2)
-    for row in range(2, len(str2) + 2):
-        for column in range(2, len(str1) + 2):
+    for row in range(2, y + 2):
+        for column in range(2, x + 2):
 
             if str1[column - 2] == str2[row - 2]:
                 matrix[row][column] = matrix[row - 1][column - 1]
-                print()
             else:
                 matrix[row][column] = min(int(matrix[row][column - 1]),
                                           int(matrix[row - 1][column - 1]),
