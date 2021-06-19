@@ -15,28 +15,28 @@ def map(vertex, edges):
     return dist
 
 
-vertex = [1, 2, 3, 4, 5, 6]
-edges = [(1, 2, 6),
-         (1, 3, 5),
-         (1, 4, 5),
-         (2, 5, -1),
+vertex = [1, 2, 3, 4, 5, 6, 7]
+edges = [(0, 1, 6),
+         (0, 2, 5),
+         (0, 3, 5),
+         (1, 4, -1),
+         (2, 1, -2),
+         (2, 4, 1),
          (3, 2, -2),
-         (3, 5, 1),
-         (4, 3, -2),
-         (4, 6, -1),
-         (5, 7, 3),
-         (6, 7, 3)]
+         (3, 5, -1),
+         (4, 6, 3),
+         (5, 6, 3)]
 
 
-dist = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+dist = [0, 1, 2, 3, 4, 5, 6]
 # dist[0] = 0
-dist[1] = 0
+dist[0] = 0
+dist[1] = float('inf')
 dist[2] = float('inf')
 dist[3] = float('inf')
 dist[4] = float('inf')
 dist[5] = float('inf')
 dist[6] = float('inf')
-dist[7] = float('inf')
 
 
 print(dist)
