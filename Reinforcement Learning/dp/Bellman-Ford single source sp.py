@@ -15,7 +15,7 @@ def map(vertex, edges):
     return dist
 
 
-vertex = [1, 2, 3, 4, 5, 6, 7]
+vertex = [0, 1, 2, 3, 4, 5, 6]
 edges = [(0, 1, 6),
          (0, 2, 5),
          (0, 3, 5),
