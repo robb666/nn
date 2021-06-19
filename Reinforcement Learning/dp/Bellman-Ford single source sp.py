@@ -8,7 +8,7 @@ def relax(u, v, c):
 
 
 def map(vertex, edges):
-    for _ in range(len(vertex) - 1):
+    for _ in range(len(vertex) - 6):
         for u, v, c in edges:
             relax(u, v, c)
             
@@ -28,18 +28,7 @@ edges = [(0, 1, 6),
          (5, 6, 3)]
 
 
-dist = [0, 1, 2, 3, 4, 5, 6]
-# dist[0] = 0
-dist[0] = 0
-dist[1] = float('inf')
-dist[2] = float('inf')
-dist[3] = float('inf')
-dist[4] = float('inf')
-dist[5] = float('inf')
-dist[6] = float('inf')
-
-
-print(dist)
+dist = [0, float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf')]
 
 print(map(vertex, edges))
 
@@ -53,3 +42,6 @@ print(map(vertex, edges))
 #          (2, 4, 4),
 #          (3, 4, 2),
 #          (4, 3, 1)]
+
+
+
