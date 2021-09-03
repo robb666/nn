@@ -10,7 +10,7 @@ import re
 import time
 from skimage import io as in_out
 import matplotlib.pyplot as plt
-import webp
+# import webp
 import os
 from PIL import Image
 from wand.image import Image as wi
@@ -186,13 +186,9 @@ personal_data = {'imię': 'robert',
                  'VIN': 'WWWZZZ456SD8'}
 
 
-
+driver = BoT.driver
 nazwa = driver.find_element_by_xpath("(//div/h1)").text
 dane = driver.find_element_by_xpath("(//div/h3)").text
-
-
-
-
 
 bot = BoT(url, tasks, personal_data)
 bot.get_url()

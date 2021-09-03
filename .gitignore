@@ -4,3 +4,9 @@
 *.pyc
 venv/
 Reinforcement Learning/zdj.jpg
+RL/rl/bin
+RL/rl/lib
+RL/rl/include
+RL/rl/lib64
+RL/rl/share
+RL/rl
