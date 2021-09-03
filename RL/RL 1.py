@@ -1,9 +1,11 @@
-import numpy as np
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+import pandas as pd
+import numpy as np
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -19,8 +21,8 @@ import io
 import cv2
 
 
-print(pytesseract.get_tesseract_version())
-print(pytesseract.pytesseract)
+# print(pytesseract.get_tesseract_version())
+# print(pytesseract.pytesseract)
 
 
 # np.random.seed(0)
@@ -173,7 +175,7 @@ class BoT:
                                                                                 "//*[text()='Pulpit']"))).click()
 
 
-url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
+# url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
 tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
 
@@ -186,26 +188,36 @@ personal_data = {'imię': 'robert',
                  'VIN': 'WWWZZZ456SD8'}
 
 
-driver = BoT.driver
-nazwa = driver.find_element_by_xpath("(//div/h1)").text
-dane = driver.find_element_by_xpath("(//div/h3)").text
+location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
+ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="D:G")
+df = pd.DataFrame(ws)
+
+# url = df.iloc[43, 0]
+url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
+log = df.iloc[43, 2]
+p_ss = df.iloc[43, 3]
 
 bot = BoT(url, tasks, personal_data)
+
 bot.get_url()
+time.sleep(2)
 bot.find_id('input_1')
-bot.send_keys(keys='macgrzelak')
+bot.send_keys(keys=log)
 bot.find_id('input_2')
-bot.send_keys(keys='03*29_Ps&bY')
+bot.send_keys(keys=p_ss)
+time.sleep(1)
 bot.find_css('.credentials_input_submit').click()
 bot.find_id('Login:LoginScreen:LoginDV:username-inputEl')
-bot.send_keys(keys='macgrzelak')
+bot.send_keys(keys=log)
 bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
-bot.send_keys(keys='03*29_Ps&bY')
+bot.send_keys(keys=p_ss)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 # bot.find_xpath("//*[text()='Wyszukiwanie']").click()
 # bot.sleep(3)
 
+nazwa = bot.find_xpath("(//div/h1)").text
+dane = bot.find_xpath("(//div/h3)").text
 bot.page_source()
 bot.screen_shot()
 bot.image_manipulation()
