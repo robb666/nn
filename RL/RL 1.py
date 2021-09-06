@@ -86,6 +86,10 @@ class BoT:
         self.locator = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, element)))
         return self.locator
 
+    def find_all_xpath(self, element):
+        self.locator = WebDriverWait(self.driver, 4).until(EC.presence_of_all_elements_located((By.XPATH, element)))
+        return self.locator
+
     def send_keys(self, keys):
         self.locator.send_keys(keys)
 
@@ -175,9 +179,7 @@ class BoT:
                                                                                 "//*[text()='Pulpit']"))).click()
 
 
-# url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
-
-tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
+tasks = ['rozliczenia']
 
 personal_data = {'imię': 'robert',
                  'nazwisko': 'grzelak',
@@ -199,6 +201,7 @@ p_ss = df.iloc[43, 3]
 
 bot = BoT(url, tasks, personal_data)
 
+# Logowanie
 bot.get_url()
 time.sleep(2)
 bot.find_id('input_1')
@@ -213,21 +216,37 @@ bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
 bot.send_keys(keys=p_ss)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
-# bot.find_xpath("//*[text()='Wyszukiwanie']").click()
-# bot.sleep(3)
 
-nazwa = bot.find_xpath("(//div/h1)").text
-dane = bot.find_xpath("(//div/h3)").text
-bot.page_source()
-bot.screen_shot()
-bot.image_manipulation()
-bot.ocr_text()
+# Wyszukanie
+bot.find_xpath("//*[text()[contains(.,'Rozliczeni')]]").click()
+bot.find_xpath("//*[text()[contains(.,'Odświe')]]").click()
+kwota = bot.find_all_xpath("//*[@class='gw-currency-positive']")[0].text
+
+print(kwota)
+
+file = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Wplaty/"
+with open(file + 'wplaty.txt', 'w') as f:
+    f.write('PZU: ' + kwota)
+    print('zapisane')
+
+
+
+
+
+
+
+# nazwa = bot.find_xpath("(//div/h1)").text
+# dane = bot.find_xpath("(//div/h3)").text
+# bot.page_source()
+# bot.screen_shot()
+# bot.image_manipulation()
+# bot.ocr_text()
 # print(ocr)
 
 
 # bot.task_execution()
 # bot.form_fill()
-bot.wysiwyg()
+# bot.wysiwyg()
 
 
 
