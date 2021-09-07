@@ -65,10 +65,10 @@ class BoT:
     options.add_argument('--window-size=1920,1080')
     driver = webdriver.Chrome(options=options)
 
-    def __init__(self, url: str, tasks: list, personal_data: dict):
+    def __init__(self, url: str, tasks: list, data: dict):
         self.url = url
         self.tasks = tasks
-        self.personal_data = personal_data
+        self.data = data
         # self.cv2 = cv2
 
     def get_url(self):
@@ -135,14 +135,14 @@ class BoT:
         return self.ocr
 
     def task_execution(self):
-        for phrase in tasks:
+        for phrase in self.tasks:
             if phrase := re.search(phrase, self.driver.page_source, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
                                                                f"//*[text()[contains(.,'{re_phrase}')]]"))).click()
 
     def form_fill(self):
-        for k, v in data.items():
+        for k, v in self.data.items():
             # print('!page source: ' + self.next_page_source)
             if key := re.search(k, self.page_source, re.I):
                 re_k = key.group()
