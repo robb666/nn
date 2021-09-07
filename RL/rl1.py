@@ -181,50 +181,9 @@ class BoT:
                                                                                 "//*[text()='Pulpit']"))).click()
 
 
-url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
-
-tasks = ['rozliczeni', 'odświe']
-
-data = {'imię': 'robert',
-                 'nazwisko': 'grzelak',
-                 'PESEL': '82082407038',
-                 'REGON': '123456789',
-                 'PIN': '1568',
-                 'numer rejestracyjny': 'EL4C079',
-                 'VIN': 'WWWZZZ456SD8'}
 
 
-location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
-ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="D:G")
-df = pd.DataFrame(ws)
-log = df.iloc[43, 2]
-p_ss = df.iloc[43, 3]
 
-bot = BoT(url, tasks, data)
-
-# Logowanie
-bot.get_url()
-time.sleep(2)
-bot.find_id('input_1')
-bot.send_keys(keys=log)
-bot.find_id('input_2')
-bot.send_keys(keys=p_ss)
-time.sleep(1)
-bot.find_css('.credentials_input_submit').click()
-bot.find_id('Login:LoginScreen:LoginDV:username-inputEl')
-bot.send_keys(keys=log)
-bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
-bot.send_keys(keys=p_ss)
-bot.find_id('Login:LoginScreen:LoginDV:submit').click()
-time.sleep(2)
-
-# Wyszukanie
-bot.task_execution()
-kwota = bot.find_all_xpath("//*[@class='gw-currency-positive']")[0].text
-
-# Zapisanie
-file = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Wpłaty"
-bot.write_txt(file, 'inkaso.txt', f'pzu: {kwota}')
 
 
 

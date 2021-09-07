@@ -10,3 +10,4 @@ RL/rl/include
 RL/rl/lib64
 RL/rl/share
 RL/rl
+RL/__init__.py
