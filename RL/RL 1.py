@@ -136,13 +136,10 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            # if phrase := re.search(phrase, self.page_source, re.I):  # Make case insensitive.
-            #     re_phrase = phrase.group()
-                # print(re_phrase)
-
-            WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
-                                                           f"//*[text()[contains(.,'{phrase}')]]"))).click()
-
+            if phrase := re.search(phrase, self.driver.page_source, re.I):  # Make case insensitive.
+                re_phrase = phrase.group()
+                WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+                                                               f"//*[text()[contains(.,'{re_phrase}')]]"))).click()
 
     def form_fill(self):
         for k, v in data.items():
@@ -186,7 +183,7 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['Rozliczeni', 'Odświe']
+tasks = ['rozliczeni', 'odświe']
 
 data = {'imię': 'robert',
                  'nazwisko': 'grzelak',
