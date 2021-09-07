@@ -62,7 +62,7 @@ import cv2
 class BoT:
 
     options = Options()
-    options.add_argument('--window-size=2220,1080')
+    options.add_argument('--window-size=1920,1080')
     driver = webdriver.Chrome(options=options)
 
     def __init__(self, url: str, tasks: list, personal_data: dict):
@@ -100,6 +100,12 @@ class BoT:
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
 
+    @staticmethod
+    def write_txt(path, name, text):
+        path = path if path.endswith('/') else path + '/'
+        with open(path + name, 'w+') as f:
+            f.write(f'{text}\n')
+
     # @staticmethod
     def image_manipulation(self):
         png = cv2.imread(os.getcwd() + f'/screenshot.png')
@@ -130,17 +136,16 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            if phrase := re.search(phrase, self.page_source, re.I):  # Make case insensitive.
-                re_phrase = phrase.group()
+            # if phrase := re.search(phrase, self.page_source, re.I):  # Make case insensitive.
+            #     re_phrase = phrase.group()
                 # print(re_phrase)
-                try:
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                   f"//*[contains(text(), '{re_phrase}')]"))).click()
-                except:
-                    print('Problem z wykonaniem zadania !')
+
+            WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+                                                           f"//*[text()[contains(.,'{phrase}')]]"))).click()
+
 
     def form_fill(self):
-        for k, v in personal_data.items():
+        for k, v in data.items():
             # print('!page source: ' + self.next_page_source)
             if key := re.search(k, self.page_source, re.I):
                 re_k = key.group()
@@ -179,9 +184,11 @@ class BoT:
                                                                                 "//*[text()='Pulpit']"))).click()
 
 
-tasks = ['rozliczenia']
+url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-personal_data = {'imię': 'robert',
+tasks = ['Rozliczeni', 'Odświe']
+
+data = {'imię': 'robert',
                  'nazwisko': 'grzelak',
                  'PESEL': '82082407038',
                  'REGON': '123456789',
@@ -193,13 +200,10 @@ personal_data = {'imię': 'robert',
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="D:G")
 df = pd.DataFrame(ws)
-
-# url = df.iloc[43, 0]
-url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 log = df.iloc[43, 2]
 p_ss = df.iloc[43, 3]
 
-bot = BoT(url, tasks, personal_data)
+bot = BoT(url, tasks, data)
 
 # Logowanie
 bot.get_url()
@@ -218,16 +222,12 @@ bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 
 # Wyszukanie
-bot.find_xpath("//*[text()[contains(.,'Rozliczeni')]]").click()
-bot.find_xpath("//*[text()[contains(.,'Odświe')]]").click()
+bot.task_execution()
 kwota = bot.find_all_xpath("//*[@class='gw-currency-positive']")[0].text
 
-print(kwota)
-
-file = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Wplaty/"
-with open(file + 'wplaty.txt', 'w') as f:
-    f.write('PZU: ' + kwota)
-    print('zapisane')
+# Zapisanie
+file = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Wpłaty"
+bot.write_txt(file, 'inkaso.txt', f'pzu: {kwota}')
 
 
 
