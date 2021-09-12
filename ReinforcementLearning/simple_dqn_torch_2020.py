@@ -95,7 +95,7 @@ class Agent():
 
         q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]
 
-        loss = self.Q_eval.loss(q_target, q_next).to(self.Q_eval.device)
+        loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
         loss.backward()
         self.Q_eval.optimizer.step()
 
