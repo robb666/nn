@@ -3,7 +3,7 @@
 *.whl
 *.pyc
 venv/
-Reinforcement Learning/zdj.jpg
+ReinforcementLearning
 RL/rl/bin
 RL/rl/lib
 RL/rl/include
