@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+import pandas as pd
 from skimage import io as in_out
 import matplotlib.pyplot as plt
 import webp
@@ -61,7 +62,7 @@ class BoT:
 
     options = Options()
     options.add_argument('--window-size=2220,1080')
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options) # koniecznie -headless przy cronie
 
     def __init__(self, url: str, tasks: list, personal_data: dict):
         self.url = url
@@ -187,8 +188,6 @@ personal_data = {'imię': 'robert',
 
 
 
-nazwa = driver.find_element_by_xpath("(//div/h1)").text
-dane = driver.find_element_by_xpath("(//div/h3)").text
 
 
 
