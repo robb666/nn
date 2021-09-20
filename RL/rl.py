@@ -126,16 +126,15 @@ class BoT:
     def task_execution(self):
         for phrase in tasks:
             # time.sleep(1)
-            WebDriverWait(self.driver, 9).until(EC.presence_of_element_located(By.XPATH))
+            # WebDriverWait(self.driver, 9).until_not(EC.presence_of_element_located((By.XPATH, "/html/body")))
             visible_text = self.driver.find_element_by_xpath("/html/body").text
             if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 print(re_phrase)
-                try:
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                   f"//*[contains(text(), '{re_phrase}')]"))).click()
-                except:
-                    print('Problem z wykonaniem zadania !')
+                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                                                    f"//*[contains(text(), '{re_phrase}')]"))).click()
+                self.driver.executeScript("return document.readyState").equals("complete")
+
 
     def form_fill(self):
         for k, v in personal_data.items():
@@ -233,21 +232,6 @@ bot.task_execution()
 
 
 
-
-# self.driver.get('https://everest.pzu.pl/pc/PolicyCenter.do')
-# log = self.driver.find_element_by_id('input_1')
-# log.send_keys('macgrzelak')
-# pas = self.driver.find_element_by_id('input_2')
-# pas.send_keys('03*29_Ps&bY')
-# self.driver.find_element_by_css_selector('.credentials_input_submit').click()
-# log = self.driver.find_element_by_id('Login:LoginScreen:LoginDV:username-inputEl')
-# log.send_keys('macgrzelak')
-# pas = self.driver.find_element_by_id('Login:LoginScreen:LoginDV:password-inputEl')
-# pas.send_keys('03*29_Ps&bY')
-# self.driver.find_element_by_id('Login:LoginScreen:LoginDV:submit').click()
-# time.sleep(2)
-# WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, f"//*[text()='Konta']"))).click()
-# time.sleep(3)
 
 
 
