@@ -125,16 +125,17 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            # time.sleep(1)
-            # WebDriverWait(self.driver, 9).until_not(EC.presence_of_element_located((By.XPATH, "/html/body")))
+            time.sleep(1)
+            WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
             visible_text = self.driver.find_element_by_xpath("/html/body").text
             if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 print(re_phrase)
                 WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
-                self.driver.executeScript("return document.readyState").equals("complete")
-
+                # self.driver.execute_script("return document.readyState")
+                # WebDriverWait(self.driver, 10).until(
+                #     lambda driver: self.driver.execute_script('return document.readyState') == 'complete')
 
     def form_fill(self):
         for k, v in personal_data.items():
