@@ -9,8 +9,8 @@ if __name__ == '__main__':
                   eps_end=0.01, input_dims=[8], lr=0.003)
     scores, eps_history = [], []
     n_games = 500
-    env.render()
     for i in range(n_games):
+        env.render()
         score = 0
         done = False
         observation = env.reset()

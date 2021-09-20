@@ -20,8 +20,8 @@ import io
 import cv2
 
 
-print(pytesseract.get_tesseract_version())
-print(pytesseract.pytesseract)
+# print(pytesseract.get_tesseract_version())
+# print(pytesseract.pytesseract)
 
 
 # np.random.seed(0)
@@ -61,7 +61,8 @@ print(pytesseract.pytesseract)
 class BoT:
 
     options = Options()
-    options.add_argument('--window-size=2220,1080')
+    options.add_argument('--window-size=1920,1080')
+    # options.add_argument('--headless')
     driver = webdriver.Chrome(options=options) # koniecznie -headless przy cronie
 
     def __init__(self, url: str, tasks: list, personal_data: dict):
@@ -89,7 +90,9 @@ class BoT:
         self.locator.send_keys(keys)
 
     def page_source(self):
-        self.page_source = BeautifulSoup(self.driver.page_source, features="lxml").get_text()
+        # self.page_source = BeautifulSoup(self.driver.page_source, features="lxml").get_text()
+        time.sleep(2)
+        self.page_source = self.driver.find_elements_by_tag_name('body')
         return self.page_source
 
     def screen_shot(self):
@@ -103,9 +106,6 @@ class BoT:
 
     # @staticmethod
     def ocr_text(self):
-        """!!!"""
-        # nazwa = driver.find_element_by_xpath("(//div/h1)").text
-        # dane = driver.find_element_by_xpath("(//div/h3)").text
         self.ocr_excluded_items = []
         self.ocr = []
         ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
@@ -125,9 +125,10 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            if phrase := re.search(phrase, self.page_source, re.I):  # Make case insensitive.
+            print(self.page_source())
+            if phrase := re.search(phrase, self.page_source(), re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
-                # print(re_phrase)
+                print(re_phrase)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                    f"//*[contains(text(), '{re_phrase}')]"))).click()
@@ -174,21 +175,23 @@ class BoT:
                                                                                 "//*[text()='Pulpit']"))).click()
 
 
+
+
+
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['konta', 'transakcje', 'podmioty', 'edytuj podmiot']
+tasks = ['Rozlicz']
 
-personal_data = {'imię': 'robert',
-                 'nazwisko': 'grzelak',
-                 'PESEL': '82082407038',
-                 'REGON': '123456789',
-                 'PIN': '1568',
-                 'numer rejestracyjny': 'EL4C079',
-                 'VIN': 'WWWZZZ456SD8'}
+personal_data = {}
 
 
+location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
+ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="A:G")
+df = pd.DataFrame(ws).head(50)
 
+l = df.iloc[43, 5]
+h = df.iloc[43, 6]
 
 
 
@@ -196,29 +199,32 @@ personal_data = {'imię': 'robert',
 bot = BoT(url, tasks, personal_data)
 bot.get_url()
 bot.find_id('input_1')
-bot.send_keys(keys='macgrzelak')
+bot.send_keys(keys=l)
 bot.find_id('input_2')
-bot.send_keys(keys='03*29_Ps&bY')
+bot.send_keys(keys=h)
 bot.find_css('.credentials_input_submit').click()
 bot.find_id('Login:LoginScreen:LoginDV:username-inputEl')
-bot.send_keys(keys='macgrzelak')
+bot.send_keys(keys=l)
 bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
-bot.send_keys(keys='03*29_Ps&bY')
+bot.send_keys(keys=h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
-# bot.find_xpath("//*[text()='Wyszukiwanie']").click()
+bot.task_execution()
+# bot.find_xpath("//*[contains(text(),'Rozlicz')]").click()
+
+
 # bot.sleep(3)
+#
+# bot.page_source()
+# bot.screen_shot()
+# bot.image_manipulation()
+# bot.ocr_text()
+# # print(ocr)
+#
+#
+# # bot.task_execution()
+# # bot.form_fill()
 
-bot.page_source()
-bot.screen_shot()
-bot.image_manipulation()
-bot.ocr_text()
-# print(ocr)
-
-
-# bot.task_execution()
-# bot.form_fill()
-bot.wysiwyg()
 
 
 
@@ -246,109 +252,4 @@ bot.wysiwyg()
 
 
 
-
-# np.set_printoptions(linewidth=2000)
-
-import difflib
-
-
-""" PZU """
-
-
-
-
-
-
-
-
-
-
-
-
-# find_all(ocr, page_source)
-
-
-# print([i for i in difflib.ndiff(soup.text, ocr)])
-# tags = ['div', 'tr', 'td', 'table', 'form', 'tbody', 'input', 'a', 'span', 'id', 'img']
-
-
-
-
-
-
-# for path in find_all('tbody', task):
-#     if path:
-#         png = cv2.imread(os.getcwd() + f'/screenshot.png')
-#
-#         ocr = ocr_text(png)
-        # print(ocr)
-
-# cv2.waitKey(0)
-
-
-
-# photo = cv2.imread(os.getcwd() + "/screenshot.png",0)
-# # img = cv2.medianBlur(photo,5)
-# ret, thresh4 = cv2.threshold(photo, 127, 255, cv2.THRESH_TOZERO)
-# # print(thresh4)
-# # th4 = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
-# #
-# #
-# #
-# #
-# plt.imshow(thresh4, 'gray')
-# plt.axis("off")
-# plt.show()
-
-
-
-
-
-
-
-
-
-
-# photo_PIL = Image.open(os.getcwd() + f"/screenshot.png").convert('RGBA')
-# arr = np.array(photo_PIL)
-
-# print(arr.shape)
-# print(arr)
-
-
-
-
-# photo = in_out.imread(os.getcwd() + f"/screenshot.png")
-#
-#
-# print(photo.shape)
-# plt.imshow(photo)
-# plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""Buttons"""
-# buttons = driver.find_elements_by_xpath(".//form//input[@type='button']")
-# for button in buttons:
-#     print(button.text)
-
-# driver.find_elements_by_css_selector('input[type=button])
-
-"""Wyszukanie po tekście"""
-# WebDriverWait(driver, 4).until(EC.element_to_be_clickable
-#                                ((By.XPATH, f"//*[contains(text(), '{text}')]")))
 
