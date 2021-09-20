@@ -125,8 +125,10 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            print(self.page_source())
-            if phrase := re.search(phrase, self.page_source(), re.I):  # Make case insensitive.
+            # time.sleep(1)
+            WebDriverWait(self.driver, 9).until(EC.presence_of_element_located(By.XPATH))
+            visible_text = self.driver.find_element_by_xpath("/html/body").text
+            if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 print(re_phrase)
                 try:
@@ -137,7 +139,7 @@ class BoT:
 
     def form_fill(self):
         for k, v in personal_data.items():
-            # print('!page source: ' + self.next_page_source)
+            print('!page source: ' + self.next_page_source)
             if key := re.search(k, self.page_source, re.I):
                 re_k = key.group()
                 # print(re_k)
@@ -180,7 +182,7 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['Rozlicz']
+tasks = ['rozlicz', 'odświe']
 
 personal_data = {}
 
@@ -211,6 +213,7 @@ bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 bot.task_execution()
 # bot.find_xpath("//*[contains(text(),'Rozlicz')]").click()
+# print(bot.find_xpath("/html/body").text)
 
 
 # bot.sleep(3)
