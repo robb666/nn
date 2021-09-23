@@ -64,7 +64,7 @@ class BoT:
     options = Options()
     options.add_argument('--window-size=1920,1080')
     # options.add_argument('--headless')
-    driver = webdriver.Chrome(options=options) # koniecznie -headless przy cronie
+    driver = webdriver.Chrome(options=options)  # koniecznie -headless przy cronie
 
     def __init__(self, url: str, tasks: list, personal_data: dict):
         self.url = url
@@ -126,7 +126,6 @@ class BoT:
 
     def task_execution(self):
         for phrase in tasks:
-            time.sleep(1)
             WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
             visible_text = self.driver.find_element_by_xpath("/html/body").text
             if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
@@ -134,9 +133,7 @@ class BoT:
                 print(re_phrase)
                 WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
-                # self.driver.execute_script("return document.readyState")
-                # WebDriverWait(self.driver, 10).until(
-                #     lambda driver: self.driver.execute_script('return document.readyState') == 'complete')
+                time.sleep(1)
 
     def form_fill(self):
         for k, v in personal_data.items():
@@ -183,9 +180,9 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['rozlicz', 'odświe']
+tasks = ['rozlicz', 'wpłaty']
 
-personal_data = {}
+personal_data = {'Data wyciągu': '1999-02-02'}
 
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
@@ -213,8 +210,8 @@ bot.send_keys(keys=h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 bot.task_execution()
-# bot.find_xpath("//*[contains(text(),'Rozlicz')]").click()
-# print(bot.find_xpath("/html/body").text)
+bot.form_fill()
+
 
 
 # bot.sleep(3)
@@ -228,9 +225,6 @@ bot.task_execution()
 #
 # # bot.task_execution()
 # # bot.form_fill()
-
-
-
 
 
 
