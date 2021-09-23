@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import requests
 from bs4 import BeautifulSoup
+from bs4.element import Comment
 import re
 import time
 import pandas as pd
@@ -70,6 +71,7 @@ class BoT:
         self.url = url
         self.tasks = tasks
         self.personal_data = personal_data
+        self.body = url
         # self.cv2 = cv2
 
     def get_url(self):
@@ -90,11 +92,23 @@ class BoT:
     def send_keys(self, keys):
         self.locator.send_keys(keys)
 
-    def page_source(self):
-        # self.page_source = BeautifulSoup(self.driver.page_source, features="lxml").get_text()
-        time.sleep(2)
-        self.page_source = self.driver.find_elements_by_tag_name('body')
-        return self.page_source
+    def _tag_visible(self, element):
+        if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+            return False
+        if isinstance(element, Comment):
+            return False
+        return True
+
+    def page_text(self):
+        soup = BeautifulSoup(self.body, features="lxml")
+        texts = soup.findAll(text=True)
+        visible_texts = filter(self._tag_visible, texts)
+
+        return u" ".join(t.strip() for t in visible_texts)
+
+
+
+
 
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
@@ -137,7 +151,7 @@ class BoT:
 
     def form_fill(self):
         for k, v in personal_data.items():
-            print('!page source: ' + self.next_page_source)
+            print(self.page_source)
             if key := re.search(k, self.page_source, re.I):
                 re_k = key.group()
                 # print(re_k)
@@ -210,7 +224,8 @@ bot.send_keys(keys=h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 bot.task_execution()
-bot.form_fill()
+print(bot.page_text())
+# bot.form_fill()
 
 
 
