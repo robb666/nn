@@ -69,7 +69,7 @@ class BoT:
 
     def __init__(self, url: str, tasks: list, personal_data: dict):
         self.url = url
-        self.tasks = tasks
+        self.tasks = next(iter(tasks))
         self.personal_data = personal_data
         self.driver.get(url)
         # self.body = requests.get(url).text  # html content
@@ -101,17 +101,15 @@ class BoT:
         return True
 
     def bs4_text(self, body):
-
         soup = BeautifulSoup(body, features="lxml")
         texts = soup.findAll(text=True)
         visible_texts = filter(self._tag_visible, texts)
-        # print(u" ".join(t.strip() for t in visible_texts))
         return u" ".join(t + '\n' for t in visible_texts)
 
     def driver_text(self):
         element = self.driver.find_element_by_xpath('//*')
-        self.body = element.get_attribute('innerHTML')
-        return self.bs4_text(self.body)
+        body = element.get_attribute('innerHTML')
+        return self.bs4_text(body)
 
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
@@ -148,51 +146,52 @@ class BoT:
             if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 # print(re_phrase)
-                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
-                time.sleep(3)
+                time.sleep(1)
 
     def form_fill(self):
         page_text = self.driver_text()
-        print(page_text)
-        print(personal_data)
         for k, v in personal_data.items():
-            print(k, v)
-            if key := re.search(k, page_text, re.I):
+            if key := re.search(k, page_text, re.I) and k != '*':
                 re_k = key.group()
-                print(re_k)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                                                    f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
+                                                f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
 
-                    """Dorobić klikniecie do przesłania formularza."""
+                    """Dorobić klikniecie do przesłania formularza po jego wypełnieniu. - next(iter(tasks))"""
                 except:
                     print('Brak BOXa !')
-                    pass
+                    self.task_execution()
 
-    def wysiwyg(self):
-        popped_items = []
-        for i, ocr_txt in enumerate(self.ocr):
-            print('!ocr: ', self.ocr, ocr_txt)
-            print('!page_source: ', self.page_source)
-            # if ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I):
-            # ocr_token = ocr_txt.group()
-            print(ocr_txt)
-            # try:
-            WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
-                                                           f"//*[contains(text(), '{ocr_txt}')]"))).click()
+            else:
+                self.task_execution()
 
-            row = WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.CLASS_NAME, f"row"))).text
-            print(row)
-            """Nie uzupełnia formularza"""
-            # self.form_fill()
-            time.sleep(1.5)
-            self.screen_shot()
-            popped_items.append(self.ocr.pop(i))
-            print(popped_items, '\n')
-            # except:
-            WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
-                                                                                "//*[text()='Pulpit']"))).click()
+
+
+    # def wysiwyg(self):
+    #     popped_items = []
+    #     for i, ocr_txt in enumerate(self.ocr):
+    #         print('!ocr: ', self.ocr, ocr_txt)
+    #         print('!page_source: ', self.page_source)
+    #         # if ocr_txt := re.search(re.escape(ocr_txt), self.next_page_source, re.I):
+    #         # ocr_token = ocr_txt.group()
+    #         print(ocr_txt)
+    #         # try:
+    #         WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+    #                                                        f"//*[contains(text(), '{ocr_txt}')]"))).click()
+    #
+    #         row = WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.CLASS_NAME, f"row"))).text
+    #         print(row)
+    #         """Nie uzupełnia formularza"""
+    #         # self.form_fill()
+    #         time.sleep(1.5)
+    #         self.screen_shot()
+    #         popped_items.append(self.ocr.pop(i))
+    #         print(popped_items, '\n')
+    #         # except:
+    #         WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+    #                                                                             "//*[text()='Pulpit']"))).click()
 
 
 
@@ -200,9 +199,14 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['rozlicz', 'wpłaty']
+tasks = ['wyszukiw', 'zukaj']
 
-personal_data = {'Data wyciągu': '1999-02-02'}
+personal_data = {'Term public ID': '45',
+                 'Numer polisy': '523654845',
+                 'nazwisko': 'Grzelak',
+                 'Imię': ' Robert',
+                 'pesel': '82082407038',
+                 '*': None}
 
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
