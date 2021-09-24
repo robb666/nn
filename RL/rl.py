@@ -71,11 +71,12 @@ class BoT:
         self.url = url
         self.tasks = tasks
         self.personal_data = personal_data
-        self.body = url
+        self.driver.get(url)
+        # self.body = requests.get(url).text  # html content
         # self.cv2 = cv2
 
-    def get_url(self):
-        self.driver.get(self.url)
+    # def get_url(self):
+    #     self.driver.get(self.url)
 
     def find_id(self, element):
         self.locator = self.driver.find_element_by_id(element)
@@ -99,44 +100,46 @@ class BoT:
             return False
         return True
 
-    def page_text(self):
-        soup = BeautifulSoup(self.body, features="lxml")
+    def bs4_text(self, body):
+
+        soup = BeautifulSoup(body, features="lxml")
         texts = soup.findAll(text=True)
         visible_texts = filter(self._tag_visible, texts)
+        # print(u" ".join(t.strip() for t in visible_texts))
+        return u" ".join(t + '\n' for t in visible_texts)
 
-        return u" ".join(t.strip() for t in visible_texts)
-
-
-
-
+    def driver_text(self):
+        element = self.driver.find_element_by_xpath('//*')
+        self.body = element.get_attribute('innerHTML')
+        return self.bs4_text(self.body)
 
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
 
-    # @staticmethod
-    def image_manipulation(self):
-        png = cv2.imread(os.getcwd() + f'/screenshot.png')
-        self.grey = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
-        return self.grey
+    # # @staticmethod
+    # def image_manipulation(self):
+    #     png = cv2.imread(os.getcwd() + f'/screenshot.png')
+    #     self.grey = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
+    #     return self.grey
 
-    # @staticmethod
-    def ocr_text(self):
-        self.ocr_excluded_items = []
-        self.ocr = []
-        ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
-        self.to_replace = ('Nr', 'rej.', 'H', 'w', 'ic', 'c', 'u', 'Ś', 'E', 'v', 'V',
-                           'p', 'T', 'ZŁ', '-MM-dd', 'E#', '.')
-
-        for raw in ocr_raw:
-            if raw not in self.to_replace:
-                self.ocr_excluded_items.append(raw)
-
-        for word in self.ocr_excluded_items:
-            no_meta = re.sub(r'[)\]"|=_,*?©—-]|[0-9]', '', word)
-            self.ocr.append(no_meta)
-            self.ocr = list(filter(None, self.ocr))
-
-        return self.ocr
+    # # @staticmethod
+    # def ocr_text(self):
+    #     self.ocr_excluded_items = []
+    #     self.ocr = []
+    #     ocr_raw = pytesseract.image_to_string(self.grey, lang='pol').split()
+    #     self.to_replace = ('Nr', 'rej.', 'H', 'w', 'ic', 'c', 'u', 'Ś', 'E', 'v', 'V',
+    #                        'p', 'T', 'ZŁ', '-MM-dd', 'E#', '.')
+    #
+    #     for raw in ocr_raw:
+    #         if raw not in self.to_replace:
+    #             self.ocr_excluded_items.append(raw)
+    #
+    #     for word in self.ocr_excluded_items:
+    #         no_meta = re.sub(r'[)\]"|=_,*?©—-]|[0-9]', '', word)
+    #         self.ocr.append(no_meta)
+    #         self.ocr = list(filter(None, self.ocr))
+    #
+    #     return self.ocr
 
     def task_execution(self):
         for phrase in tasks:
@@ -144,20 +147,23 @@ class BoT:
             visible_text = self.driver.find_element_by_xpath("/html/body").text
             if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
-                print(re_phrase)
+                # print(re_phrase)
                 WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
-                time.sleep(1)
+                time.sleep(3)
 
     def form_fill(self):
+        page_text = self.driver_text()
+        print(page_text)
+        print(personal_data)
         for k, v in personal_data.items():
-            print(self.page_source)
-            if key := re.search(k, self.page_source, re.I):
+            print(k, v)
+            if key := re.search(k, page_text, re.I):
                 re_k = key.group()
-                # print(re_k)
+                print(re_k)
                 try:
                     WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
+                                                                                    f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
 
                     """Dorobić klikniecie do przesłania formularza."""
                 except:
@@ -211,7 +217,7 @@ h = df.iloc[43, 6]
 
 
 bot = BoT(url, tasks, personal_data)
-bot.get_url()
+# bot.get_url()
 bot.find_id('input_1')
 bot.send_keys(keys=l)
 bot.find_id('input_2')
@@ -224,8 +230,8 @@ bot.send_keys(keys=h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 bot.task_execution()
-print(bot.page_text())
-# bot.form_fill()
+bot.driver_text()
+bot.form_fill()
 
 
 
