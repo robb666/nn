@@ -168,7 +168,7 @@ class BoT:
                 self.task_execution()
 
 
-
+#e
     # def wysiwyg(self):
     #     popped_items = []
     #     for i, ocr_txt in enumerate(self.ocr):
