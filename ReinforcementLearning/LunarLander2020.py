@@ -10,11 +10,12 @@ if __name__ == '__main__':
     scores, eps_history = [], []
     n_games = 500
     for i in range(n_games):
-        env.render()
+
         score = 0
         done = False
         observation = env.reset()
         while not done:
+            env.render()
             action = agent.choose_action(observation)
             observation_, reward, done, info = env.step(action)
             score += reward

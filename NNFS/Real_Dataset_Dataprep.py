@@ -191,6 +191,7 @@ class Activation_Linear:
         # Just remember values
         self.inputs = inputs
         self.output = inputs
+
     # Backward pass
     def backward(self, dvalues):
         # derivative is 1, 1 * dvalues = dvalues - the chain rule
