@@ -3,7 +3,6 @@
 *.whl
 *.pyc
 venv/
-ReinforcementLearning
 RL/rl/bin
 RL/rl/lib
 RL/rl/include
@@ -13,3 +12,4 @@ RL/rl
 RL/__init__.py
 .env/
 .idea/
+swigwin*
