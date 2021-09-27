@@ -154,10 +154,10 @@ class BoT:
             time.sleep(1)
             if phrase == '*':
                 self.form_fill()
-
+            # TODO Nie znajduje przycisku szukaj po szukaj..
             elif phrase := re.search(phrase, self.visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
-                print(re_phrase)
+                print('znalazł:\n', re_phrase)
                 try:
                     WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
