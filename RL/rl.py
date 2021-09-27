@@ -148,18 +148,19 @@ class BoT:
             # print(self.driver_text())
             phrase = next(iter(tasks))
             print(phrase)
-            # WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
-            # self.visible_text = self.driver.find_element_by_xpath("/html/body").text
+            WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
+            self.visible_text = self.driver.find_element_by_xpath("/html/body").text
+            print(self.visible_text)
             time.sleep(1)
             if phrase == '*':
                 self.form_fill()
 
-            elif phrase := re.search(f'[{phrase}]', self.driver_text(), re.I):  # Make case insensitive.
+            elif phrase := re.search(phrase, self.visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 print(re_phrase)
                 try:
                     WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
-                                                                                        f"//*[contains(text(), '{re_phrase}')]"))).click()
+                                                                    f"//*[contains(text(), '{re_phrase}')]"))).click()
                 except TimeoutException as e:
                     print('TimeoutException', e)
                 except NoSuchElementException as e:
@@ -169,7 +170,7 @@ class BoT:
 
                 try:
                     WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
-                                                                                        f"//*[@class='bigButton' and contains(text(), '{re_phrase}')]"))).click()
+                                                f"//*[@class='bigButton' and contains(text(), '{re_phrase}')]"))).click()
                 except TimeoutException as e:
                     print('bigButton TimeoutException', e)
                 except NoSuchElementException as e:
@@ -219,7 +220,7 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['wyszukiw', '*', 'zukaj']
+tasks = ['wyszukiw', '*', 'szukaj']
 
 personal_data = {'Term public ID': '45',
                  'Numer polisy': '523654845',
