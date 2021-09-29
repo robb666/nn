@@ -4,6 +4,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import ElementNotVisibleException
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import requests
 from bs4 import BeautifulSoup
@@ -69,7 +72,7 @@ class BoT:
 
     def __init__(self, url: str, tasks: list, personal_data: dict):
         self.url = url
-        self.tasks = next(iter(tasks))
+        self.tasks = tasks
         self.personal_data = personal_data
         self.driver.get(url)
         # self.body = requests.get(url).text  # html content
@@ -140,32 +143,50 @@ class BoT:
     #     return self.ocr
 
     def task_execution(self):
-        for phrase in tasks:
+        # for phrase in tasks:
+        while tasks:
+            # print(self.driver_text())
+            phrase = next(iter(tasks))
+            print(phrase)
             WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
-            visible_text = self.driver.find_element_by_xpath("/html/body").text
-            if phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
+            self.visible_text = self.driver.find_element_by_xpath("/html/body").text
+            print(self.visible_text)
+            time.sleep(1)
+            if phrase == '*':
+                self.form_fill()
+            # TODO Nie znajduje przycisku szukaj po szukaj..
+            elif phrase := re.search(phrase, self.visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
-                # print(re_phrase)
-                WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH,
+                print('znalazł:\n', re_phrase)
+                try:
+                    WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
-                time.sleep(1)
+                except TimeoutException as e:
+                    print('TimeoutException', e)
+                except NoSuchElementException as e:
+                    print('NoSuchElementException', e)
+                except ElementNotVisibleException as e:
+                    print('ElementNotVisibleException', e)
+
+                try:
+                    WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
+                                                f"//*[@class='bigButton' and contains(text(), '{re_phrase}')]"))).click()
+                except TimeoutException as e:
+                    print('bigButton TimeoutException', e)
+                except NoSuchElementException as e:
+                    print('bigButton NoSuchElementException', e)
+                except ElementNotVisibleException as e:
+                    print('bigButton ElementNotVisibleException', e)
+
+            tasks.pop(0)
 
     def form_fill(self):
         page_text = self.driver_text()
         for k, v in personal_data.items():
-            if key := re.search(k, page_text, re.I) and k != '*':
+            if (key := re.search(k, page_text, re.I)) and k != '*':
                 re_k = key.group()
-                try:
-                    WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                                f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
-
-                    """Dorobić klikniecie do przesłania formularza po jego wypełnieniu. - next(iter(tasks))"""
-                except:
-                    print('Brak BOXa !')
-                    self.task_execution()
-
-            else:
-                self.task_execution()
+                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
+                                            f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
 
 
 
@@ -199,14 +220,14 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['wyszukiw', 'zukaj']
+tasks = ['wyszukiw', '*', 'szukaj']
 
 personal_data = {'Term public ID': '45',
                  'Numer polisy': '523654845',
                  'nazwisko': 'Grzelak',
                  'Imię': ' Robert',
-                 'pesel': '82082407038',
-                 '*': None}
+                 'pesel': '82082407038'
+}
 
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
@@ -234,8 +255,8 @@ bot.send_keys(keys=h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 bot.task_execution()
-bot.driver_text()
-bot.form_fill()
+# bot.driver_text()
+# bot.form_fill()
 
 
 
