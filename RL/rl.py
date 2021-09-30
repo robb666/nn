@@ -151,18 +151,14 @@ class BoT:
         while tasks:
             phrase = next(iter(tasks))
             visible_text = self.driver_text()
-            # time.sleep(1)
             if phrase == '*':
                 self.form_fill()
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 try:
-                    WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
-                                                                    f"//*[contains(text(), '{re_phrase}')]"))).click()
+                    self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_phrase}')]").click()
                 except:
-                    WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
-                                                f"//*[@class='bigButton' and contains(., '{re_phrase}')]"))).click()
-
+                    self.driver.find_element_by_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
             tasks.pop(0)
 
     def form_fill(self):
@@ -170,8 +166,8 @@ class BoT:
         for k, v in personal_data.items():
             if (key := re.search(k, visible_text, re.I)) and k != '*':
                 re_k = key.group()
-                WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
-                                            f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
+                self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
+
 
 
 
