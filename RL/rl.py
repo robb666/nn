@@ -116,6 +116,7 @@ class BoT:
     #     return self.bs4_text(body)
 
     def driver_text(self):
+        # WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
         return self.driver.find_element_by_xpath("/html/body").text
 
     def screen_shot(self):
@@ -149,11 +150,8 @@ class BoT:
     def task_execution(self):
         while tasks:
             phrase = next(iter(tasks))
-            WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
-            # self.visible_text = self.driver.find_element_by_xpath("/html/body").text
             visible_text = self.driver_text()
-
-            time.sleep(1)
+            # time.sleep(1)
             if phrase == '*':
                 self.form_fill()
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
