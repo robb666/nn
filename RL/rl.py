@@ -75,6 +75,7 @@ class BoT:
         self.tasks = tasks
         self.personal_data = personal_data
         self.driver.get(url)
+
         # self.body = requests.get(url).text  # html content
         # self.cv2 = cv2
 
@@ -96,23 +97,26 @@ class BoT:
     def send_keys(self, keys):
         self.locator.send_keys(keys)
 
-    def _tag_visible(self, element):
-        if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
-            return False
-        if isinstance(element, Comment):
-            return False
-        return True
-
-    def bs4_text(self, body):
-        soup = BeautifulSoup(body, features="lxml")
-        texts = soup.findAll(text=True)
-        visible_texts = filter(self._tag_visible, texts)
-        return u" ".join(t + '\n' for t in visible_texts)
+    # def _tag_visible(self, element):
+    #     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+    #         return False
+    #     if isinstance(element, Comment):
+    #         return False
+    #     return True
+    #
+    # def bs4_text(self, body):
+    #     soup = BeautifulSoup(body, features="lxml")
+    #     texts = soup.findAll(text=True)
+    #     visible_texts = filter(self._tag_visible, texts)
+    #     return u" ".join(t + '\n' for t in visible_texts)
+    #
+    # def driver_text(self):
+    #     element = self.driver.find_element_by_xpath('//*')
+    #     body = element.get_attribute('innerHTML')
+    #     return self.bs4_text(body)
 
     def driver_text(self):
-        element = self.driver.find_element_by_xpath('//*')
-        body = element.get_attribute('innerHTML')
-        return self.bs4_text(body)
+        return self.driver.find_element_by_xpath("/html/body").text
 
     def screen_shot(self):
         return self.driver.save_screenshot(f"screenshot.png")
@@ -143,47 +147,30 @@ class BoT:
     #     return self.ocr
 
     def task_execution(self):
-        # for phrase in tasks:
         while tasks:
-            # print(self.driver_text())
             phrase = next(iter(tasks))
-            print(phrase)
             WebDriverWait(self.driver, 9).until(EC.visibility_of_element_located((By.XPATH, "/html/body")))
-            self.visible_text = self.driver.find_element_by_xpath("/html/body").text
-            print(self.visible_text)
+            # self.visible_text = self.driver.find_element_by_xpath("/html/body").text
+            visible_text = self.driver_text()
+
             time.sleep(1)
             if phrase == '*':
                 self.form_fill()
-            # TODO Nie znajduje przycisku szukaj po szukaj..
-            elif phrase := re.search(phrase, self.visible_text, re.I):  # Make case insensitive.
+            elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
-                print('znalazł:\n', re_phrase)
                 try:
                     WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
                                                                     f"//*[contains(text(), '{re_phrase}')]"))).click()
-                except TimeoutException as e:
-                    print('TimeoutException', e)
-                except NoSuchElementException as e:
-                    print('NoSuchElementException', e)
-                except ElementNotVisibleException as e:
-                    print('ElementNotVisibleException', e)
-
-                try:
+                except:
                     WebDriverWait(self.driver, 1).until(EC.presence_of_element_located((By.XPATH,
-                                                f"//*[@class='bigButton' and contains(text(), '{re_phrase}')]"))).click()
-                except TimeoutException as e:
-                    print('bigButton TimeoutException', e)
-                except NoSuchElementException as e:
-                    print('bigButton NoSuchElementException', e)
-                except ElementNotVisibleException as e:
-                    print('bigButton ElementNotVisibleException', e)
+                                                f"//*[@class='bigButton' and contains(., '{re_phrase}')]"))).click()
 
             tasks.pop(0)
 
     def form_fill(self):
-        page_text = self.driver_text()
+        visible_text = self.driver_text()
         for k, v in personal_data.items():
-            if (key := re.search(k, page_text, re.I)) and k != '*':
+            if (key := re.search(k, visible_text, re.I)) and k != '*':
                 re_k = key.group()
                 WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH,
                                             f"//*[contains(text(), '{re_k}')]/following::input[1]"))).send_keys(v)
@@ -220,7 +207,7 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['wyszukiw', '*', 'szukaj']
+tasks = ['wyszuk', '*', 'szukaj']
 
 personal_data = {'Term public ID': '45',
                  'Numer polisy': '523654845',
@@ -271,14 +258,3 @@ bot.task_execution()
 #
 # # bot.task_execution()
 # # bot.form_fill()
-
-
-
-
-
-
-
-
-
-
-
