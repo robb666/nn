@@ -4,6 +4,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import ElementNotVisibleException
@@ -60,11 +62,7 @@ import cv2
 # print(activation1.forward(layer1.output))
 
 
-
-
-
 class BoT:
-
     options = Options()
     options.add_argument('--window-size=1920,1080')
     # options.add_argument('--headless')
@@ -96,6 +94,16 @@ class BoT:
 
     def send_keys(self, keys):
         self.locator.send_keys(keys)
+
+    def write(self, text):
+        actions = ActionChains(self.driver)
+        actions.send_keys(text)
+        actions.perform()
+
+    def press_key(self, key):
+        actions = ActionChains(self.driver)
+        actions.send_keys(key)
+        actions.perform()
 
     # def _tag_visible(self, element):
     #     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -168,9 +176,6 @@ class BoT:
                 re_k = key.group()
                 self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
 
-
-
-
     # def wysiwyg(self):
     #     popped_items = []
     #     for i, ocr_txt in enumerate(self.ocr):
@@ -196,59 +201,52 @@ class BoT:
     #                                                                             "//*[text()='Pulpit']"))).click()
 
 
-
-
-
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['wyszuk', '*', 'szukaj']
+tasks = ['szukaj']
 
 personal_data = {'Term public ID': '45',
                  'Numer polisy': '523654845',
                  'nazwisko': 'Grzelak',
-                 'Imię': ' Robert',
+                 'Imię': 'Robert',
                  'pesel': '82082407038'
-}
-
+                 }
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
-ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="A:G")
-df = pd.DataFrame(ws).head(50)
+pd.options.display.max_rows = 80
+pd.options.display.max_columns = 10
+ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="B:G")
+df = pd.DataFrame(ws).head(80)
 
-l = df.iloc[43, 5]
-h = df.iloc[43, 6]
-
-
-
-
-bot = BoT(url, tasks, personal_data)
-# bot.get_url()
-bot.find_id('input_1')
-bot.send_keys(keys=l)
-bot.find_id('input_2')
-bot.send_keys(keys=h)
-bot.find_css('.credentials_input_submit').click()
-bot.find_id('Login:LoginScreen:LoginDV:username-inputEl')
-bot.send_keys(keys=l)
-bot.find_id('Login:LoginScreen:LoginDV:password-inputEl')
-bot.send_keys(keys=h)
-bot.find_id('Login:LoginScreen:LoginDV:submit').click()
-time.sleep(2)
-bot.task_execution()
-# bot.driver_text()
-# bot.form_fill()
-
-
-
-# bot.sleep(3)
+print(df)
+# log = df.iloc[43, 5]
+# h = df.iloc[43, 6]
 #
-# bot.page_source()
-# bot.screen_shot()
-# bot.image_manipulation()
-# bot.ocr_text()
-# # print(ocr)
+# bot = BoT(url, tasks, personal_data)
 #
-#
+# bot.find_id('input_1').send_keys(log)
+# bot.find_id('input_2').send_keys(h)
+# bot.find_css('.credentials_input_submit').click()
+# bot.find_id('Login:LoginScreen:LoginDV:username-inputEl').send_keys(log)
+# bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
+# bot.find_id('Login:LoginScreen:LoginDV:submit').click()
+# time.sleep(2)
+# bot.write('82082407038')
+# bot.press_key(Keys.RETURN)
 # # bot.task_execution()
+# # bot.driver_text()
 # # bot.form_fill()
+#
+#
+# # bot.sleep(3)
+# #
+# # bot.page_source()
+# # bot.screen_shot()
+# # bot.image_manipulation()
+# # bot.ocr_text()
+# # # print(ocr)
+# #
+# #
+# # # bot.task_execution()
+# # # bot.form_fill()
