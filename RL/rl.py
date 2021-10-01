@@ -88,6 +88,10 @@ class BoT:
         self.locator = self.driver.find_element_by_css_selector(element)
         return self.locator
 
+    def find_class(self, element, n):
+        self.locator = self.driver.find_elements_by_class_name(element)[n]
+        return self.locator
+
     def find_xpath(self, element):
         self.locator = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, element)))
         return self.locator
@@ -165,14 +169,17 @@ class BoT:
                 re_phrase = phrase.group()
                 try:
                     self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_phrase}')]").click()
-                except:
+                except 1:
                     self.driver.find_element_by_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
+                except 2:
+                    self.driver.find_element_by_xpath(f"//*[@class='policy-name' and contains(text(), '{re_phrase}')]").click()
+
             tasks.pop(0)
 
     def form_fill(self):
         visible_text = self.driver_text()
         for k, v in personal_data.items():
-            if (key := re.search(k, visible_text, re.I)) and k != '*':
+            if (key := re.search(k, visible_text, re.I)) and k != '*':  # ??
                 re_k = key.group()
                 self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
 
@@ -203,7 +210,7 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['szukaj']
+tasks = ['pzu auto']
 
 personal_data = {'Term public ID': '45',
                  'Numer polisy': '523654845',
@@ -216,25 +223,29 @@ location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza
 
 pd.options.display.max_rows = 80
 pd.options.display.max_columns = 10
+pd.set_option("expand_frame_repr", False)
 ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="B:G")
 df = pd.DataFrame(ws).head(80)
 
-print(df)
-# log = df.iloc[43, 5]
-# h = df.iloc[43, 6]
-#
-# bot = BoT(url, tasks, personal_data)
-#
-# bot.find_id('input_1').send_keys(log)
-# bot.find_id('input_2').send_keys(h)
-# bot.find_css('.credentials_input_submit').click()
-# bot.find_id('Login:LoginScreen:LoginDV:username-inputEl').send_keys(log)
-# bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
-# bot.find_id('Login:LoginScreen:LoginDV:submit').click()
-# time.sleep(2)
+log = df.iloc[43, 4]
+h = df.iloc[43, 5]
+
+bot = BoT(url, tasks, personal_data)
+
+bot.find_id('input_1').send_keys(log)
+bot.find_id('input_2').send_keys(h)
+bot.find_css('.credentials_input_submit').click()
+bot.find_id('Login:LoginScreen:LoginDV:username-inputEl').send_keys(log)
+bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
+bot.find_id('Login:LoginScreen:LoginDV:submit').click()
+time.sleep(2)
+
+bot.find_class('policy-icon', 1).click()
+
+
 # bot.write('82082407038')
 # bot.press_key(Keys.RETURN)
-# # bot.task_execution()
+bot.task_execution()
 # # bot.driver_text()
 # # bot.form_fill()
 #
