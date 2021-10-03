@@ -77,28 +77,34 @@ if __name__ == '__main__':
 
     scoreHistory = []
     numEpisodes = 200
-    numTrainingEpisodes = 50
+    numTrainingEpisodes = 1
     highScore = -math.inf
     recordTimeSteps = math.inf
     for episode in range(numEpisodes):
         done = False
         observation = env.reset()
+        print(observation)
         score, frame = 0, 1
+        # print(score, frame)
         while not done:
             if episode > numTrainingEpisodes:
                 env.render()
             action = agent.chooseAction(observation)
+            # print(action)
             nextObservation, reward, done, info = env.step(action)
+            # print(nextObservation, reward, done, info)
+            print(reward)
             agent.learn(observation, reward, nextObservation, done)
             observation = nextObservation
             score += reward
             frame += 1
+            # print(score, frame)
         scoreHistory.append(score)
 
         recordTimeSteps = min(recordTimeSteps, frame)
         highScore = max(highScore, score)
         print(("ep {}: high-score {:12.3f}, shortest-time {:d}, "
-               "score {:12.3f}, last-epidode-time {:4d}").format(
+               "score {:12.3f}, last-episode-time {:4d}").format(
             episode, highScore, recordTimeSteps, score, frame))
 
     fig = plt.figure()
