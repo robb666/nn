@@ -76,7 +76,7 @@ if __name__ == '__main__':
     env = gym.make("LunarLander-v2")
 
     scoreHistory = []
-    numEpisodes = 7
+    numEpisodes = 200
     numTrainingEpisodes = 50
     highScore = -math.inf
     recordTimeSteps = math.inf
@@ -102,9 +102,10 @@ if __name__ == '__main__':
             episode, highScore, recordTimeSteps, score, frame))
 
     fig = plt.figure()
-    meanWindow = 12
+    meanWindow = 10
     meanedScoreHistory = np.convolve(scoreHistory, np.ones(meanWindow), 'valid') / meanWindow
-    print(numEpisodes - 1, meanedScoreHistory)
+    while numEpisodes - 1 != len(meanedScoreHistory):
+        numEpisodes -= 1
     plt.plot(np.arange(0, numEpisodes - 1, 1.0), meanedScoreHistory)
     plt.ylabel("score")
     plt.xlabel("episode")

@@ -16,26 +16,30 @@ import numpy as np
 
 
 
-def _tag_visible(element):
-    if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
-        return False
-    if isinstance(element, Comment):
-        return False
-    return True
-
-
-def page_text(body):
-    soup = BeautifulSoup(body, features="lxml")
-    texts = soup.findAll(text=True)
-    visible_texts = filter(_tag_visible, texts)
-
-    return u" ".join(t.strip() for t in visible_texts)
 
 
 
-r = requests.get('http://media4web.pl/').text
 
-print(page_text(r))
+# def _tag_visible(element):
+#     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+#         return False
+#     if isinstance(element, Comment):
+#         return False
+#     return True
+#
+#
+# def page_text(body):
+#     soup = BeautifulSoup(body, features="lxml")
+#     texts = soup.findAll(text=True)
+#     visible_texts = filter(_tag_visible, texts)
+#
+#     return u" ".join(t.strip() for t in visible_texts)
+#
+#
+#
+# r = requests.get('http://media4web.pl/').text
+#
+# print(page_text(r))
 
 
 
