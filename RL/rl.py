@@ -16,6 +16,7 @@ from bs4.element import Comment
 import re
 import time
 import pandas as pd
+import pyautogui
 from skimage import io as in_out
 import matplotlib.pyplot as plt
 import webp
@@ -88,8 +89,8 @@ class BoT:
         self.locator = self.driver.find_element_by_css_selector(element)
         return self.locator
 
-    def find_class(self, element, n):
-        self.locator = self.driver.find_elements_by_class_name(element)[n]
+    def find_class(self, element):
+        self.locator = self.driver.find_element_by_class_name(element)
         return self.locator
 
     def find_xpath(self, element):
@@ -173,7 +174,6 @@ class BoT:
                     self.driver.find_element_by_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
                 except 2:
                     self.driver.find_element_by_xpath(f"//*[@class='policy-name' and contains(text(), '{re_phrase}')]").click()
-
             tasks.pop(0)
 
     def form_fill(self):
@@ -216,7 +216,7 @@ personal_data = {'Term public ID': '45',
                  'Numer polisy': '523654845',
                  'nazwisko': 'Grzelak',
                  'Imię': 'Robert',
-                 'pesel': '82082407038'
+                 'pesel': '92082407084'
                  }
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
@@ -240,12 +240,14 @@ bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 time.sleep(2)
 
-bot.find_class('policy-icon', 1).click()
+to_click = bot.find_xpath('(//*[@class="policy-icon"])[1]')
+
+to_click.click()
 
 
 # bot.write('82082407038')
 # bot.press_key(Keys.RETURN)
-bot.task_execution()
+# bot.task_execution()
 # # bot.driver_text()
 # # bot.form_fill()
 #
