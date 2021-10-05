@@ -177,10 +177,6 @@ class BoT:
 
             elif phrase == '**':
                 self.form_refill()
-                # time.sleep(1)
-                # if self.driver.find_element_by_xpath(f"//*[contains(text(), 'Poczta')]/following::input[1]").text == '':
-                #     self.driver.find_element_by_xpath(f"//*[contains(text(), 'Poczta')]/following::input[1]").send_keys(phrase.get('poczta'))
-
 
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
@@ -191,23 +187,15 @@ class BoT:
                 except 2:
                     print('except')
                     self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
-
-
             tasks.pop(0)
             time.sleep(.5)
-
 
     def form_fill(self):
         visible_text = self.driver_text()
         for k, v in data.items():
-            if (key := re.search(k, visible_text, re.I)) and k != '*':  # ??
+            if (key := re.search(k, visible_text, re.I)) and k != '*':
                 re_k = key.group()
                 self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
-                # time.sleep(.5)
-            elif key := re.search(k, visible_text, re.I):
-                re_k = key.group()
-                print(self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").text)
-                # [self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v) for k, v in data.items() if data.keys() == 'poczta']
 
     def form_refill(self):
         visible_text = self.driver_text()
@@ -215,14 +203,9 @@ class BoT:
             if (key := re.search(k, visible_text, re.I)) and k not in ['*', '**']:
                 re_k = key.group()
                 box = self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]")
-                if box.text == '':
-                    box.send_keys(data.get('poczta'))
-
-        # self.driver.find_element_by_xpath(f"//*[contains(text(), '{phrase.}')]/following::input[1]").send_keys(phrase.values())
-        # print('tu', self.driver.find_element_by_xpath(f"//*[contains(text(), 'poczta')]/following::input[1]").text)
-        # if self.driver.find_element_by_xpath(f"//*[contains(text(), '{phrase['poczta']}')]/following::input[1]").text == '':
-        #     self.driver.find_element_by_xpath(f"//*[contains(text(), '{phrase['poczta']}')]/following::input[1]").send_keys()
-
+                if box.get_attribute('value') in ['', '<wybierz>']:
+                    box.click()
+                    box.send_keys(v)
 
 
     # def wysiwyg(self):
@@ -263,10 +246,21 @@ data = {'Term public ID': '45',
         'miejscowość': 'Łódź',
         'ulica': 'Wólczańska',
         'Numer budynku': '7a',
-        'Numer lokalu': '10'
+        'Numer lokalu': '10',
+        'E-mail główny': 'Klient odmówił',
+        'Telefon główny': 'Klient odmówił'
         }
 
-tasks = ['wyszukiwanie', 'podmiotu', '*', 'zukaj', 'nowy podmiot', 'fizyczna', 'dane adresowe', '**']
+tasks = ['wyszukiwanie',
+         'podmiotu',
+         '*',
+         'zukaj', 
+         'nowy podmiot',
+         'fizyczna',
+         'dane adresowe',
+         '**',
+         'dane kontaktowe',
+         '*']
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
@@ -303,7 +297,7 @@ try:
 
 except:
     bot.task_execution()
-    bot.find_id('ext-element-754').click()
+    bot.find_xpath("(//*[@class='x-grid-checkcolumn'])[3]").click()
 
 
 
