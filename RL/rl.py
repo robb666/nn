@@ -299,7 +299,13 @@ vehicle_data = {'DMC': '2315',
                  'Ładowność pojazdu': '560'}
 
 
-pezu_form = {'Numer rejestracyjny': vehicle_data.get('Numer rejestracyjny')}
+pezu_form = {'Numer rejestracyjny': vehicle_data.get('Numer rejestracyjny'),
+             'VIN': vehicle_data.get('Numer VIN'),
+             'Data pierwszej rejestracji': ''.join(vehicle_data.get('Data pierwszej rejestracji'))
+             }
+
+
+
 
 tasks = ['wyszukiwanie',
          'podmiotu',

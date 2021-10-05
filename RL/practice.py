@@ -12,24 +12,58 @@ import cv2
 import numpy as np
 
 
+vehicle_data = {'DMC': '2315',
+                 'Data pierwszej rejestracji': '15.03.2005',
+                 'Import': 'tak',
+                 'Kierownica po prawej stronie': 'NIE',
+                 'Liczba miejsc': '5',
+                 'Liczba współwłaścicieli': '1',
+                 'Marka': 'BMW',
+                 'Masa pojazdu': '1755',
+                 'Moc': '200 kW',
+                 'Model': '535 D',
+                 'Numer VIN': 'WBANJ91030CR65131',
+                 'Numer rejestracyjny': 'EL4C079',
+                 'Paliwo': 'Olej napędowy',
+                 'Pierwsza rejestracja w Polsce': '21.01.2011',
+                 'Podrodzaj': 'kombi',
+                 'Pojazd wyposażony w instalację LPG': 'NIE',
+                 'Pojemność': '2993 cm3',
+                 'Przebieg': '408484',
+                 'Rodzaj': 'samochód osobowy',
+                 'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+                 'Rodzaj pojazdu': 'Samochód osobowy',
+                 'Rok produkcji': '2005',
+                 'Specjalne użytkowanie': '-',
+                 'Termin następnego bad. tech.': '08.06.2022',
+                 'Ważność OC': '27.03.2022',
+                 'Właściciel nr': '3',
+                 'Ładowność pojazdu': '560'}
 
 
-data = {'Term public ID': '45',
-        'Numer polisy': '523654845',
-        'nazwisko': 'Grzelak',
-        'Imię': 'Robert',
-        'pesel': '71073141349',  # 92082407084
-        'kod pocztowy': '90-441',
-        'poczta': 'Łódź',
-        'województwo': 'MAZOWIECKIE',
-        'miejscowość': 'Łódź',
-        'ulica': 'Wólczańska',
-        'Numer budynku': '7a',
-        'Numer lokalu': '10'
-        }
+d = '15.03.2005'
+dd = d.split('.')
+ddd = dd[-1] + dd[-2] + dd[-3]
+print(ddd)
 
-for i in data:
-        print(data[i])
+
+
+# data = {'Term public ID': '45',
+#         'Numer polisy': '523654845',
+#         'nazwisko': 'Grzelak',
+#         'Imię': 'Robert',
+#         'pesel': '71073141349',  # 92082407084
+#         'kod pocztowy': '90-441',
+#         'poczta': 'Łódź',
+#         'województwo': 'MAZOWIECKIE',
+#         'miejscowość': 'Łódź',
+#         'ulica': 'Wólczańska',
+#         'Numer budynku': '7a',
+#         'Numer lokalu': '10'
+#         }
+#
+# for i in data:
+#         print(data[i])
 
 
 
