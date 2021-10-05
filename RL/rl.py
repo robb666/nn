@@ -65,7 +65,7 @@ import cv2
 
 class BoT:
     options = Options()
-    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--window-size=3440,1440')
     # options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)  # koniecznie -headless przy cronie
 
@@ -82,11 +82,11 @@ class BoT:
     #     self.driver.get(self.url)
 
     def find_id(self, element):
-        self.locator = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.ID, element)))
+        self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.ID, element)))
         return self.locator
 
     def find_css(self, element):
-        self.locator = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, element)))
+        self.locator = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.CSS_SELECTOR, element)))
         return self.locator
 
     def find_class(self, element):
@@ -94,8 +94,8 @@ class BoT:
         return self.locator
 
     def find_xpath(self, element):
-        self.locator = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, element)))
-        print(self.locator)
+        self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, element)))
+
         return self.locator
 
     def find_link(self, element):
@@ -179,8 +179,11 @@ class BoT:
                 self.form_refill()
 
             elif isinstance(phrase, dict):
-                print('tried')
-                self.find_xpath(phrase['xpath']).click()
+                print(phrase)
+                if check := self.find_xpath(phrase.get('xpath')):
+                    webdriver.ActionChains(self.driver).click_and_hold(check).perform()
+                    webdriver.ActionChains(self.driver).release().perform()
+                    time.sleep(.6)
 
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
@@ -192,7 +195,7 @@ class BoT:
                     print('except')
                     self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
             tasks.pop(0)
-            time.sleep(.5)
+            time.sleep(5)
 
 
 
@@ -245,20 +248,24 @@ class BoT:
     #                                                                             "//*[text()='Pulpit']"))).click()
 
 
-url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-data = {'Term public ID': '45',
-        'Numer polisy': '523654845',
-        'nazwisko': 'Grzelak',
-        'Imię': 'Robert',
-        'pesel': '71073141349',  # 92082407084
+url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
+# url = 'https://everest.pzu.pl/my.policy'  # sandbox
+
+
+data = {'Term public ID': '',
+        'Numer polisy': '',
+        'Imię': '',
+        'nazwisko': '',
+        'pesel': '',  # 99051222215
+        'regon': '365897881',
         'kod pocztowy': '90-441',
         'poczta': 'Łódź',
-        'województwo': 'MAZOWIECKIE',
+        'województwo': 'Łódzkie'.upper(),
         'miejscowość': 'Łódź',
-        'ulica': 'Wólczańska',
-        'Numer budynku': '7a',
-        'Numer lokalu': '10',
+        'ulica': 'Kościuszki',
+        'Numer budynku': '123',
+        'Numer lokalu': '310',
         'E-mail główny': 'Klient odmówił',
         'Telefon główny': 'Klient odmówił'
         }
@@ -271,9 +278,15 @@ tasks = ['wyszukiwanie',
          'fizyczna',
          'dane adresowe',
          '**',
+         {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
          {'xpath': "(//*[@class='x-grid-checkcolumn'])[3]"},
          'dane kontaktowe',
-         '**'
+         '**',
+         'zapisz',
+         'zapisz',
+         'kcje',
+         'Utwórz Konto prywatne',
+         'zapisz',
          ]
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
@@ -289,6 +302,15 @@ h = df.iloc[43, 5]
 
 bot = BoT(url, tasks, data)
 
+
+# # sandbox
+# bot.find_id('newSessionDIV').click()  # sanbox
+# time.sleep(1)  # sanbox
+# bot = BoT(url, tasks, data)
+# time.sleep(1)  # sanbox
+# # bot.find_css('body > center > p > a > span').click()
+# time.sleep(1)  # sanbox
+
 # Login
 bot.find_id('input_1').send_keys(log)
 bot.find_id('input_2').send_keys(h)
@@ -299,20 +321,29 @@ bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 
 # Check
 bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput-inputEl')
-bot.send_keys(data['pesel'])
+id = data.get('pesel') if data.get('pesel') else data.get('regon')
+
+bot.send_keys(id)
+
+if len(id) == 11:
+    locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:1:bthLF'
+else:
+    locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:0:bthLF'
 
 try:
     bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput_Button').click()
     bot.find_id('DesktopClientsAccountsPzu:DesktopClientsAccountsScreen:0:AccountNumber').click()
-    bot.find_css('#AccountFile_Summary\:AccountFile_SummaryScreen\:ContactData\:AccountFileSummary_BasicInfoPzuPanelSet\:lfProducts\:1\:bthLF > img').click()
+    bot.find_id(locator).click()
     time.sleep(1.5)
     bot.find_id('escapeToEVE').click()
     bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
 
 except:
     bot.task_execution()
-    # bot.find_xpath("(//*[@class='x-grid-checkcolumn'])[3]").click()
-    # bot.task_execution()
+    bot.find_css('#AccountFile_Summary\:AccountFile_SummaryScreen\:ContactData\:AccountFileSummary_BasicInfoPzuPanelSet\:lfProducts\:1\:bthLF > img').click()
+    time.sleep(1.5)
+    bot.find_id('escapeToEVE').click()
+    bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
 
 
 
