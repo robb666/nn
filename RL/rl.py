@@ -82,11 +82,11 @@ class BoT:
     #     self.driver.get(self.url)
 
     def find_id(self, element):
-        self.locator = self.driver.find_element_by_id(element)
+        self.locator = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.ID, element)))
         return self.locator
 
     def find_css(self, element):
-        self.locator = self.driver.find_element_by_css_selector(element)
+        self.locator = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, element)))
         return self.locator
 
     def find_class(self, element):
@@ -94,7 +94,12 @@ class BoT:
         return self.locator
 
     def find_xpath(self, element):
-        self.locator = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.XPATH, element)))
+        self.locator = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, element)))
+        print(self.locator)
+        return self.locator
+
+    def find_link(self, element):
+        self.locator = self.driver.find_element_by_partial_link_text(element)
         return self.locator
 
     def send_keys(self, keys):
@@ -160,12 +165,23 @@ class BoT:
     #
     #     return self.ocr
 
+    # def __getitem__(self, item):
+    #     self.tasks = tasks
+
     def task_execution(self):
         while tasks:
             phrase = next(iter(tasks))
             visible_text = self.driver_text()
             if phrase == '*':
                 self.form_fill()
+
+            elif phrase == '**':
+                self.form_refill()
+                # time.sleep(1)
+                # if self.driver.find_element_by_xpath(f"//*[contains(text(), 'Poczta')]/following::input[1]").text == '':
+                #     self.driver.find_element_by_xpath(f"//*[contains(text(), 'Poczta')]/following::input[1]").send_keys(phrase.get('poczta'))
+
+
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 try:
@@ -173,15 +189,41 @@ class BoT:
                 except 1:
                     self.driver.find_element_by_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
                 except 2:
-                    self.driver.find_element_by_xpath(f"//*[@class='policy-name' and contains(text(), '{re_phrase}')]").click()
+                    print('except')
+                    self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
+
+
             tasks.pop(0)
+            time.sleep(.5)
+
 
     def form_fill(self):
         visible_text = self.driver_text()
-        for k, v in personal_data.items():
+        for k, v in data.items():
             if (key := re.search(k, visible_text, re.I)) and k != '*':  # ??
                 re_k = key.group()
                 self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
+                # time.sleep(.5)
+            elif key := re.search(k, visible_text, re.I):
+                re_k = key.group()
+                print(self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").text)
+                # [self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v) for k, v in data.items() if data.keys() == 'poczta']
+
+    def form_refill(self):
+        visible_text = self.driver_text()
+        for k, v in data.items():
+            if (key := re.search(k, visible_text, re.I)) and k not in ['*', '**']:
+                re_k = key.group()
+                box = self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]")
+                if box.text == '':
+                    box.send_keys(data.get('poczta'))
+
+        # self.driver.find_element_by_xpath(f"//*[contains(text(), '{phrase.}')]/following::input[1]").send_keys(phrase.values())
+        # print('tu', self.driver.find_element_by_xpath(f"//*[contains(text(), 'poczta')]/following::input[1]").text)
+        # if self.driver.find_element_by_xpath(f"//*[contains(text(), '{phrase['poczta']}')]/following::input[1]").text == '':
+        #     self.driver.find_element_by_xpath(f"//*[contains(text(), '{phrase['poczta']}')]/following::input[1]").send_keys()
+
+
 
     # def wysiwyg(self):
     #     popped_items = []
@@ -210,14 +252,21 @@ class BoT:
 
 url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
-tasks = ['pzu auto']
+data = {'Term public ID': '45',
+        'Numer polisy': '523654845',
+        'nazwisko': 'Grzelak',
+        'Imię': 'Robert',
+        'pesel': '71073141349',  # 92082407084
+        'kod pocztowy': '90-441',
+        'poczta': 'Łódź',
+        'województwo': 'MAZOWIECKIE',
+        'miejscowość': 'Łódź',
+        'ulica': 'Wólczańska',
+        'Numer budynku': '7a',
+        'Numer lokalu': '10'
+        }
 
-personal_data = {'Term public ID': '45',
-                 'Numer polisy': '523654845',
-                 'nazwisko': 'Grzelak',
-                 'Imię': 'Robert',
-                 'pesel': '92082407084'
-                 }
+tasks = ['wyszukiwanie', 'podmiotu', '*', 'zukaj', 'nowy podmiot', 'fizyczna', 'dane adresowe', '**']
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
@@ -230,19 +279,43 @@ df = pd.DataFrame(ws).head(80)
 log = df.iloc[43, 4]
 h = df.iloc[43, 5]
 
-bot = BoT(url, tasks, personal_data)
+bot = BoT(url, tasks, data)
 
+# Login
 bot.find_id('input_1').send_keys(log)
 bot.find_id('input_2').send_keys(h)
 bot.find_css('.credentials_input_submit').click()
 bot.find_id('Login:LoginScreen:LoginDV:username-inputEl').send_keys(log)
 bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
 bot.find_id('Login:LoginScreen:LoginDV:submit').click()
-time.sleep(2)
 
-to_click = bot.find_xpath('(//*[@class="policy-icon"])[1]')
+# Check
+bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput-inputEl')
+bot.send_keys(data['pesel'])
 
-to_click.click()
+try:
+    bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput_Button').click()
+    bot.find_id('DesktopClientsAccountsPzu:DesktopClientsAccountsScreen:0:AccountNumber').click()
+    bot.find_css('#AccountFile_Summary\:AccountFile_SummaryScreen\:ContactData\:AccountFileSummary_BasicInfoPzuPanelSet\:lfProducts\:1\:bthLF > img').click()
+    time.sleep(1.5)
+    bot.find_id('escapeToEVE').click()
+    bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+
+except:
+    bot.task_execution()
+    bot.find_id('ext-element-754').click()
+
+
+
+
+
+
+
+# bot.task_execution()
+# to_click = bot.find_xpath('//img[@class="policy-icon" and text()=" PZU Auto "]')
+# to_click = bot.find_link('/motorSaleLink.png')
+
+
 
 
 # bot.write('82082407038')

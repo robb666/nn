@@ -14,9 +14,21 @@ import numpy as np
 
 
 
+data = {'Term public ID': '45',
+        'Numer polisy': '523654845',
+        'nazwisko': 'Grzelak',
+        'Imię': 'Robert',
+        'pesel': '71073141349',  # 92082407084
+        'kod pocztowy': '90-441',
+        'poczta': 'Łódź',
+        'województwo': 'MAZOWIECKIE',
+        'miejscowość': 'Łódź',
+        'ulica': 'Wólczańska',
+        'Numer budynku': '7a',
+        'Numer lokalu': '10'
+        }
 
-
-
+[k, v for k, v in data.items() if k == 'poczta']
 
 
 
