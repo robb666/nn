@@ -28,7 +28,8 @@ data = {'Term public ID': '45',
         'Numer lokalu': '10'
         }
 
-[k, v for k, v in data.items() if k == 'poczta']
+for i in data:
+        print(data[i])
 
 
 

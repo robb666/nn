@@ -178,9 +178,9 @@ class BoT:
             elif phrase == '**':
                 self.form_refill()
 
-            elif phrase.startswith('//'):
-                self.find_xpath(phrase).click()
-                time.sleep(2)
+            elif isinstance(phrase, dict):
+                print('tried')
+                self.find_xpath(phrase['xpath']).click()
 
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
@@ -193,6 +193,8 @@ class BoT:
                     self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
             tasks.pop(0)
             time.sleep(.5)
+
+
 
     def form_fill(self):
         visible_text = self.driver_text()
@@ -269,9 +271,10 @@ tasks = ['wyszukiwanie',
          'fizyczna',
          'dane adresowe',
          '**',
-         "(//*[@class='x-grid-checkcolumn'])[3]"
+         {'xpath': "(//*[@class='x-grid-checkcolumn'])[3]"},
          'dane kontaktowe',
-         '**']
+         '**'
+         ]
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
@@ -309,7 +312,7 @@ try:
 except:
     bot.task_execution()
     # bot.find_xpath("(//*[@class='x-grid-checkcolumn'])[3]").click()
-
+    # bot.task_execution()
 
 
 
