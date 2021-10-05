@@ -178,6 +178,10 @@ class BoT:
             elif phrase == '**':
                 self.form_refill()
 
+            elif phrase.startswith('//'):
+                self.find_xpath(phrase).click()
+                time.sleep(2)
+
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
                 re_phrase = phrase.group()
                 try:
@@ -206,6 +210,12 @@ class BoT:
                 if box.get_attribute('value') in ['', '<wybierz>']:
                     box.click()
                     box.send_keys(v)
+                elif box.get_attribute('value') == '<Nieustalona>':
+                    box.click()
+                    box.send_keys(Keys.ARROW_UP)
+                    box.send_keys(Keys.ARROW_UP)
+                    box.send_keys(Keys.RETURN)
+                    time.sleep(.5)
 
 
     # def wysiwyg(self):
@@ -254,13 +264,14 @@ data = {'Term public ID': '45',
 tasks = ['wyszukiwanie',
          'podmiotu',
          '*',
-         'zukaj', 
+         'zukaj',
          'nowy podmiot',
          'fizyczna',
          'dane adresowe',
          '**',
+         "(//*[@class='x-grid-checkcolumn'])[3]"
          'dane kontaktowe',
-         '*']
+         '**']
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
@@ -297,7 +308,7 @@ try:
 
 except:
     bot.task_execution()
-    bot.find_xpath("(//*[@class='x-grid-checkcolumn'])[3]").click()
+    # bot.find_xpath("(//*[@class='x-grid-checkcolumn'])[3]").click()
 
 
 
