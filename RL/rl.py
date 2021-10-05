@@ -270,6 +270,37 @@ data = {'Term public ID': '',
         'Telefon główny': 'Klient odmówił'
         }
 
+vehicle_data = {'DMC': '2315',
+                 'Data pierwszej rejestracji': '15.03.2005',
+                 'Import': 'tak',
+                 'Kierownica po prawej stronie': 'NIE',
+                 'Liczba miejsc': '5',
+                 'Liczba współwłaścicieli': '1',
+                 'Marka': 'BMW',
+                 'Masa pojazdu': '1755',
+                 'Moc': '200 kW',
+                 'Model': '535 D',
+                 'Numer VIN': 'WBANJ91030CR65131',
+                 'Numer rejestracyjny': 'EL4C079',
+                 'Paliwo': 'Olej napędowy',
+                 'Pierwsza rejestracja w Polsce': '21.01.2011',
+                 'Podrodzaj': 'kombi',
+                 'Pojazd wyposażony w instalację LPG': 'NIE',
+                 'Pojemność': '2993 cm3',
+                 'Przebieg': '408484',
+                 'Rodzaj': 'samochód osobowy',
+                 'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+                 'Rodzaj pojazdu': 'Samochód osobowy',
+                 'Rok produkcji': '2005',
+                 'Specjalne użytkowanie': '-',
+                 'Termin następnego bad. tech.': '08.06.2022',
+                 'Ważność OC': '27.03.2022',
+                 'Właściciel nr': '3',
+                 'Ładowność pojazdu': '560'}
+
+
+pezu_form = {'Numer rejestracyjny': vehicle_data.get('Numer rejestracyjny')}
+
 tasks = ['wyszukiwanie',
          'podmiotu',
          '*',
