@@ -94,7 +94,7 @@ class BoT:
         return self.locator
 
     def find_xpath(self, element):
-        self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, element)))
+        self.locator = WebDriverWait(self.driver, 12).until(EC.element_to_be_clickable((By.XPATH, element)))
 
         return self.locator
 
@@ -195,7 +195,7 @@ class BoT:
                     print('except')
                     self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
             tasks.pop(0)
-            time.sleep(5)
+            time.sleep(.5)
 
 
 
@@ -204,14 +204,16 @@ class BoT:
         for k, v in data.items():
             if (key := re.search(k, visible_text, re.I)) and k != '*':
                 re_k = key.group()
-                self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
+                self.find_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]").send_keys(v)
+            else:
+                pass
 
     def form_refill(self):
         visible_text = self.driver_text()
         for k, v in data.items():
             if (key := re.search(k, visible_text, re.I)) and k not in ['*', '**']:
                 re_k = key.group()
-                box = self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]")
+                box = self.find_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]")
                 if box.get_attribute('value') in ['', '<wybierz>']:
                     box.click()
                     box.send_keys(v)
@@ -255,54 +257,54 @@ url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 
 data = {'Term public ID': '',
         'Numer polisy': '',
-        'Imię': '',
-        'nazwisko': '',
-        'pesel': '',  # 99051222215
-        'regon': '365897881',
-        'kod pocztowy': '90-441',
+        'Imię': 'Maria',
+        'nazwisko': 'Lisiecka',
+        'pesel': '',
+        'regon': '',
+        'kod pocztowy': '94-060',
         'poczta': 'Łódź',
         'województwo': 'Łódzkie'.upper(),
         'miejscowość': 'Łódź',
-        'ulica': 'Kościuszki',
-        'Numer budynku': '123',
-        'Numer lokalu': '310',
+        'ulica': 'Pływacka',
+        'Numer budynku': '8',
+        'Numer lokalu': '5',
         'E-mail główny': 'Klient odmówił',
         'Telefon główny': 'Klient odmówił'
         }
 
-vehicle_data = {'DMC': '2315',
-                 'Data pierwszej rejestracji': '15.03.2005',
-                 'Import': 'tak',
-                 'Kierownica po prawej stronie': 'NIE',
-                 'Liczba miejsc': '5',
-                 'Liczba współwłaścicieli': '1',
-                 'Marka': 'BMW',
-                 'Masa pojazdu': '1755',
-                 'Moc': '200 kW',
-                 'Model': '535 D',
-                 'Numer VIN': 'WBANJ91030CR65131',
-                 'Numer rejestracyjny': 'EL4C079',
-                 'Paliwo': 'Olej napędowy',
-                 'Pierwsza rejestracja w Polsce': '21.01.2011',
-                 'Podrodzaj': 'kombi',
-                 'Pojazd wyposażony w instalację LPG': 'NIE',
-                 'Pojemność': '2993 cm3',
-                 'Przebieg': '408484',
-                 'Rodzaj': 'samochód osobowy',
-                 'Rodzaj Podrodzaj': 'samochód osobowy kombi',
-                 'Rodzaj pojazdu': 'Samochód osobowy',
-                 'Rok produkcji': '2005',
-                 'Specjalne użytkowanie': '-',
-                 'Termin następnego bad. tech.': '08.06.2022',
-                 'Ważność OC': '27.03.2022',
-                 'Właściciel nr': '3',
-                 'Ładowność pojazdu': '560'}
-
-
-pezu_form = {'Numer rejestracyjny': vehicle_data.get('Numer rejestracyjny'),
-             'VIN': vehicle_data.get('Numer VIN'),
-             'Data pierwszej rejestracji': ''.join(vehicle_data.get('Data pierwszej rejestracji'))
-             }
+# vehicle_data = {'DMC': '2315',
+#                  'Data pierwszej rejestracji': '15.03.2005',
+#                  'Import': 'tak',
+#                  'Kierownica po prawej stronie': 'NIE',
+#                  'Liczba miejsc': '5',
+#                  'Liczba współwłaścicieli': '1',
+#                  'Marka': 'BMW',
+#                  'Masa pojazdu': '1755',
+#                  'Moc': '200 kW',
+#                  'Model': '535 D',
+#                  'Numer VIN': 'WBANJ91030CR65131',
+#                  'Numer rejestracyjny': 'EL4C079',
+#                  'Paliwo': 'Olej napędowy',
+#                  'Pierwsza rejestracja w Polsce': '21.01.2011',
+#                  'Podrodzaj': 'kombi',
+#                  'Pojazd wyposażony w instalację LPG': 'NIE',
+#                  'Pojemność': '2993 cm3',
+#                  'Przebieg': '408484',
+#                  'Rodzaj': 'samochód osobowy',
+#                  'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+#                  'Rodzaj pojazdu': 'Samochód osobowy',
+#                  'Rok produkcji': '2005',
+#                  'Specjalne użytkowanie': '-',
+#                  'Termin następnego bad. tech.': '08.06.2022',
+#                  'Ważność OC': '27.03.2022',
+#                  'Właściciel nr': '3',
+#                  'Ładowność pojazdu': '560'}
+#
+#
+# pezu_form = {'Numer rejestracyjny': vehicle_data.get('Numer rejestracyjny'),
+#              'VIN': vehicle_data.get('Numer VIN'),
+#              'Data pierwszej rejestracji': ''.join(vehicle_data.get('Data pierwszej rejestracji'))
+#              }
 
 
 
