@@ -298,40 +298,33 @@ company_data = {'Term public ID': '',
                 'Znacznik podmiotu': 'Pozostałe (niefinansowe)'
                 }
 
-# vehicle_data = {'DMC': '2315',
-#                  'Data pierwszej rejestracji': '15.03.2005',
-#                  'Import': 'tak',
-#                  'Kierownica po prawej stronie': 'NIE',
-#                  'Liczba miejsc': '5',
-#                  'Liczba współwłaścicieli': '1',
-#                  'Marka': 'BMW',
-#                  'Masa pojazdu': '1755',
-#                  'Moc': '200 kW',
-#                  'Model': '535 D',
-#                  'Numer VIN': 'WBANJ91030CR65131',
-#                  'Numer rejestracyjny': 'EL4C079',
-#                  'Paliwo': 'Olej napędowy',
-#                  'Pierwsza rejestracja w Polsce': '21.01.2011',
-#                  'Podrodzaj': 'kombi',
-#                  'Pojazd wyposażony w instalację LPG': 'NIE',
-#                  'Pojemność': '2993 cm3',
-#                  'Przebieg': '408484',
-#                  'Rodzaj': 'samochód osobowy',
-#                  'Rodzaj Podrodzaj': 'samochód osobowy kombi',
-#                  'Rodzaj pojazdu': 'Samochód osobowy',
-#                  'Rok produkcji': '2005',
-#                  'Specjalne użytkowanie': '-',
-#                  'Termin następnego bad. tech.': '08.06.2022',
-#                  'Ważność OC': '27.03.2022',
-#                  'Właściciel nr': '3',
-#                  'Ładowność pojazdu': '560'}
-#
-#
-# pezu_form = {'Numer rejestracyjny': vehicle_data.get('Numer rejestracyjny'),
-#              'VIN': vehicle_data.get('Numer VIN'),
-#              'Data pierwszej rejestracji': ''.join(vehicle_data.get('Data pierwszej rejestracji'))
-#              }
-
+vehicle_data = {'DMC': '2315',
+                 'Data pierwszej rejestracji': '15.03.2005',
+                 'Import': 'tak',
+                 'Kierownica po prawej stronie': 'NIE',
+                 'Liczba miejsc': '5',
+                 'Liczba współwłaścicieli': '1',
+                 'Marka': 'BMW',
+                 'Masa pojazdu': '1755',
+                 'Moc': '200 kW',
+                 'Model': '535 D',
+                 'Numer VIN': 'WBANJ91030CR65131',
+                 'Numer rejestracyjny': 'EL4C079',
+                 'Paliwo': 'Olej napędowy',
+                 'Pierwsza rejestracja w Polsce': '21.01.2011',
+                 'Podrodzaj': 'kombi',
+                 'Pojazd wyposażony w instalację LPG': 'NIE',
+                 'Pojemność': '2993 cm3',
+                 'Przebieg': '408484',
+                 'Rodzaj': 'samochód osobowy',
+                 'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+                 'Rodzaj pojazdu': 'Samochód osobowy',
+                 'Rok produkcji': '2005',
+                 'Specjalne użytkowanie': '-',
+                 'Termin następnego bad. tech.': '08.06.2022',
+                 'Ważność OC': '27.03.2022',
+                 'Właściciel nr': '3',
+                 'Ładowność pojazdu': '560'}
 
 person_tasks = ['wyszukiwanie',
                  'podmiotu',
@@ -350,10 +343,10 @@ person_tasks = ['wyszukiwanie',
                  'kcje',
                  'Utwórz Konto prywatne',
                  'zapisz',
-                 ]
+                ]
 
-
-company_tasks = ['wyszukiwanie',
+company_tasks = [
+                 'wyszukiwanie',
                  'podmiotu',
                  '*',
                  'zukaj',
@@ -374,6 +367,12 @@ company_tasks = ['wyszukiwanie',
                  'zapisz',
                  ]
 
+calc_tasks = [
+                {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
+                'pojazd',
+                '*',
+]
+
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
 pd.options.display.max_rows = 80
@@ -387,7 +386,7 @@ h = df.iloc[43, 5]
 
 
 tasks = person_tasks if personal_data.get('pesel') else company_tasks
-data = personal_data if personal_data.get('pesel') else company_data
+data = personal_data | vehicle_data if personal_data.get('pesel') else company_data | vehicle_data
 
 bot = BoT(url, tasks, data)
 
@@ -419,6 +418,7 @@ if len(id) == 11:
 else:
     locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:0:bthLF'
 
+# Existing
 try:
     bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput_Button').click()
     bot.find_id('DesktopClientsAccountsPzu:DesktopClientsAccountsScreen:0:AccountNumber').click()
@@ -426,15 +426,36 @@ try:
     time.sleep(1.5)
     bot.find_id('escapeToEVE').click()
     bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+    time.sleep(3)
 
+# New
 except:
     bot.task_execution()
     bot.find_id(locator).click()
     time.sleep(1.5)
     bot.find_id('escapeToEVE').click()
     bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+    time.sleep(3)
+
 
 
 # Calc
+tasks.clear()
+tasks.extend(calc_tasks)
+
+bot.task_execution()
 
 
+
+
+
+
+
+# calc_tasks = [
+#     {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
+#     {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
+#     '*',
+# ]
+
+
+# bot = BoT(url, calc_tasks, vehicle_data)

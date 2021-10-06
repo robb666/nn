@@ -12,6 +12,51 @@ import cv2
 import numpy as np
 
 
+
+company_tasks = [
+                 'wyszukiwanie',
+                 'podmiotu',
+                 '*',
+                 'zukaj',
+                 'nowy podmiot',
+                 'firma',
+                 'dane adresowe',
+                 '**',
+                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+                 'dane kontaktowe',
+                 '**',
+                 'dane dodatkowe',
+                 '**',
+                 'zapisz',
+                 # 'zapisz',
+                 'kcje',
+                 'Utwórz Konto firmowe',
+                 'zapisz',
+                 ]
+
+calc_tasks = [
+                {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
+                'pojazd',
+                '*',
+]
+
+# TODO opróżnić listę i dodać nowe itemsy
+company_tasks.clear()
+company_tasks.extend(calc_tasks)
+print(company_tasks)
+# for task in company_tasks:
+#     print(task)
+
+
+
+
+
+
+
+
+
+
 vehicle_data = {'DMC': '2315',
                  'Data pierwszej rejestracji': '15.03.2005',
                  'Import': 'tak',
@@ -44,7 +89,7 @@ vehicle_data = {'DMC': '2315',
 d = '15.03.2005'
 dd = d.split('.')
 ddd = dd[-1] + dd[-2] + dd[-3]
-print(ddd)
+# print(ddd)
 
 
 
