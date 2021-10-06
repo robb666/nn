@@ -65,7 +65,7 @@ import cv2
 
 class BoT:
     options = Options()
-    options.add_argument('--window-size=3440,1440')
+    options.add_argument('--window-size=1440,900')
     # options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)  # koniecznie -headless przy cronie
 
@@ -86,16 +86,16 @@ class BoT:
         return self.locator
 
     def find_css(self, element):
-        self.locator = WebDriverWait(self.driver, 4).until(EC.element_to_be_clickable((By.CSS_SELECTOR, element)))
+        self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.CSS_SELECTOR, element)))
         return self.locator
 
     def find_class(self, element):
         self.locator = self.driver.find_element_by_class_name(element)
         return self.locator
 
-    def find_xpath(self, element):
-        self.locator = WebDriverWait(self.driver, 12).until(EC.element_to_be_clickable((By.XPATH, element)))
-
+    def find_xpath(self, element, *t):
+        self.locator = WebDriverWait(self.driver, t).until(EC.element_to_be_clickable((By.XPATH, element))) if t \
+            else WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, element)))
         return self.locator
 
     def find_link(self, element):
@@ -186,21 +186,27 @@ class BoT:
                     time.sleep(.6)
 
             elif phrase := re.search(phrase, visible_text, re.I):  # Make case insensitive.
+                print(phrase)
                 re_phrase = phrase.group()
                 try:
-                    self.driver.find_element_by_xpath(f"//*[contains(text(), '{re_phrase}')]").click()
-                except 1:
-                    self.driver.find_element_by_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
-                except 2:
-                    print('except')
-                    self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
+                    if re_phrase == 'Nowy podmiot':
+                        time.sleep(2.5)
+                    self.find_xpath(f"//*[contains(text(), '{re_phrase}')]").click()
+                except:
+                    self.find_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
+                # except:
+                #     self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
             tasks.pop(0)
             time.sleep(.5)
 
-
-
     def form_fill(self):
         visible_text = self.driver_text()
+        box_typ = self.find_xpath(f"//*[contains(text(), 'Typ')]/following::input[1]")
+        if box_typ.get_attribute('value') != 'Firma' and data.get('regon'):
+            self.write('Firma')
+            box_typ.send_keys(Keys.TAB)
+            time.sleep(.3)
+
         for k, v in data.items():
             if (key := re.search(k, visible_text, re.I)) and k != '*':
                 re_k = key.group()
@@ -214,6 +220,11 @@ class BoT:
             if (key := re.search(k, visible_text, re.I)) and k not in ['*', '**']:
                 re_k = key.group()
                 box = self.find_xpath(f"//*[contains(text(), '{re_k}')]/following::input[1]")
+                if box.get_attribute('value') == '<wybierz>' and k == 'Znacznik podmiotu':
+                    for _ in range(3):
+                        box.send_keys(Keys.ARROW_UP)
+                    box.send_keys(Keys.RETURN)
+                    time.sleep(.5)
                 if box.get_attribute('value') in ['', '<wybierz>']:
                     box.click()
                     box.send_keys(v)
@@ -255,22 +266,37 @@ url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 # url = 'https://everest.pzu.pl/my.policy'  # sandbox
 
 
-data = {'Term public ID': '',
-        'Numer polisy': '',
-        'Imię': 'Maria',
-        'nazwisko': 'Lisiecka',
-        'pesel': '',
-        'regon': '',
-        'kod pocztowy': '94-060',
-        'poczta': 'Łódź',
-        'województwo': 'Łódzkie'.upper(),
-        'miejscowość': 'Łódź',
-        'ulica': 'Pływacka',
-        'Numer budynku': '8',
-        'Numer lokalu': '5',
-        'E-mail główny': 'Klient odmówił',
-        'Telefon główny': 'Klient odmówił'
-        }
+personal_data = {'Term public ID': '',
+                    'Numer polisy': '',
+                    'Imię': 'Maria',
+                    'nazwisko': 'Lisiecka',
+                    'pesel': '',  # 99051222215
+                    'kod pocztowy': '91-010',
+                    'poczta': 'Łódź',
+                    'województwo': 'Łódzkie'.upper(),
+                    'miejscowość': 'Łódź',
+                    'ulica': 'Łubinowa',
+                    'Numer budynku': '49',
+                    'Numer lokalu': '',
+                    'E-mail główny': 'Klient odmówił',
+                    'Telefon główny': 'Klient odmówił'
+                    }
+
+company_data = {'Term public ID': '',
+                'Numer polisy': '',
+                'nazwa': 'Mielczarek Sp o.o.',
+                'regon': '766602846',
+                'kod pocztowy': '93-054',
+                'poczta': 'Łódź',
+                'województwo': 'Łódzkie'.upper(),
+                'miejscowość': 'Łódź',
+                'ulica': 'Liściasta',
+                'Numer budynku': '3',
+                'Numer lokalu': '',
+                'E-mail główny': 'Klient odmówił',
+                'Telefon główny': 'Klient odmówił',
+                'Znacznik podmiotu': 'Pozostałe (niefinansowe)'
+                }
 
 # vehicle_data = {'DMC': '2315',
 #                  'Data pierwszej rejestracji': '15.03.2005',
@@ -307,26 +333,46 @@ data = {'Term public ID': '',
 #              }
 
 
+person_tasks = ['wyszukiwanie',
+                 'podmiotu',
+                 '*',
+                 'zukaj',
+                 'nowy podmiot',
+                 'fizyczna',
+                 'dane adresowe',
+                 '**',
+                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+                 'dane kontaktowe',
+                 '**',
+                 'zapisz',
+                 'zapisz',
+                 'kcje',
+                 'Utwórz Konto prywatne',
+                 'zapisz',
+                 ]
 
 
-tasks = ['wyszukiwanie',
-         'podmiotu',
-         '*',
-         'zukaj',
-         'nowy podmiot',
-         'fizyczna',
-         'dane adresowe',
-         '**',
-         {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
-         {'xpath': "(//*[@class='x-grid-checkcolumn'])[3]"},
-         'dane kontaktowe',
-         '**',
-         'zapisz',
-         'zapisz',
-         'kcje',
-         'Utwórz Konto prywatne',
-         'zapisz',
-         ]
+company_tasks = ['wyszukiwanie',
+                 'podmiotu',
+                 '*',
+                 'zukaj',
+                 'nowy podmiot',
+                 'firma',
+                 'dane adresowe',
+                 '**',
+                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+                 'dane kontaktowe',
+                 '**',
+                 'dane dodatkowe',
+                 '**',
+                 'zapisz',
+                 # 'zapisz',
+                 'kcje',
+                 'Utwórz Konto firmowe',
+                 'zapisz',
+                 ]
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
@@ -338,6 +384,10 @@ df = pd.DataFrame(ws).head(80)
 
 log = df.iloc[43, 4]
 h = df.iloc[43, 5]
+
+
+tasks = person_tasks if personal_data.get('pesel') else company_tasks
+data = personal_data if personal_data.get('pesel') else company_data
 
 bot = BoT(url, tasks, data)
 
@@ -360,7 +410,7 @@ bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 
 # Check
 bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput-inputEl')
-id = data.get('pesel') if data.get('pesel') else data.get('regon')
+id = personal_data.get('pesel') if personal_data.get('pesel') else company_data.get('regon')
 
 bot.send_keys(id)
 
@@ -379,38 +429,12 @@ try:
 
 except:
     bot.task_execution()
-    bot.find_css('#AccountFile_Summary\:AccountFile_SummaryScreen\:ContactData\:AccountFileSummary_BasicInfoPzuPanelSet\:lfProducts\:1\:bthLF > img').click()
+    bot.find_id(locator).click()
     time.sleep(1.5)
     bot.find_id('escapeToEVE').click()
     bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
 
 
+# Calc
 
 
-
-
-# bot.task_execution()
-# to_click = bot.find_xpath('//img[@class="policy-icon" and text()=" PZU Auto "]')
-# to_click = bot.find_link('/motorSaleLink.png')
-
-
-
-
-# bot.write('82082407038')
-# bot.press_key(Keys.RETURN)
-# bot.task_execution()
-# # bot.driver_text()
-# # bot.form_fill()
-#
-#
-# # bot.sleep(3)
-# #
-# # bot.page_source()
-# # bot.screen_shot()
-# # bot.image_manipulation()
-# # bot.ocr_text()
-# # # print(ocr)
-# #
-# #
-# # # bot.task_execution()
-# # # bot.form_fill()
