@@ -93,9 +93,8 @@ class BoT:
         self.locator = self.driver.find_element_by_class_name(element)
         return self.locator
 
-    def find_xpath(self, element, *t):
-        self.locator = WebDriverWait(self.driver, t).until(EC.element_to_be_clickable((By.XPATH, element))) if t \
-            else WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, element)))
+    def find_xpath(self, element):
+        self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, element)))
         return self.locator
 
     def find_link(self, element):
@@ -200,8 +199,8 @@ class BoT:
             time.sleep(.5)
 
     def form_fill(self):
-        print(data)
         visible_text = self.driver_text()
+        print(visible_text)
         if 'Typ' in visible_text and 'pojazdu' not in visible_text:
             box_typ = self.find_xpath(f"//*[contains(text(), 'Typ')]/following::input[1]")
             if box_typ.get_attribute('value') != 'Firma' and data.get('regon'):
@@ -301,7 +300,7 @@ company_data = {'Term public ID': '',
                 }
 
 vehicle_data = {'DMC': '2315',
-                 'Data pierwszej rejestracji': '15.03.2005',
+                 'Data pierwszej rejestracji': '2005.03.15',
                  'Import': 'tak',
                  'Kierownica po prawej stronie': 'NIE',
                  'Liczba miejsc': '5',
@@ -370,9 +369,6 @@ company_tasks = [
                  ]
 
 calc_tasks = [
-                {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
-                'pojazd',
-                '*',
                 '*',
 ]
 
@@ -441,15 +437,93 @@ except:
     time.sleep(3)
 
 
-
 # Calc
 tasks.clear()
 tasks.extend(calc_tasks)
+bot.find_id('SaleSubmissionWizard:PmoVehicleId').click()
 
-bot.task_execution()
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:RegistrationNo-inputEl').send_keys(vehicle_data['Numer rejestracyjny'])
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VIN-inputEl').send_keys(vehicle_data['Numer VIN'])
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FirstRegistrationDate-inputEl').send_keys(vehicle_data['Data pierwszej rejestracji'])
+bot.press_key(Keys.TAB)
+
+engine_ccm = int(vehicle_data['Pojemność'][:5])
+print(engine_ccm)
+
+if engine_ccm < 1400:
+    engine_ccm = 'Poniżej 1400 ccm'
+elif 1400 < engine_ccm < 1599:
+    engine_ccm = '1400 ccm - 1599 ccm'
+elif 1600 < engine_ccm < 1799:
+    engine_ccm = '1600 ccm - 1799 ccm'
+elif 1800 < engine_ccm < 1949:
+    engine_ccm = '1800 ccm - 1949 ccm'
+elif 1950 < engine_ccm < 2099:
+    engine_ccm = '1950 ccm -  2099 ccm'
+elif 2100 < engine_ccm < 2499:
+    engine_ccm = '2100 ccm -  2499 ccm'
+else:
+    engine_ccm = 'Powyżej 2500 ccm'
+
+
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:EngineSizeRange-inputEl')
+time.sleep(1)
+for _ in range(15):
+    bot.send_keys(Keys.BACK_SPACE)
+bot.send_keys(engine_ccm)
+time.sleep(1)
+bot.press_key(Keys.TAB)
+
+
+fuel = vehicle_data['Paliwo']
+
+if fuel == 'Benzyna' and fuel != 'HYBRID':
+    fuel = 'Benzyna'
+elif 'benzyna, gaz' in fuel:
+    fuel = 'Benzyna i Gaz'
+elif fuel in ['HYBRID', 'Hybryda benzyna-elektr.']:
+    fuel = 'Hybrydowy'
+if fuel == 'Olej napędowy':
+    fuel = 'Diesel'
+
+time.sleep(1)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FuelType-inputEl').send_keys(fuel)
+time.sleep(1)
+bot.press_key(Keys.TAB)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Model-inputEl').click()
 
 
 
+# bot.task_execution()
+
+
+# vehicle_data = {'DMC': '2315',
+#                  'Data pierwszej rejestracji': '2005.03.15',
+#                  'Import': 'tak',
+#                  'Kierownica po prawej stronie': 'NIE',
+#                  'Liczba miejsc': '5',
+#                  'Liczba współwłaścicieli': '1',
+#                  'Marka': 'BMW',
+#                  'Masa pojazdu': '1755',
+#                  'Moc': '200 kW',
+#                  'Model': '535 D',
+#                  'Numer VIN': 'WBANJ91030CR65131',
+#                  'Numer rejestracyjny': 'EL4C079',
+#                  'Paliwo': 'Olej napędowy',
+#                  'Pierwsza rejestracja w Polsce': '21.01.2011',
+#                  'Podrodzaj': 'kombi',
+#                  'Pojazd wyposażony w instalację LPG': 'NIE',
+#                  'Pojemność': '2993 cm3',
+#                  'Przebieg': '408484',
+#                  'Rodzaj': 'samochód osobowy',
+#                  'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+#                  'Rodzaj pojazdu': 'Samochód osobowy',
+#                  'Rok produkcji': '2005',
+#                  'Specjalne użytkowanie': '-',
+#                  'Termin następnego bad. tech.': '08.06.2022',
+#                  'Ważność OC': '27.03.2022',
+#                  'Właściciel nr': '3',
+#                  'Ładowność pojazdu': '560'}
 
 
 
