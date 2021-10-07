@@ -200,12 +200,14 @@ class BoT:
             time.sleep(.5)
 
     def form_fill(self):
+        print(data)
         visible_text = self.driver_text()
-        box_typ = self.find_xpath(f"//*[contains(text(), 'Typ')]/following::input[1]")
-        if box_typ.get_attribute('value') != 'Firma' and data.get('regon'):
-            self.write('Firma')
-            box_typ.send_keys(Keys.TAB)
-            time.sleep(.3)
+        if 'Typ' in visible_text and 'pojazdu' not in visible_text:
+            box_typ = self.find_xpath(f"//*[contains(text(), 'Typ')]/following::input[1]")
+            if box_typ.get_attribute('value') != 'Firma' and data.get('regon'):
+                self.write('Firma')
+                box_typ.send_keys(Keys.TAB)
+                time.sleep(.3)
 
         for k, v in data.items():
             if (key := re.search(k, visible_text, re.I)) and k != '*':
@@ -284,14 +286,14 @@ personal_data = {'Term public ID': '',
 
 company_data = {'Term public ID': '',
                 'Numer polisy': '',
-                'nazwa': 'Mielczarek Sp o.o.',
-                'regon': '766602846',
-                'kod pocztowy': '93-054',
-                'poczta': 'Łódź',
-                'województwo': 'Łódzkie'.upper(),
-                'miejscowość': 'Łódź',
-                'ulica': 'Liściasta',
-                'Numer budynku': '3',
+                'nazwa': 'AQUARID TRANS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ',
+                'regon': '382582078',
+                'kod pocztowy': '37-700',
+                'poczta': '37-700',
+                'województwo': 'Podkarpackie'.upper(),
+                'miejscowość': 'Przemyśl',
+                'ulica': '3 MAJA',
+                'Numer budynku': '8',
                 'Numer lokalu': '',
                 'E-mail główny': 'Klient odmówił',
                 'Telefon główny': 'Klient odmówił',
@@ -370,6 +372,7 @@ company_tasks = [
 calc_tasks = [
                 {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
                 'pojazd',
+                '*',
                 '*',
 ]
 
