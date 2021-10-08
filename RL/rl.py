@@ -413,6 +413,7 @@ else:
 try:
     bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput_Button').click()
     bot.find_id('DesktopClientsAccountsPzu:DesktopClientsAccountsScreen:0:AccountNumber').click()
+    time.sleep(1.5)
     bot.find_id(locator).click()
     time.sleep(1.5)
     bot.find_id('escapeToEVE').click()
@@ -423,7 +424,7 @@ try:
 except:
     bot.task_execution()
     bot.find_id(locator).click()
-    time.sleep(1.5)
+    time.sleep(2)
     bot.find_id('escapeToEVE').click()
     bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
     time.sleep(3)
