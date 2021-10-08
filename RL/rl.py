@@ -390,15 +390,6 @@ data = personal_data | vehicle_data if personal_data.get('pesel') else company_d
 
 bot = BoT(url, tasks, data)
 
-
-# # sandbox
-# bot.find_id('newSessionDIV').click()  # sanbox
-# time.sleep(1)  # sanbox
-# bot = BoT(url, tasks, data)
-# time.sleep(1)  # sanbox
-# # bot.find_css('body > center > p > a > span').click()
-# time.sleep(1)  # sanbox
-
 # Login
 bot.find_id('input_1').send_keys(log)
 bot.find_id('input_2').send_keys(h)
