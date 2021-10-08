@@ -304,7 +304,9 @@ company_data = {'Term public ID': '',
                 }
 
 vehicle_data = {'DMC': '2315',
-                 'Data pierwszej rejestracji': '2005.03.15',
+                 'Data pierwszej rejestracji': '2005.03.15'.split('.')[-1] +
+                                               '2005.03.15'.split('.')[-2] +
+                                               '2005.03.15'.split('.')[-3],
                  'Import': 'tak',
                  'Kierownica po prawej stronie': 'NIE',
                  'Liczba miejsc': '5',

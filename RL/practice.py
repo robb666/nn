@@ -41,20 +41,9 @@ calc_tasks = [
                 '*',
 ]
 
-# TODO opróżnić listę i dodać nowe itemsy
+
 company_tasks.clear()
 company_tasks.extend(calc_tasks)
-print(company_tasks)
-# for task in company_tasks:
-#     print(task)
-
-
-
-
-
-
-
-
 
 
 vehicle_data = {'DMC': '2315',
@@ -86,10 +75,15 @@ vehicle_data = {'DMC': '2315',
                  'Ładowność pojazdu': '560'}
 
 
-d = '15.03.2005'
-dd = d.split('.')
-ddd = dd[-1] + dd[-2] + dd[-3]
-# print(ddd)
+d = '15.03.2005'.split('.')[-1] +\
+    '15.03.2005'.split('.')[-2] +\
+    '15.03.2005'.split('.')[-3]
+
+# ddd = dd[-1] + dd[-2] + dd[-3]
+
+
+
+print(d)
 
 
 
