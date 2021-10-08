@@ -94,7 +94,7 @@ class BoT:
         return self.locator
 
     def find_xpath(self, element):
-        self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, element)))
+        self.locator = WebDriverWait(self.driver, 9).until(EC.element_to_be_clickable((By.XPATH, element)))
         return self.locator
 
     def find_link(self, element):
@@ -113,6 +113,10 @@ class BoT:
         actions = ActionChains(self.driver)
         actions.send_keys(key)
         actions.perform()
+
+    def ac_click(self, element):
+        webdriver.ActionChains(self.driver).click_and_hold(element).perform()
+        webdriver.ActionChains(self.driver).release().perform()
 
     # def _tag_visible(self, element):
     #     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -368,9 +372,7 @@ company_tasks = [
                  'zapisz',
                  ]
 
-calc_tasks = [
-                '*',
-]
+
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
@@ -436,6 +438,7 @@ except:
     bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
     time.sleep(3)
 
+calc_tasks = ['*']
 
 # Calc
 tasks.clear()
@@ -447,7 +450,8 @@ bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissi
 bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FirstRegistrationDate-inputEl').send_keys(vehicle_data['Data pierwszej rejestracji'])
 bot.press_key(Keys.TAB)
 
-engine_ccm = int(vehicle_data['Pojemność'][:5])
+
+engine_ccm = int(vehicle_data['Pojemność'].split()[0])
 print(engine_ccm)
 
 if engine_ccm < 1400:
@@ -467,11 +471,11 @@ else:
 
 
 bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:EngineSizeRange-inputEl')
-time.sleep(1)
+
 for _ in range(15):
     bot.send_keys(Keys.BACK_SPACE)
 bot.send_keys(engine_ccm)
-time.sleep(1)
+
 bot.press_key(Keys.TAB)
 
 
@@ -486,11 +490,37 @@ elif fuel in ['HYBRID', 'Hybryda benzyna-elektr.']:
 if fuel == 'Olej napędowy':
     fuel = 'Diesel'
 
-time.sleep(1)
+time.sleep(.2)
 bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FuelType-inputEl').send_keys(fuel)
-time.sleep(1)
+
 bot.press_key(Keys.TAB)
 bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Model-inputEl').click()
+
+time.sleep(.2)
+# bot.press_key(Keys.TAB)
+bot.write(f"{vehicle_data['Pojemność'].split()[0]}ccm, {vehicle_data['Moc'].replace(' ', '')}")
+time.sleep(.2)
+bot.press_key(Keys.RETURN)
+time.sleep(.8)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VehicleVersionPicker:SelectVehicleVersionPicker').click()
+time.sleep(.4)
+bot.find_id('VehicleVersionSelectPzuPopup:0:_Select').click()
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').send_keys(vehicle_data['Przebieg'])
+lease = bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:IsLeased_false-boxLabelEl')
+lease.click()
+# time.sleep(1)
+# bot.ac_click(lease)
+# time.sleep(1)
+# bot.ac_click(lease)
+# time.sleep(1)
+# bot.ac_click(lease)
+# time.sleep(1)
+# bot.ac_click(lease)
+# time.sleep(1)
+# bot.ac_click(lease)
+
+
+
 
 
 
