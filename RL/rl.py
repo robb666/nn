@@ -366,7 +366,6 @@ company_tasks = [
                  'dane dodatkowe',
                  '**',
                  'zapisz',
-                 # 'zapisz',
                  'kcje',
                  'Utwórz Konto firmowe',
                  'zapisz',
@@ -508,61 +507,16 @@ bot.find_id('VehicleVersionSelectPzuPopup:0:_Select').click()
 bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').send_keys(vehicle_data['Przebieg'])
 lease = bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:IsLeased_false-boxLabelEl')
 lease.click()
-# time.sleep(1)
-# bot.ac_click(lease)
-# time.sleep(1)
-# bot.ac_click(lease)
-# time.sleep(1)
-# bot.ac_click(lease)
-# time.sleep(1)
-# bot.ac_click(lease)
-# time.sleep(1)
-# bot.ac_click(lease)
 
 
+time.sleep(1)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').click()
+time.sleep(1)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_PAPreselection-inputEl').click()
+time.sleep(1)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_WindscreenPreselection-inputEl').click()
+time.sleep(1)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_CascoPreselection-inputEl').click()
+time.sleep(1)
+bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:JobWizardToolbarButtonSet:QuoteOrReview-btnInnerEl').click()
 
-
-
-
-# bot.task_execution()
-
-
-# vehicle_data = {'DMC': '2315',
-#                  'Data pierwszej rejestracji': '2005.03.15',
-#                  'Import': 'tak',
-#                  'Kierownica po prawej stronie': 'NIE',
-#                  'Liczba miejsc': '5',
-#                  'Liczba współwłaścicieli': '1',
-#                  'Marka': 'BMW',
-#                  'Masa pojazdu': '1755',
-#                  'Moc': '200 kW',
-#                  'Model': '535 D',
-#                  'Numer VIN': 'WBANJ91030CR65131',
-#                  'Numer rejestracyjny': 'EL4C079',
-#                  'Paliwo': 'Olej napędowy',
-#                  'Pierwsza rejestracja w Polsce': '21.01.2011',
-#                  'Podrodzaj': 'kombi',
-#                  'Pojazd wyposażony w instalację LPG': 'NIE',
-#                  'Pojemność': '2993 cm3',
-#                  'Przebieg': '408484',
-#                  'Rodzaj': 'samochód osobowy',
-#                  'Rodzaj Podrodzaj': 'samochód osobowy kombi',
-#                  'Rodzaj pojazdu': 'Samochód osobowy',
-#                  'Rok produkcji': '2005',
-#                  'Specjalne użytkowanie': '-',
-#                  'Termin następnego bad. tech.': '08.06.2022',
-#                  'Ważność OC': '27.03.2022',
-#                  'Właściciel nr': '3',
-#                  'Ładowność pojazdu': '560'}
-
-
-
-
-# calc_tasks = [
-#     {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
-#     {'xpath': "(//*[contains(text(), 'Pojazd')])[1]"},
-#     '*',
-# ]
-
-
-# bot = BoT(url, calc_tasks, vehicle_data)
