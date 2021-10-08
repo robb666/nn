@@ -304,9 +304,9 @@ company_data = {'Term public ID': '',
                 }
 
 vehicle_data = {'DMC': '2315',
-                 'Data pierwszej rejestracji': '2005.03.15'.split('.')[-1] +
-                                               '2005.03.15'.split('.')[-2] +
-                                               '2005.03.15'.split('.')[-3],
+                 'Data pierwszej rejestracji': '15.03.2005'.split('.')[-1] +
+                                               '15.03.2005'.split('.')[-2] +
+                                               '15.03.2005'.split('.')[-3],
                  'Import': 'tak',
                  'Kierownica po prawej stronie': 'NIE',
                  'Liczba miejsc': '5',
@@ -377,140 +377,151 @@ company_tasks = [
 
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
-pd.options.display.max_rows = 80
-pd.options.display.max_columns = 10
-pd.set_option("expand_frame_repr", False)
-ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="B:G")
-df = pd.DataFrame(ws).head(80)
-
-log = df.iloc[43, 4]
-h = df.iloc[43, 5]
-
 
 tasks = person_tasks if personal_data.get('pesel') else company_tasks
 data = personal_data | vehicle_data if personal_data.get('pesel') else company_data | vehicle_data
 
 bot = BoT(url, tasks, data)
 
-# Login
-bot.find_id('input_1').send_keys(log)
-bot.find_id('input_2').send_keys(h)
-bot.find_css('.credentials_input_submit').click()
-bot.find_id('Login:LoginScreen:LoginDV:username-inputEl').send_keys(log)
-bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
-bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 
-# Check
-bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput-inputEl')
-id = personal_data.get('pesel') if personal_data.get('pesel') else company_data.get('regon')
+def login_pezu(location):
+    pd.options.display.max_rows = 80
+    pd.options.display.max_columns = 10
+    pd.set_option("expand_frame_repr", False)
+    ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="B:G")
+    df = pd.DataFrame(ws).head(80)
 
-bot.send_keys(id)
+    log = df.iloc[43, 4]
+    h = df.iloc[43, 5]
 
-if len(id) == 11:
-    locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:1:bthLF'
-else:
-    locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:0:bthLF'
-
-# Existing
-try:
-    bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput_Button').click()
-    bot.find_id('DesktopClientsAccountsPzu:DesktopClientsAccountsScreen:0:AccountNumber').click()
-    time.sleep(1.5)
-    bot.find_id(locator).click()
-    time.sleep(1.5)
-    bot.find_id('escapeToEVE').click()
-    bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
-    time.sleep(3)
-
-# New
-except:
-    bot.task_execution()
-    bot.find_id(locator).click()
-    time.sleep(2)
-    bot.find_id('escapeToEVE').click()
-    bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
-    time.sleep(3)
-
-calc_tasks = ['*']
-
-# Calc
-tasks.clear()
-tasks.extend(calc_tasks)
-bot.find_id('SaleSubmissionWizard:PmoVehicleId').click()
-
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:RegistrationNo-inputEl').send_keys(vehicle_data['Numer rejestracyjny'])
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VIN-inputEl').send_keys(vehicle_data['Numer VIN'])
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FirstRegistrationDate-inputEl').send_keys(vehicle_data['Data pierwszej rejestracji'])
-bot.press_key(Keys.TAB)
+    # Login
+    bot.find_id('input_1').send_keys(log)
+    bot.find_id('input_2').send_keys(h)
+    bot.find_css('.credentials_input_submit').click()
+    bot.find_id('Login:LoginScreen:LoginDV:username-inputEl').send_keys(log)
+    bot.find_id('Login:LoginScreen:LoginDV:password-inputEl').send_keys(h)
+    bot.find_id('Login:LoginScreen:LoginDV:submit').click()
 
 
-engine_ccm = int(vehicle_data['Pojemność'].split()[0])
-print(engine_ccm)
+def entity_check():
+    bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput-inputEl')
+    id = personal_data.get('pesel') if personal_data.get('pesel') else company_data.get('regon')
 
-if engine_ccm < 1400:
-    engine_ccm = 'Poniżej 1400 ccm'
-elif 1400 < engine_ccm < 1599:
-    engine_ccm = '1400 ccm - 1599 ccm'
-elif 1600 < engine_ccm < 1799:
-    engine_ccm = '1600 ccm - 1799 ccm'
-elif 1800 < engine_ccm < 1949:
-    engine_ccm = '1800 ccm - 1949 ccm'
-elif 1950 < engine_ccm < 2099:
-    engine_ccm = '1950 ccm -  2099 ccm'
-elif 2100 < engine_ccm < 2499:
-    engine_ccm = '2100 ccm -  2499 ccm'
-else:
-    engine_ccm = 'Powyżej 2500 ccm'
+    bot.send_keys(id)
 
-
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:EngineSizeRange-inputEl')
-
-for _ in range(15):
-    bot.send_keys(Keys.BACK_SPACE)
-bot.send_keys(engine_ccm)
-
-bot.press_key(Keys.TAB)
-
-
-fuel = vehicle_data['Paliwo']
-
-if fuel == 'Benzyna' and fuel != 'HYBRID':
-    fuel = 'Benzyna'
-elif 'benzyna, gaz' in fuel:
-    fuel = 'Benzyna i Gaz'
-elif fuel in ['HYBRID', 'Hybryda benzyna-elektr.']:
-    fuel = 'Hybrydowy'
-if fuel == 'Olej napędowy':
-    fuel = 'Diesel'
-
-time.sleep(.2)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FuelType-inputEl').send_keys(fuel)
-
-bot.press_key(Keys.TAB)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Model-inputEl').click()
-
-time.sleep(.2)
-# bot.press_key(Keys.TAB)
-bot.write(f"{vehicle_data['Pojemność'].split()[0]}ccm, {vehicle_data['Moc'].replace(' ', '')}")
-time.sleep(.2)
-bot.press_key(Keys.RETURN)
-time.sleep(.8)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VehicleVersionPicker:SelectVehicleVersionPicker').click()
-time.sleep(.4)
-bot.find_id('VehicleVersionSelectPzuPopup:0:_Select').click()
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').send_keys(vehicle_data['Przebieg'])
-lease = bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:IsLeased_false-boxLabelEl')
-lease.click()
+    if len(id) == 11:
+        locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:1:bthLF'
+    else:
+        locator = 'AccountFile_Summary:AccountFile_SummaryScreen:ContactData:AccountFileSummary_BasicInfoPzuPanelSet:lfProducts:0:bthLF'
+    # Existing
+    try:
+        bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput_Button').click()
+        bot.find_id('DesktopClientsAccountsPzu:DesktopClientsAccountsScreen:0:AccountNumber').click()
+        time.sleep(1.5)
+        bot.find_id(locator).click()
+        time.sleep(1.5)
+        bot.find_id('escapeToEVE').click()
+        bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+        time.sleep(3)
+    # New
+    except:
+        bot.task_execution()
+        bot.find_id(locator).click()
+        time.sleep(2)
+        bot.find_id('escapeToEVE').click()
+        bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+        time.sleep(3)
 
 
-time.sleep(1)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').click()
-time.sleep(1)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_PAPreselection-inputEl').click()
-time.sleep(1)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_WindscreenPreselection-inputEl').click()
-time.sleep(1)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_CascoPreselection-inputEl').click()
-time.sleep(1)
-bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:JobWizardToolbarButtonSet:QuoteOrReview-btnInnerEl').click()
+def calc_start(vehicle_data):
+    calc_tasks = ['*']
+    tasks.clear()
+    tasks.extend(calc_tasks)
+    bot.find_id('SaleSubmissionWizard:PmoVehicleId').click()
 
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:RegistrationNo-inputEl').send_keys(vehicle_data['Numer rejestracyjny'])
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VIN-inputEl').send_keys(vehicle_data['Numer VIN'])
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FirstRegistrationDate-inputEl').send_keys(vehicle_data['Data pierwszej rejestracji'])
+    bot.press_key(Keys.TAB)
+
+
+def engine_ccm(vehicle_data):
+    engine_ccm = int(vehicle_data['Pojemność'].split()[0])
+
+    if engine_ccm < 1400:
+        engine_ccm = 'Poniżej 1400 ccm'
+    elif 1400 < engine_ccm < 1599:
+        engine_ccm = '1400 ccm - 1599 ccm'
+    elif 1600 < engine_ccm < 1799:
+        engine_ccm = '1600 ccm - 1799 ccm'
+    elif 1800 < engine_ccm < 1949:
+        engine_ccm = '1800 ccm - 1949 ccm'
+    elif 1950 < engine_ccm < 2099:
+        engine_ccm = '1950 ccm -  2099 ccm'
+    elif 2100 < engine_ccm < 2499:
+        engine_ccm = '2100 ccm -  2499 ccm'
+    else:
+        engine_ccm = 'Powyżej 2500 ccm'
+
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:EngineSizeRange-inputEl')
+    for _ in range(15):
+        bot.send_keys(Keys.BACK_SPACE)
+    bot.send_keys(engine_ccm)
+    bot.press_key(Keys.TAB)
+
+
+def engine_type(vehicle_data):
+    fuel = vehicle_data['Paliwo']
+    if fuel == 'Benzyna' and fuel != 'HYBRID':
+        fuel = 'Benzyna'
+    elif 'benzyna, gaz' in fuel:
+        fuel = 'Benzyna i Gaz'
+    elif fuel in ['HYBRID', 'Hybryda benzyna-elektr.']:
+        fuel = 'Hybrydowy'
+    if fuel == 'Olej napędowy':
+        fuel = 'Diesel'
+
+    time.sleep(.2)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FuelType-inputEl').send_keys(fuel)
+    bot.press_key(Keys.TAB)
+
+
+def model_pezu(vehicle_data):
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Model-inputEl').click()
+    time.sleep(.2)
+    bot.write(f"{vehicle_data['Pojemność'].split()[0]}ccm, {vehicle_data['Moc'].replace(' ', '')}")
+    time.sleep(.2)
+    bot.press_key(Keys.RETURN)
+    time.sleep(.8)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VehicleVersionPicker:SelectVehicleVersionPicker').click()
+    time.sleep(.4)
+    bot.find_id('VehicleVersionSelectPzuPopup:0:_Select').click()
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').send_keys(vehicle_data['Przebieg'])
+    lease = bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:IsLeased_false-boxLabelEl')
+    lease.click()
+
+
+def scope_pezu():
+    time.sleep(1)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Mileage-inputEl').click()
+    time.sleep(1)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_PAPreselection-inputEl').click()
+    time.sleep(1)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_WindscreenPreselection-inputEl').click()
+    time.sleep(1)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehiclePzuCoverOptionPanelSet:PMOVehiclePzuCoverOptionInputSet:tah_CascoPreselection-inputEl').click()
+    time.sleep(1)
+    bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:JobWizardToolbarButtonSet:QuoteOrReview-btnInnerEl').click()
+
+
+def pezu_concurent():
+    login_pezu(location)
+    entity_check()
+    calc_start(vehicle_data)
+    engine_ccm(vehicle_data)
+    engine_type(vehicle_data)
+    model_pezu(vehicle_data)
+    scope_pezu()
+
+
+pezu_concurent()
