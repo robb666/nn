@@ -272,7 +272,7 @@ class specPezuBoT(BoT):
 
 
 
-url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
+
 # url = 'https://everest.pzu.pl/my.policy'  # sandbox
 
 
@@ -379,7 +379,7 @@ company_tasks = [
                  ]
 
 
-
+url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 
 
