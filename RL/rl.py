@@ -65,7 +65,7 @@ import cv2
 
 class BoT:
     options = Options()
-    options.add_argument('--window-size=1440,900')
+    options.add_argument('--window-size=1000,1000')
     # options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)  # koniecznie -headless przy cronie
 
@@ -148,6 +148,11 @@ class BoT:
     #     png = cv2.imread(os.getcwd() + f'/screenshot.png')
     #     self.grey = cv2.cvtColor(png, cv2.COLOR_BGR2GRAY)
     #     return self.grey
+
+
+class specPezuBoT(BoT):
+    def __init__(self, url, tasks, data):
+        super().__init__(url, tasks, data)
 
     # # @staticmethod
     # def ocr_text(self):
@@ -381,7 +386,7 @@ location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza
 tasks = person_tasks if personal_data.get('pesel') else company_tasks
 data = personal_data | vehicle_data if personal_data.get('pesel') else company_data | vehicle_data
 
-bot = BoT(url, tasks, data)
+bot = specPezuBoT(url, tasks, data)
 
 
 def login_pezu(location):
@@ -514,7 +519,7 @@ def scope_pezu():
     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:JobWizardToolbarButtonSet:QuoteOrReview-btnInnerEl').click()
 
 
-def pezu_concurent():
+def run_pezu():
     login_pezu(location)
     entity_check()
     calc_start(vehicle_data)
@@ -524,4 +529,4 @@ def pezu_concurent():
     scope_pezu()
 
 
-pezu_concurent()
+
