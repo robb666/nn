@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from bs4.element import Comment
 import time
 import re
-import cv2
+# import cv2
 import numpy as np
 
 
@@ -41,18 +41,13 @@ class Dog(NonMarineMammal, NonWingedMammal):
         super().__init__('Dog')
 
 
-d = Dog()
-print('')
-bat = NonMarineMammal('Bat')
-
-print(Dog.__mro__)
-
-
+# d = Dog()
+# print('')
+# bat = NonMarineMammal('Bat')
+#
+# print(Dog.__mro__)
 
 # https://www.programiz.com/python-programming/methods/built-in/super
-
-
-
 
 company_tasks = [
                  'wyszukiwanie',
@@ -116,15 +111,15 @@ vehicle_data = {'DMC': '2315',
                  'Ładowność pojazdu': '560'}
 
 
-d = '15.03.2005'.split('.')[-1] +\
-    '15.03.2005'.split('.')[-2] +\
-    '15.03.2005'.split('.')[-3]
-
-# ddd = dd[-1] + dd[-2] + dd[-3]
+frd = vehicle_data['Data pierwszej rejestracji'].split('.')
+frd = frd[-1] + frd[-2] + frd[-3]
+vehicle_data['Data pierwszej rejestracji'] = frd
 
 
+print(vehicle_data)
 
-# print(d)
+
+
 
 
 
