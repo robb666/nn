@@ -65,22 +65,19 @@ import time
 
 
 class BoT:
-    options = Options()
-    options.add_argument('--window-size=1000, 1000')
-    # options.add_argument('--headless')
-    driver = webdriver.Chrome(options=options)  # koniecznie -headless przy cronie
 
-    def __init__(self, url: str, tasks: list, personal_data: dict):
-        self.url = url
+    def __init__(self, tasks: list, personal_data: dict):
         self.tasks = tasks
         self.personal_data = personal_data
-        self.driver.get(url)
-
         # self.body = requests.get(url).text  # html content
         # self.cv2 = cv2
 
-    # def get_url(self):
-    #     self.driver.get(self.url)
+    def get_url(self, url):
+        options = Options()
+        options.add_argument('--window-size=1000, 1000')
+        # options.add_argument('--headless')  # koniecznie -headless przy cronie
+        self.driver = webdriver.Chrome(options=options)
+        self.driver.get(url)
 
     def find_id(self, element):
         self.locator = WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.ID, element)))
@@ -152,8 +149,8 @@ class BoT:
 
 
 class specPezuBoT(BoT):
-    def __init__(self, url, tasks, data):
-        super().__init__(url, tasks, data)
+    def __init__(self, tasks, data):
+        super().__init__(tasks, data)
         # self.tasks = tasks
         # self.data = data
 
