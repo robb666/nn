@@ -8,10 +8,46 @@ from bs4 import BeautifulSoup
 from bs4.element import Comment
 import time
 import re
-import cv2
+# import cv2
 import numpy as np
 
 
+class Animal:
+    def __init__(self, Animal):
+        print(Animal, 'is an animal.')
+
+
+class Mammal(Animal):
+    def __init__(self, mammalName):
+        print(mammalName, 'is a warm-blooded animal.')
+        super().__init__(mammalName)
+
+
+class NonWingedMammal(Mammal):
+    def __init__(self, NonWingedMammal):
+        print(NonWingedMammal, "can't fly.")
+        super().__init__(NonWingedMammal)
+
+
+class NonMarineMammal(Mammal):
+    def __init__(self, NonMarineMammal):
+        print(NonMarineMammal, "can't swim.")
+        super().__init__(NonMarineMammal)
+
+
+class Dog(NonMarineMammal, NonWingedMammal):
+    def __init__(self):
+        print('Dog has 4 legs.')
+        super().__init__('Dog')
+
+
+# d = Dog()
+# print('')
+# bat = NonMarineMammal('Bat')
+#
+# print(Dog.__mro__)
+
+# https://www.programiz.com/python-programming/methods/built-in/super
 
 company_tasks = [
                  'wyszukiwanie',
@@ -41,20 +77,9 @@ calc_tasks = [
                 '*',
 ]
 
-# TODO opróżnić listę i dodać nowe itemsy
+
 company_tasks.clear()
 company_tasks.extend(calc_tasks)
-print(company_tasks)
-# for task in company_tasks:
-#     print(task)
-
-
-
-
-
-
-
-
 
 
 vehicle_data = {'DMC': '2315',
@@ -86,10 +111,15 @@ vehicle_data = {'DMC': '2315',
                  'Ładowność pojazdu': '560'}
 
 
-d = '15.03.2005'
-dd = d.split('.')
-ddd = dd[-1] + dd[-2] + dd[-3]
-# print(ddd)
+frd = vehicle_data['Data pierwszej rejestracji'].split('.')
+frd = frd[-1] + frd[-2] + frd[-3]
+vehicle_data['Data pierwszej rejestracji'] = frd
+
+
+print(vehicle_data)
+
+
+
 
 
 
