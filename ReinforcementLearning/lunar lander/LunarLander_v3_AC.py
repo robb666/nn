@@ -66,7 +66,7 @@ class Agent(object):
         actions[np.arange(1), action] = 1.0
 
         self.actor.fit([state, delta], actions, verbose=0)
-        self.critic.fir(state, target, verbose=0)
+        self.critic.fit(state, target, verbose=0)
 
 
 

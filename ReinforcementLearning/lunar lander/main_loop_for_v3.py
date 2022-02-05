@@ -19,6 +19,7 @@ if __name__ == '__main__':
             observation_, reward, done, info = env.step(action)
             agent.learn(observation, action, reward, observation_, done)
             observation = observation_
+            score += reward
 
         score_history.append(score)
         avg_score = np.mean(score_history[-100:])
