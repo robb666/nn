@@ -1,5 +1,7 @@
 
 import gym
+import Box2D
+print(Box2D.__version__)
 
 
 env = gym.make("LunarLander-v2")
@@ -16,3 +18,4 @@ env.close()
 
 
 
+# fp, pathname, description = imp.find_module('_Box2D', [dirname(__file__)])

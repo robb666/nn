@@ -9,10 +9,14 @@ Y_OFS = 75
 # obs = {'mysz': 'zielona', 'kufel': 'po piwie'}
 
 vectorized = {'Robo': '666', 'Ania': '777', 'Piesek': 'kość'}
+
+
 class MiniWoBCropper(vectorized.ObservationWrapper):
+
     def __init__(self, env, keep_text=False):
         super(MiniWoBCropper, self).__init__(env)
         self.keep_text = keep_text
+
     def _observation(self, observation_n):
         res = []
         for obs in observation_n:

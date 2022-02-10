@@ -64,6 +64,7 @@ class Agent():
         loss.backward()
         self.network.optimizer.step()
 
+
 if __name__ == '__main__':
     env = gym.make('CartPole-v1').unwrapped
     agent = Agent(lr=0.001, inputShape=(4,), numActions=2)

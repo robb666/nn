@@ -3,6 +3,7 @@ from simple_dqn_torch_2020 import Agent
 from util import plot_learning_curve
 import numpy as np
 
+
 if __name__ == '__main__':
     env = gym.make('LunarLander-v2')
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,

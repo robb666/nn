@@ -14,6 +14,7 @@ poleThetaVelSpace = np.linspace(-4, 4, 10)
 cartPosSpace = np.linspace(-2.4, 2.4, 10)
 cartVelSpace = np.linspace(-4, 4, 10)
 
+
 def getState(observation):
     cartX, cartXdot, cartTheta, cartThetadot = observation
     cartX = int(np.digitize(cartX, cartPosSpace))
