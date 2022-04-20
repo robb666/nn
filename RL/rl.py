@@ -179,6 +179,7 @@ class specPezuBoT(BoT):
     def task_execution(self):
         while tasks:
             phrase = next(iter(tasks))
+            print(phrase)
             visible_text = self.driver_text()
             if phrase == '*':
                 self.form_fill()
@@ -201,6 +202,7 @@ class specPezuBoT(BoT):
                         time.sleep(2.5)
                     self.find_xpath(f"//*[contains(text(), '{re_phrase}')]").click()
                 except:
+                    print('fackuop')
                     self.find_xpath(f"//*[@class='bigButton' and contains(., '{re_phrase}')]").click()
                 # except:
                 #     self.driver.find_element_by_xpath(f"//*[contains(., '{re_phrase}')]").click()
@@ -273,24 +275,13 @@ class specPezuBoT(BoT):
 
 
 
-# url = 'https://everest.pzu.pl/my.policy'  # sandbox
-
-
-# personal_data = {'Term public ID': '',
-#                     'Numer polisy': '',
-#                     'Imię': 'Maria',
-#                     'nazwisko': 'Lisiecka',
-#                     'pesel': '',  # 99051222215
-#                     'kod pocztowy': '91-010',
-#                     'poczta': 'Łódź',
-#                     'województwo': 'Łódzkie'.upper(),
-#                     'miejscowość': 'Łódź',
-#                     'ulica': 'Łubinowa',
-#                     'Numer budynku': '49',
-#                     'Numer lokalu': '',
-#                     'E-mail główny': 'Klient odmówił',
-#                     'Telefon główny': 'Klient odmówił'
-#                     }
+# # url = 'https://everest.pzu.pl/my.policy'  # sandbox
+#
+# personal_data = {'Data urodzenia': '26-01-1984',
+#                  'Imię': 'Michał',
+#                  'Kod pocztowy': '-',
+#                  'Nazwisko': 'Piotrowicz',
+#                  'PESEL': '82082407038'}
 #
 # company_data = {'Term public ID': '',
 #                 'Numer polisy': '',
@@ -308,34 +299,65 @@ class specPezuBoT(BoT):
 #                 'Znacznik podmiotu': 'Pozostałe (niefinansowe)'
 #                 }
 #
-# vehicle_data = {'DMC': '2315',
-#                  'Data pierwszej rejestracji': '15.03.2005'.split('.')[-1] +
-#                                                '15.03.2005'.split('.')[-2] +
-#                                                '15.03.2005'.split('.')[-3],
-#                  'Import': 'tak',
+# # vehicle_data = {'DMC': '2315',
+# #                  'Data pierwszej rejestracji': '15.03.2005'.split('.')[-1] +
+# #                                                '15.03.2005'.split('.')[-2] +
+# #                                                '15.03.2005'.split('.')[-3],
+# #                  'Import': 'tak',
+# #                  'Kierownica po prawej stronie': 'NIE',
+# #                  'Liczba miejsc': '5',
+# #                  'Liczba współwłaścicieli': '1',
+# #                  'Marka': 'BMW',
+# #                  'Masa pojazdu': '1755',
+# #                  'Moc': '200 kW',
+# #                  'Model': '535 D',
+# #                  'Numer VIN': 'WBANJ91030CR65131',
+# #                  'Numer rejestracyjny': 'EL4C079',
+# #                  'Paliwo': 'Olej napędowy',
+# #                  'Pierwsza rejestracja w Polsce': '21.01.2011',
+# #                  'Podrodzaj': 'kombi',
+# #                  'Pojazd wyposażony w instalację LPG': 'NIE',
+# #                  'Pojemność': '2993 cm3',
+# #                  'Przebieg': '408484',
+# #                  'Rodzaj': 'samochód osobowy',
+# #                  'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+# #                  'Rodzaj pojazdu': 'Samochód osobowy',
+# #                  'Rok produkcji': '2005',
+# #                  'Specjalne użytkowanie': '-',
+# #                  'Termin następnego bad. tech.': '08.06.2022',
+# #                  'Ważność OC': '27.03.2022',
+# #                  'Właściciel nr': '3',
+# #                  'Ładowność pojazdu': '560'}
+#
+#
+# vehicle_data = {'DMC': '1590',
+#                 'Data pierwszej rejestracji': '20.02.2006'.split('.')[-1] +
+#                                               '20.02.2006'.split('.')[-2] +
+#                                               '20.02.2006'.split('.')[-3],
+#                  'Import': 'nie',
 #                  'Kierownica po prawej stronie': 'NIE',
 #                  'Liczba miejsc': '5',
-#                  'Liczba współwłaścicieli': '1',
-#                  'Marka': 'BMW',
-#                  'Masa pojazdu': '1755',
-#                  'Moc': '200 kW',
-#                  'Model': '535 D',
-#                  'Numer VIN': 'WBANJ91030CR65131',
-#                  'Numer rejestracyjny': 'EL4C079',
-#                  'Paliwo': 'Olej napędowy',
-#                  'Pierwsza rejestracja w Polsce': '21.01.2011',
-#                  'Podrodzaj': 'kombi',
-#                  'Pojazd wyposażony w instalację LPG': 'NIE',
-#                  'Pojemność': '2993 cm3',
-#                  'Przebieg': '408484',
+#                  'Liczba współwłaścicieli': '0',
+#                  'Marka': 'FIAT',
+#                  'Masa pojazdu': '1030',
+#                  'Moc': '48 kW',
+#                  'Model': 'PUNTO',
+#                  'Numer VIN': 'ZFA19900001045125',
+#                  'Numer rejestracyjny': 'WOS83815',
+#                  'Paliwo': 'Gaz / benzyna',
+#                  'Pierwsza rejestracja w Polsce': '20.02.2006',
+#                  'Podrodzaj': 'wielozadaniowy',
+#                  'Pojazd wyposażony w instalację LPG': 'TAK',
+#                  'Pojemność': '1242 cm3',
+#                  'Przebieg': '248601',
 #                  'Rodzaj': 'samochód osobowy',
-#                  'Rodzaj Podrodzaj': 'samochód osobowy kombi',
+#                  'Rodzaj Podrodzaj': 'samochód osobowy wielozadaniowy',
 #                  'Rodzaj pojazdu': 'Samochód osobowy',
-#                  'Rok produkcji': '2005',
+#                  'Rok produkcji': '2006',
 #                  'Specjalne użytkowanie': '-',
-#                  'Termin następnego bad. tech.': '08.06.2022',
-#                  'Ważność OC': '27.03.2022',
-#                  'Właściciel nr': '3',
+#                  'Termin następnego bad. tech.': '18.01.2022',
+#                  'Ważność OC': 'Brak info',
+#                  'Właściciel nr': '4',
 #                  'Ładowność pojazdu': '560'}
 #
 # person_tasks = ['wyszukiwanie',
@@ -356,37 +378,37 @@ class specPezuBoT(BoT):
 #                  'Utwórz Konto prywatne',
 #                  'zapisz',
 #                 ]
-
-company_tasks = [
-                 'wyszukiwanie',
-                 'podmiotu',
-                 '*',
-                 'zukaj',
-                 'nowy podmiot',
-                 'firma',
-                 'dane adresowe',
-                 '**',
-                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
-                 {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
-                 'dane kontaktowe',
-                 '**',
-                 'dane dodatkowe',
-                 '**',
-                 'zapisz',
-                 'kcje',
-                 'Utwórz Konto firmowe',
-                 'zapisz',
-                 ]
-
-
+#
+# company_tasks = [
+#                  'wyszukiwanie',
+#                  'podmiotu',
+#                  '*',
+#                  'zukaj',
+#                  'nowy podmiot',
+#                  'firma',
+#                  'dane adresowe',
+#                  '**',
+#                  {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+#                  {'xpath': "(//*[@class='x-grid-checkcolumn'])[2]"},
+#                  'dane kontaktowe',
+#                  '**',
+#                  'dane dodatkowe',
+#                  '**',
+#                  'zapisz',
+#                  'kcje',
+#                  'Utwórz Konto firmowe',
+#                  'zapisz',
+#                  ]
+#
+#
 # url = 'https://everest.pzu.pl/pc/PolicyCenter.do'
 # location = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/Agent baza/Login_Hasło.xlsx"
 #
 #
-# tasks = person_tasks if personal_data.get('pesel') else company_tasks
-# data = personal_data | vehicle_data if personal_data.get('pesel') else company_data | vehicle_data
+# tasks = person_tasks if personal_data.get('PESEL') else company_tasks
+# data = personal_data | vehicle_data if personal_data.get('PESEL') else company_data | vehicle_data
 #
-# bot = specPezuBoT(url, tasks, data)
+# bot = specPezuBoT(tasks, data)
 #
 #
 # def login_pezu(location):
@@ -395,11 +417,12 @@ company_tasks = [
 #     pd.set_option("expand_frame_repr", False)
 #     ws = pd.read_excel(location, index_col=None, na_values=['NA'], usecols="B:G")
 #     df = pd.DataFrame(ws).head(80)
-#
-#     log = df.iloc[43, 4]
-#     h = df.iloc[43, 5]
+#     # print(df)
+#     log = df.iloc[30-2, 4]
+#     h = df.iloc[30-2, 5]
 #
 #     # Login
+#     bot.get_url(url)
 #     bot.find_id('input_1').send_keys(log)
 #     bot.find_id('input_2').send_keys(h)
 #     bot.find_css('.credentials_input_submit').click()
@@ -410,7 +433,7 @@ company_tasks = [
 #
 # def entity_check():
 #     bot.find_id('SalesSubmissionPzu:SalesSubmissionScreen:SalesSubmissionScreen:SmartSearchPzuPanelSet:smartSearchToolbarInput-inputEl')
-#     id = personal_data.get('pesel') if personal_data.get('pesel') else company_data.get('regon')
+#     id = personal_data.get('PESEL') if personal_data.get('PESEL') else company_data.get('PESEL')
 #
 #     bot.send_keys(id)
 #
@@ -425,8 +448,17 @@ company_tasks = [
 #         time.sleep(1.5)
 #         bot.find_id(locator).click()
 #         time.sleep(1.5)
-#         bot.find_id('escapeToEVE').click()
-#         bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+#
+#         try:
+#             bot.find_id('escapeToEVE').click()
+#             bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+#         except:
+#
+#             bot.find_id(locator).click()
+#             time.sleep(1.5)
+#             bot.find_id('escapeToEVE').click()
+#             bot.find_xpath("//button[@class='btn btn-primary' and text()='Tak']").click()
+#
 #         time.sleep(3)
 #     # New
 #     except:
@@ -439,14 +471,26 @@ company_tasks = [
 #
 #
 # def calc_start(vehicle_data):
+#     bot.find_id('SaleSubmissionWizard:PmoVehicleId').click()
 #     calc_tasks = ['*']
 #     tasks.clear()
 #     tasks.extend(calc_tasks)
-#     bot.find_id('SaleSubmissionWizard:PmoVehicleId').click()
 #
+#     time.sleep(1)
 #     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:RegistrationNo-inputEl').send_keys(vehicle_data['Numer rejestracyjny'])
 #     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:VIN-inputEl').send_keys(vehicle_data['Numer VIN'])
 #     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FirstRegistrationDate-inputEl').send_keys(vehicle_data['Data pierwszej rejestracji'])
+#     bot.press_key(Keys.TAB)
+#     # Rok prod
+#     # Rodzaj
+#     # time.sleep(2)
+#
+#     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Make-inputEl')
+#     for _ in range(15):
+#         bot.send_keys(Keys.BACK_SPACE)
+#
+#     # time.sleep(2)
+#     bot.send_keys(vehicle_data['Marka'])
 #     bot.press_key(Keys.TAB)
 #
 #
@@ -468,6 +512,7 @@ company_tasks = [
 #     else:
 #         engine_ccm = 'Powyżej 2500 ccm'
 #
+#     time.sleep(.5)
 #     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:EngineSizeRange-inputEl')
 #     for _ in range(15):
 #         bot.send_keys(Keys.BACK_SPACE)
@@ -479,19 +524,24 @@ company_tasks = [
 #     fuel = vehicle_data['Paliwo']
 #     if fuel == 'Benzyna' and fuel != 'HYBRID':
 #         fuel = 'Benzyna'
-#     elif 'benzyna, gaz' in fuel:
+#     elif fuel in ['Gaz / benzyna', 'benzyna, gaz']:
 #         fuel = 'Benzyna i Gaz'
 #     elif fuel in ['HYBRID', 'Hybryda benzyna-elektr.']:
 #         fuel = 'Hybrydowy'
-#     if fuel == 'Olej napędowy':
+#     elif fuel == 'Olej napędowy':
 #         fuel = 'Diesel'
+#     else:
+#         print('paliwo fuckup')
 #
-#     time.sleep(.2)
-#     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FuelType-inputEl').send_keys(fuel)
+#     time.sleep(.5)
+#     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:FuelType-inputEl')
+#     bot.send_keys(fuel)
+#     # time.sleep(1)
 #     bot.press_key(Keys.TAB)
 #
 #
 # def model_pezu(vehicle_data):
+#     # time.sleep(1)
 #     bot.find_id('SaleSubmissionWizard:SaleSubmissionInsuranceDataScreen:SaleSubmissionVehicleDataPanelSet:PmoVehicleInformationPanelSet:Model-inputEl').click()
 #     time.sleep(.2)
 #     bot.write(f"{vehicle_data['Pojemność'].split()[0]}ccm, {vehicle_data['Moc'].replace(' ', '')}")
@@ -527,6 +577,6 @@ company_tasks = [
 #     engine_type(vehicle_data)
 #     model_pezu(vehicle_data)
 #     scope_pezu()
-
-
-
+#
+#
+# run_pezu()
