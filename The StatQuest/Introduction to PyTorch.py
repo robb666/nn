@@ -41,11 +41,11 @@ class BasicNN(nn.Module):
 
 input_doses = torch.linspace(start=0, end=1, steps=11)
 
-model = BasicNN()
-output_values = model(input_doses)
-
 inputs = torch.tensor([0., 0.5, 1.])
 labels = torch.tensor([0., 1., 0.])
+
+model = BasicNN()
+output_values = model(inputs)
 
 optimizer = SGD(model.parameters(), lr=0.1)
 
