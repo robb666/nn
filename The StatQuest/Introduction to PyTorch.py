@@ -33,19 +33,19 @@ class BasicNN(nn.Module):
         scaled_bottom_relu_output = top_relu_output * self.w11
 
         input_to_final_relu = scaled_top_relu_output + scaled_bottom_relu_output + self.final_bias
-
+        print('bias:', self.final_bias.data)
         output = F.relu(input_to_final_relu)
 
         return output
 
 
-input_doses = torch.linspace(start=0, end=1, steps=11)
+
 
 inputs = torch.tensor([0., 0.5, 1.])
 labels = torch.tensor([0., 1., 0.])
 
 model = BasicNN()
-output_values = model(inputs)
+
 
 optimizer = SGD(model.parameters(), lr=0.1)
 
@@ -66,6 +66,8 @@ for epoch in range(100):
 
         loss.backward()
 
+        print(loss)
+
         total_loss += float(loss)
 
     if (total_loss < 0.0001):
@@ -81,7 +83,9 @@ print('Final bias, after optimization: ' + str(model.final_bias.data))
 
 
 
+input_doses = torch.linspace(start=0, end=1, steps=50)
 
+output_values = model(input_doses)
 
 sns.set(style='whitegrid')
 
