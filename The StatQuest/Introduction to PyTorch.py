@@ -41,49 +41,55 @@ class BasicNN(nn.Module):
 
 
 
-inputs = torch.tensor([0., 0.5, 1.])
-labels = torch.tensor([0., 1., 0.])
-
+# inputs = torch.tensor([0., 0.5, 1.])
+# labels = torch.tensor([0., 1., 0.])
+#
 model = BasicNN()
+#
+#
+# optimizer = SGD(model.parameters(), lr=0.1)
+#
+# print('Final bias, before optimization: ' + str(model.final_bias.data) + '\n')
+#
+# for epoch in range(100):
+#
+#     total_loss = 0
+#
+#     for iteration in range(len(inputs)):
+#
+#         input_i = inputs[iteration]
+#         label_i = labels[iteration]
+#
+#         output_i = model(input_i)
+#
+#         loss = (output_i - label_i) ** 2
+#
+#         loss.backward()
+#
+#         print(loss)
+#
+#         total_loss += float(loss)
+#
+#     if (total_loss < 0.0001):
+#         print('Num steps: ' + str(epoch))
+#         break
+#
+#     optimizer.step()
+#     optimizer.zero_grad()
+#
+#     print('Step: ' + str(epoch) + ' Final Bias: ' + str(model.final_bias.data) + '\n')
+#
+# print('Final bias, after optimization: ' + str(model.final_bias.data))
+#
+# PATH = r'C:\Users\Robert\Desktop\python\nn\The StatQuest\mod'
+# torch.save(model.state_dict(), PATH)
 
 
-optimizer = SGD(model.parameters(), lr=0.1)
+# model = BasicNN()
+# model.load_state_dict(torch.load(PATH))
+# model.eval()
 
-print('Final bias, before optimization: ' + str(model.final_bias.data) + '\n')
-
-for epoch in range(100):
-
-    total_loss = 0
-
-    for iteration in range(len(inputs)):
-
-        input_i = inputs[iteration]
-        label_i = labels[iteration]
-
-        output_i = model(input_i)
-
-        loss = (output_i - label_i) ** 2
-
-        loss.backward()
-
-        print(loss)
-
-        total_loss += float(loss)
-
-    if (total_loss < 0.0001):
-        print('Num steps: ' + str(epoch))
-        break
-
-    optimizer.step()
-    optimizer.zero_grad()
-
-    print('Step: ' + str(epoch) + ' Final Bias: ' + str(model.final_bias.data) + '\n')
-
-print('Final bias, after optimization: ' + str(model.final_bias.data))
-
-
-
-input_doses = torch.linspace(start=0, end=1, steps=50)
+input_doses = torch.linspace(start=0, end=1, steps=11)
 
 output_values = model(input_doses)
 
