@@ -3,9 +3,12 @@
 import os
 from google.cloud import speech_v1 as speech
 
+PATH_HOME = r'C:\Users\Robert\Desktop\python\nn\Speech To Text\text-to-speech-349604-369288fae48e.json'
+PATH_OFFICE = r'C:\Users\PipBoy3000\Desktop\IT\projekty\nn\Speech To Text\text-to-speech-349604-9fb6a8e4da36.json'
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = \
-    r'C:\Users\PipBoy3000\Desktop\IT\projekty\nn\Speech To Text\text-to-speech-349604-9fb6a8e4da36.json'
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH_HOME if os.path.exists(PATH_HOME) else PATH_OFFICE
+
 
 def speech_to_text(config, audio):
     client = speech.SpeechClient()
@@ -22,17 +25,18 @@ def print_sentences(response):
         print(f"Transcript: {transcript}")
         print(f"Confidence: {confidence:.0%}")
 
-# 'xxx'
-# config = dict(language_code="en-US")
+
+
 config = speech.RecognitionConfig(
     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    language_code="pl-PL",
     # sample_rate_hertz=16000,
-    language_code="pl-PL",  # 'pl-PL'
 )
-# audio = dict(uri="gs://cloud-samples-data/speech/brooklyn_bridge.flac")
-# audio = dict(uri="adres.wav")
-audio = dict(uri="gs://tts1_magro/nrrej.wav")
-speech_to_text(config, audio)
+
+audio_set = ['adres', 'pesel', 'nrrej']
+for wav in audio_set:
+    audio = dict(uri=f"gs://tts1_magro/{wav}.wav")
+    speech_to_text(config, audio)
 
 
 
