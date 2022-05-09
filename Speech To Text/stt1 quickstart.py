@@ -1,10 +1,7 @@
-# Imports the Google Cloud client library
-# from google.cloud import speech
+
 import os
 from google.cloud import speech_v1 as speech
-
-PATH_HOME = r'C:\Users\Robert\Desktop\python\nn\Speech To Text\text-to-speech-349604-369288fae48e.json'
-PATH_OFFICE = r'C:\Users\PipBoy3000\Desktop\IT\projekty\nn\Speech To Text\text-to-speech-349604-9fb6a8e4da36.json'
+from constants import PATH_HOME, PATH_OFFICE
 
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH_HOME if os.path.exists(PATH_HOME) else PATH_OFFICE
