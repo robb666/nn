@@ -22,7 +22,7 @@ def print_sentences(response):
         print(f"Transcript: {transcript}")
         print(f"Confidence: {confidence:.0%}")
 
-
+# 'xxx'
 # config = dict(language_code="en-US")
 config = speech.RecognitionConfig(
     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
