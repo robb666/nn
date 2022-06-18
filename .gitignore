@@ -1,4 +1,5 @@
-
+*/MNIST
+*/celeba
 *.png
 *.whl
 *.pyc
