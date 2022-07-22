@@ -1,10 +1,10 @@
 
 import os
 from google.cloud import speech_v1 as speech
-from constants import PATH_HOME, PATH_OFFICE
+from constants import PATH_HOME#, PATH_OFFICE
+import pyaudio
 
-
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH_HOME if os.path.exists(PATH_HOME) else PATH_OFFICE
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH_HOME #if os.path.exists(PATH_HOME) else PATH_OFFICE
 
 
 def speech_to_text(config, audio):
