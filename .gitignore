@@ -1,4 +1,6 @@
 
+*/pyscript-main
+*.html
 *.pt
 */MNIST
 */celeba
@@ -36,3 +38,7 @@ Machine Learning With PyTorch and Scikit-Learn/aclImdb_v1.tar.gz
 Machine Learning With PyTorch and Scikit-Learn/aclImdb/README
 Machine Learning With PyTorch and Scikit-Learn/movie_data.csv
 *stopwords
+Speech To Text/wave.wav
+Speech To Text/output.wav
+Speech To Text/pyscr.html
+Speech To Text/pyscr.html
