@@ -1,6 +1,6 @@
 
 */pyscript-main
-*.html
+
 *.pt
 */MNIST
 */celeba
