@@ -88,3 +88,26 @@ footer {
   border-top: 1px solid #0d122b;
   text-align: center;
 }
+
+
+
+.input-icons i {
+position: fixed;
+left: 910px
+}
+
+.input-icons {
+width: 100%;
+margin-bottom: 8px;
+}
+
+.icon {
+padding: 10px;
+min-width: 40px;
+}
+
+.input-field {
+width: 100%;
+padding: 10px;
+text-align: center;
+}
