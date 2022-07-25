@@ -6,7 +6,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>Kalkulator</title>
 
-        <link rel="stylesheet" href="./style.css" />
+          <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+
+          <link rel="stylesheet" href="./style.css" />
 
       </head>
 
@@ -29,7 +32,7 @@
                       const stop = () => {
                         main.classList.remove("speaking");
                         recognition.stop();
-                        button.textContent = "Zacznij";
+                        button.textContent = "Nagraj";
                       };
 
                       const start = () => {
@@ -67,12 +70,16 @@
 
             </script>
 
-        <input id="rej" type="text" name="s" size="20"> Wpisz numer </input>
+        <input id="rej" type="text" name="s" size="20"> Wpisz numer
+
+        <i class="fa fa-microphone"></i>
 
         </body>
     <main>
 
-      <button id="button">Zacznij</button>
+      <button id="button">Nagraj</button>
+
+
 
       <div id="result"></div>
       <p id="message" hidden aria-hidden="true">
