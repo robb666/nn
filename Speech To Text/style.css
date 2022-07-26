@@ -68,16 +68,13 @@ button {
   background: none;
   transition: all 0.3s ease 0s;
   cursor: pointer;
-
   border-radius: 40px;
-
-
   margin-bottom: 4em;
 }
 button:hover,
 button:focus {
  
-  color: #f22f46;
+  color: #58c248;
 }
 
 a {
