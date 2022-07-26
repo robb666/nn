@@ -65,15 +65,19 @@ button {
   width: 70px;
   background: transparent;
   border: none;
-  transition: all 0.4s ease 0s;
+  background: none;
+  transition: all 0.3s ease 0s;
   cursor: pointer;
+
+  border-radius: 40px;
+
 
   margin-bottom: 4em;
 }
 button:hover,
 button:focus {
-  background: #f22f46;
-  color: #fff;
+ 
+  color: #f22f46;
 }
 
 a {
@@ -92,8 +96,8 @@ footer {
 
 .input-icons i {
 position: absolute;
-padding-left: 373px;	
-top: 180px
+padding-left: 172px;	
+top: 287px
 
 }
 
