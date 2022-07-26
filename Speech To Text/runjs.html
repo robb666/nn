@@ -1,106 +1,86 @@
 <!DOCTYPE html>
-<html>
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <title>Kalkulator</title>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Browser speech recognition</title>
 
-<!--          <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>-->
-<!--          <link href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" rel="stylesheet">-->
-          <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
-
-          <link rel="stylesheet" href="./style.css" />
-
-
-      </head>
-
-        <body>
-
-            <h1>Wypełnij formularz głosowo.</h1>
-            <center><p>Numer rejestracyjny</p></center>
-
-            <script>
-                  window.addEventListener("DOMContentLoaded", () => {
-                    const button = document.getElementById("button");
-                    const result = document.getElementById("result");
-                    const main = document.getElementsByTagName("main")[0];
-                    let listening = false;
-                    const SpeechRecognition =
-                      window.SpeechRecognition || window.webkitSpeechRecognition;
-                    if (typeof SpeechRecognition !== "undefined") {
-                      const recognition = new SpeechRecognition();
-
-                      const stop = () => {
-                        main.classList.remove("speaking");
-                        recognition.stop();
-                        button.textContent = "Nagraj";
-                      };
-
-                      const start = () => {
-                        main.classList.add("speaking");
-                        recognition.start();
-                        button.textContent = "Zakończ";
-                      };
-
-                      const onResult = event => {
-                        result.innerHTML = "";
-                        for (const res of event.results) {
-                          const text = document.createTextNode(res[0].transcript);
-                          const p = document.createElement("p");
-                          if (res.isFinal) {
-                            p.classList.add("final");
-                          }
-                          p.appendChild(text);
-                          result.appendChild(p);
-                        }
-                      };
-                      recognition.continuous = true;
-                      recognition.interimResults = true;
-                      recognition.addEventListener("result", onResult);
-                      button.addEventListener("click", event => {
-                        listening ? stop() : start();
-                        listening = !listening;
-                      });
-                    } else {
-                      button.remove();
-                      const message = document.getElementById("message");
-                      message.removeAttribute("hidden");
-                      message.setAttribute("aria-hidden", "false");
-                    }
-                  });
-
-                var mic = document.getElementById("i");
-                mic.addEventListener("click",function(){
-                mic.style.color = "#66c144";
-                });
-
-            </script>
-
-            <div style="max-width:400px;margin:auto">
-        <div class="input-icons">
-
-            <i class="fa fa-microphone fa-2x"></i>
-            <input id="rej" class="input-field" type="text" name="s" size="40" placeholder="Wpisz numer">
-
-              </div>
-          </div>
-
-        </body>
+      <link href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Browser speech recognition</h1>
+    </header>
     <main>
 
-      <button id="button">Nagraj</button>
+        <div style="max-width:400px;margin:auto">
+        <div class="input-icons">
+            <i class="fa fa-microphone fa-2x"></i>
+            <input id="rej" class="input-field" type="text" name="s" size="40" placeholder="Wpisz numer">
+        </div>
+        </div>
 
-
-
+      <button id="button">Start listening</button>
       <div id="result"></div>
       <p id="message" hidden aria-hidden="true">
         Your browser doesn't support Speech Recognition. Sorry.
       </p>
+
     </main>
+    <footer>
+      <p>Built with 🎙 by <a href="https://twitter.com/philnash">philnash</a></p>
+    </footer>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const button = document.getElementById("button");
+        const result = document.getElementById("result");
+        const main = document.getElementsByTagName("main")[0];
+        let listening = false;
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (typeof SpeechRecognition !== "undefined") {
+          const recognition = new SpeechRecognition();
 
+          const stop = () => {
+            main.classList.remove("speaking");
+            recognition.stop();
+            button.textContent = "Start listening";
+          };
+
+          const start = () => {
+            main.classList.add("speaking");
+            recognition.start();
+            button.textContent = "Stop listening";
+          };
+
+          const onResult = event => {
+            result.innerHTML = "";
+            for (const res of event.results) {
+              const text = document.createTextNode(res[0].transcript);
+              const p = document.createElement("p");
+              if (res.isFinal) {
+                p.classList.add("final");
+              }
+              p.appendChild(text);
+              result.appendChild(p);
+            }
+          };
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.addEventListener("result", onResult);
+          button.addEventListener("click", event => {
+            listening ? stop() : start();
+            listening = !listening;
+          });
+        } else {
+          button.remove();
+          const message = document.getElementById("message");
+          message.removeAttribute("hidden");
+          message.setAttribute("aria-hidden", "false");
+        }
+      });
+    </script>
+  </body>
 </html>
-
-
-
