@@ -92,8 +92,10 @@ footer {
 
 
 .input-icons i {
-position: fixed;
-left: 910px
+position: absolute;
+padding-left: 373px;	
+top: 180px
+
 }
 
 .input-icons {
@@ -109,5 +111,5 @@ min-width: 40px;
 .input-field {
 width: 100%;
 padding: 10px;
-text-align: center;
+text-align: left;
 }
