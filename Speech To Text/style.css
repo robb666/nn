@@ -91,15 +91,8 @@ input[type=checkbox] {
 }
 
 input[type=checkbox]:checked + .label {
-
   color: #f22f46;
-  /* background-image: url("checked.png"); */
 }
-
-
-#input[type=checkbox] {
-#visibility: hidden;
-#}
 
 
 
