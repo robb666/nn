@@ -66,16 +66,23 @@ button {
   background: transparent;
   border: none;
   background: none;
-  transition: all 0.3s ease 0s;
+  transition: all 0.4s ease 0s;
   cursor: pointer;
   border-radius: 40px;
   margin-bottom: 4em;
 }
-button:hover,
-button:focus {
- 
+button:hover {
   color: #58c248;
 }
+
+button:focus {
+  color: #f22f46;
+}
+
+button:visited {
+  color: #f22f46;
+}
+
 
 a {
   color: #0d122b;
