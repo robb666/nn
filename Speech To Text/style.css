@@ -58,24 +58,26 @@ main.speaking {
   color: #0d122b;
   font-style: normal;
 }
-.swich.btn label {
-  font-size: 18px;
-  font-weight: 200;
+
+
+
+
+
+
+
+
+.switch.btn label {
   padding: 1em;
   width: 70px;
   background: transparent;
   border: none;
   background: none;
-  transition: all 0.3s ease 0s;
+  transition: all 0.4s ease 0s;
   cursor: pointer;
   border-radius: 40px;
   margin-bottom: 4em;
 }
 
-
-.switch.btn label:after{
-  color: #f22f46;
-}
 
 .switch.btn label:hover {
   color: #58c248;
@@ -85,19 +87,15 @@ main.speaking {
   color: #f22f46;
 }
 
-.switch.btn .fa-microphone:after {
-  color: #ad999b;
-}
-
-.switch.btn label:before {
-  color: #58c248;
-}
 
 
 
 
-a {
-  color: #0d122b;
+
+
+
+
+a { color: #0d122b;
 }
 .error {
   color: #f22f46;
@@ -115,4 +113,5 @@ position: absolute;
 padding-left: 172px;	
 top: 287px
 }
+
 
