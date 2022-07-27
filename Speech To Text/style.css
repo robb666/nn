@@ -66,10 +66,10 @@ main.speaking {
 
 
 
+
 .switch.btn label {
   padding: 1em;
   width: 70px;
-  background: transparent;
   border: none;
   background: none;
   transition: all 0.4s ease 0s;
@@ -78,17 +78,28 @@ main.speaking {
   margin-bottom: 4em;
 }
 
+input[type=checkbox] {
+  display: none;
+}
 
 .switch.btn label:hover {
   color: #58c248;
 }
 
-.switch.btn input:checked ~ label {
+.switch.btn input[type=checkbox]:checked ~ label {
   color: #f22f46;
 }
 
+input[type=checkbox]:checked + .label {
+
+  color: #f22f46;
+  /* background-image: url("checked.png"); */
+}
 
 
+#input[type=checkbox] {
+#visibility: hidden;
+#}
 
 
 
@@ -105,6 +116,10 @@ footer {
   border-top: 1px solid #0d122b;
   text-align: center;
 }
+
+
+
+
 
 
 
