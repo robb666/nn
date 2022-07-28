@@ -94,13 +94,7 @@ input[type=checkbox]:checked + .label {
   color: #f22f46;
 }
 
-
-
-
-
-
-
-.container {
+.text-box {
   position: relative;
   border: 1px solid #f2efe2;
   width: 40vw;
