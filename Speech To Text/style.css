@@ -97,8 +97,8 @@ input[type=checkbox]:checked + .label {
 .text-box {
   position: relative;
   border: 1px solid #f2efe2;
-  width: 38vw;
-  max-width: 50vw;
+  width: 40vw;
+  max-width: 40vw;
   margin: 0 auto;
   border-radius: 0.9rem;
   background: #f2efe2;
