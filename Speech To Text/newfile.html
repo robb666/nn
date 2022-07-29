@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Browser speech recognition</title>
+    <title>Podaj numer rejestracyjny</title>
 
       <link href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="./style.css" />
@@ -22,15 +22,8 @@
               <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
         </div>
 
-        <div id="result" class="text-box" contenteditable="true"></div>
-       <input id="ddd" type="text" value="" size="40" placeholder="Wpisz numer" contenteditable="true">
-
-
-<!--Fragment kalkulatora OC-->
-<!--          <p id="result" data-tooltip='Pole "A" w dowodzie rejestracyjnym'><input id="ddd" placeholder="Nr. rej." maxlength="9"  oninput="this.className = ''" name="fname" required></p>-->
-<!--      <div style="text-align:center;line-height:16px;"></div>-->
-<!---->
-
+          <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'><input id="ddd" placeholder="Nr. rej." maxlength="9"  oninput="this.className = ''" name="fname" required></p>
+      <div style="text-align:center;line-height:16px;"></div>
 
       <p id="message" hidden aria-hidden="true">
         Your browser doesn't support Speech Recognition. Sorry.
@@ -39,9 +32,6 @@
     </main>
 
     <script>
-
-
-
       window.addEventListener("DOMContentLoaded", () => {
         const button = document.getElementById("button");
         const result = document.getElementById("ddd");
