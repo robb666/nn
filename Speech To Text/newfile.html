@@ -13,7 +13,7 @@
 
   <body>
     <header>
-      <h1>Browser speech recognition</h1>
+      <h1>Podaj numer rejestracyjny</h1>
     </header>
 
     <main>
@@ -22,7 +22,7 @@
               <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
         </div>
 
-          <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'><input id="ddd" placeholder="Nr. rej." maxlength="9"  oninput="this.className = ''" name="fname" required></p>
+          <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'><input id="ddd" placeholder="Nr. rej." maxlength="9" oninput="this.className = ''" name="fname" required></p>
       <div style="text-align:center;line-height:16px;"></div>
 
       <p id="message" hidden aria-hidden="true">
@@ -45,7 +45,6 @@
           const stop = () => {
             recognition.stop();
           };
-
           const start = () => {
             recognition.start();
           };
@@ -54,10 +53,7 @@
             result.value = "";
             for (const res of event.results) {
               const spchtext = res[0].transcript;
-
-              document.getElementById("ddd").value = result.value + spchtext;
-
-
+              document.getElementById("ddd").value = result.value + spchtext.toUpperCase();
             }
           };
           recognition.continuous = true;
