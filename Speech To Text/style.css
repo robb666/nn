@@ -68,8 +68,8 @@ main.speaking {
 
 
 .switch.btn label {
-  padding: 1em;
-  width: 70px;
+
+  width: 20px;
   border: none;
   background: none;
   transition: all 0.4s ease 0s;
@@ -126,8 +126,8 @@ footer {
 
 
 .switch.btn i {
-position: absolute;
-padding-left: 170px;
+#position: absolute;
+#padding-left: 140px;
 top: 205px
 }
 

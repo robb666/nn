@@ -25,20 +25,21 @@
 
 
           <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'>
-            <input id="ddd" placeholder="Nr. rej." maxlength="9" size="40" oninput="this.className = ''" name="fname" required></p>
+            <input id="ddd" placeholder="Nr. rej." maxlength="9"  oninput="this.className = ''"
+                   name="fname" style="text-transform: uppercase;" required></p>
       <div style="text-align:center;line-height:16px;"></div>
       <br><br>
 
 
 
-<!--      <div class="switch btn">-->
-<!--        <label><input type="checkbox" id="button2"><span class="label">-->
-<!--        <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>-->
-<!--      </div>-->
-<!--      -->
-<!--      -->
-<!--      <p data-tooltip="Kod pocztowy">-->
-<!--        <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod"></p>-->
+      <div class="switch btn">
+        <label><input type="checkbox" id="button2"><span class="label">
+        <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
+      </div>
+
+
+      <p data-tooltip="Kod pocztowy">
+        <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod"></p>
 
 
 
@@ -75,7 +76,7 @@
             result.value = "";
             for (const res of event.results) {
               const spchtext = res[0].transcript;
-              document.getElementById("ddd").value = removeSpaces(result.value + spchtext.toUpperCase());
+              document.getElementById("ddd").value = removeSpaces(result.value + spchtext);
             }
           };
           recognition.continuous = true;
