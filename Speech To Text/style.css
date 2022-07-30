@@ -33,34 +33,6 @@ main {
   padding-top: 4em;
   text-align: center;
 }
-@keyframes bg-pulse {
-  0% {
-    background-color: #fff;
-  }
-
-  50% {
-    background-color: #c7ecee;
-  }
-
-  100% {
-    backgrouond-color: #fff;
-  }
-}
-main.speaking {
-  animation: bg-pulse 1.5s alternate ease-in-out infinite;
-}
-#result {
-  color: #666;
-  font-style: italic;
-  text-align: center;
-}
-#result .final {
-  color: #0d122b;
-  font-style: normal;
-}
-
-
-
 
 
 
@@ -68,7 +40,6 @@ main.speaking {
 
 
 .switch.btn label {
-
   width: 20px;
   border: none;
   background: none;
@@ -110,7 +81,6 @@ input[type=checkbox]:checked + .label {
 
 
 
-
 a { color: #0d122b;
 }
 .error {
@@ -132,3 +102,13 @@ top: 205px
 }
 
 
+
+.switch.btn2 label {
+  width: 20px;
+  border: none;
+  background: none;
+  transition: all 0.4s ease 0s;
+  cursor: pointer;
+  border-radius: 40px;
+  margin-bottom: 4em;
+}

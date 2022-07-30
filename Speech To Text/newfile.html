@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Podaj numer rejestracyjny</title>
+    <title>Podaj dane</title>
 
       <link href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="./style.css" />
@@ -13,16 +13,16 @@
 
   <body>
     <header>
-      <h1>Podaj numer rejestracyjny</h1>
+      <h1>Podaj dane</h1>
     </header>
 
     <main>
+
+<!--    button 1-->
         <div class="switch btn">
             <label><input type="checkbox" id="button"><span class="label">
               <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
         </div>
-
-
 
           <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'>
             <input id="ddd" placeholder="Nr. rej." maxlength="9"  oninput="this.className = ''"
@@ -32,11 +32,11 @@
 
 
 
+<!--    button 2-->
       <div class="switch btn">
         <label><input type="checkbox" id="button2"><span class="label">
-        <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
+          <i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
       </div>
-
 
       <p data-tooltip="Kod pocztowy">
         <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod"></p>
@@ -49,8 +49,7 @@
       </p>
 
     </main>
-
-    <script>
+        <script>
     function removeSpaces(string) {
     return string.split(' ').join('');
     }
@@ -89,6 +88,51 @@
         } else {
           button.remove();
           const message = document.getElementById("message");
+          message.removeAttribute("hidden");
+          message.setAttribute("aria-hidden", "false");
+        }
+      });
+    </script>
+
+    <script>
+    function removeSpaces(string) {
+    return string.split(' ').join('');
+    }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const button = document.getElementById("button2");
+        const result = document.getElementById("m4wkod");
+        const main = document.getElementsByTagName("main")[0];
+        let listening = false;
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (typeof SpeechRecognition !== "undefined") {
+          const recognition = new SpeechRecognition();
+
+          const stop = () => {
+            recognition.stop();
+          };
+          const start = () => {
+            recognition.start();
+          };
+
+          const onResult = event => {
+            result.value = "";
+            for (const res of event.results) {
+              const spchtext = res[0].transcript;
+              document.getElementById("ddd").value = removeSpaces(result.value + spchtext);
+            }
+          };
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.addEventListener("result", onResult);
+          button.addEventListener("click", event => {
+            listening ? stop() : start();
+            listening = !listening;
+          });
+        } else {
+          button.remove();
+          const message = document.getElementById("message2");
           message.removeAttribute("hidden");
           message.setAttribute("aria-hidden", "false");
         }
