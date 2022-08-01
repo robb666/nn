@@ -48,23 +48,28 @@ input[type=checkbox]:checked + .label {
   color: #f22f46;
 }
 
-
-
+input[type=checkbox]:checked + span i {
+  color: #f22f46;
+}
+label{
+cursor:pointer;
+}
 
 
 
 span.inner-icon {
     position: relative;
-    left: 75px;
-    top: 6.5vh;
-    font-size: 20px;
+    left: -35px;
+    top: 4px;
+
+    font-size: 24px;
 }
 
 #span.inner-icon:checked + .label {
   color: #f22f46;
 }
 
-input[id="m4wkod"] {
+#m4wkod{
     padding: 1px 2px;
     width: 200px;
     height: 50px;
