@@ -36,19 +36,6 @@ main {
 
 
 
-
-
-
-.switch.btn label {
-  width: 20px;
-  border: none;
-  background: none;
-  transition: all 0.4s ease 0s;
-  cursor: pointer;
-  border-radius: 40px;
-  margin-bottom: 4em;
-}
-
 input[type=checkbox] {
   display: none;
 }
@@ -57,58 +44,45 @@ input[type=checkbox] {
   color: #58c248;
 }
 
-.switch.btn input[type=checkbox]:checked ~ label {
-  color: #f22f46;
-}
-
 input[type=checkbox]:checked + .label {
   color: #f22f46;
 }
 
-.text-box {
-  position: relative;
-  border: 1px solid #f2efe2;
-  width: 40vw;
-  max-width: 40vw;
-  margin: 0 auto;
-  border-radius: 0.9rem;
-  background: #f2efe2;
-  padding: 0.2rem 1rem;
-  color: #1e2440;
-  margin-top: 10vh;
+
+
+
+
+
+span.inner-icon {
+    position: relative;
+    left: 75px;
+    top: 6.5vh;
+    font-size: 20px;
+}
+
+#span.inner-icon:checked + .label {
+  color: #f22f46;
+}
+
+input[id="m4wkod"] {
+    padding: 1px 2px;
+    width: 200px;
+    height: 50px;
 }
 
 
 
 
-a { color: #0d122b;
-}
+
+
+
+
+
+
 .error {
   color: #f22f46;
   text-align: center;
 }
-footer {
-  border-top: 1px solid #0d122b;
-  text-align: center;
-}
 
 
 
-
-.switch.btn i {
-#position: absolute;
-#padding-left: 140px;
-top: 205px
-}
-
-
-
-.switch.btn2 label {
-  width: 20px;
-  border: none;
-  background: none;
-  transition: all 0.4s ease 0s;
-  cursor: pointer;
-  border-radius: 40px;
-  margin-bottom: 4em;
-}
