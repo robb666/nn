@@ -20,9 +20,7 @@
 
 
 <!--    button 1-->
-        <div class="switch btn">
-
-        </div>
+        <div class="switch btn"></div>
 
           <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'>
             <input id="ddd" placeholder="Nr. rej." type="text" maxlength="9"  oninput="this.className = ''"
@@ -35,30 +33,16 @@
 
 
 <!--    button 2-->
-      <div class="switch btn">
-<!--          <div class=container">-->
-        <label>
-
-
-        </label>
-          </div>
-<!--      </div>-->
+      <div class="switch btn"></div>
 
       <p data-tooltip="Kod pocztowy">
-        <input id="m4wkod"  type="text" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod">
+        <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod">
       <label>  <input type="checkbox" id="button2">
           <span class="inner-icon">
             <i class="fa fa-microphone" aria-hidden="true"></i></span>
 </label>
 
-
-
-
-
       </p>
-
-
-
 
       <p id="message" hidden aria-hidden="true">
         Your browser doesn't support Speech Recognition. Sorry.
@@ -66,73 +50,18 @@
 
     </main>
 
-<!--    ID = ["ddd", "m4wkod"]  -->
-        <script>
-        /*
+    <script>
     function removeSpaces(string) {
     return string.split(' ').join('');
     }
 
-      window.addEventListener("DOMContentLoaded", () => {
-        const button = document.getElementById("button");
-        const result = document.getElementById("ddd");
-       // const main = document.getElementsByTagName("main")[0];
-        let listening = false;
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (typeof SpeechRecognition !== "undefined") {
-          const recognition = new SpeechRecognition();
+    var listapol = document.querySelectorAll('input[type=text], input[type=tel]');
 
-          const stop = () => {
-            recognition.stop();
-          };
-          const start = () => {
-            recognition.start();
-          };
-
-          const onResult = event => {
-            result.value = "";
-            for (const res of event.results) {
-              const spchtext = res[0].transcript;
-              document.getElementById("ddd").value = removeSpaces(result.value + spchtext);
-            }
-          };
-          recognition.continuous = true;
-          recognition.interimResults = true;
-          recognition.addEventListener("result", onResult);
-          button.addEventListener("click", event => {
-            listening ? stop() : start();
-            listening = !listening;
-          });
-        } else {
-          button.remove();
-          const message = document.getElementById("message");
-          message.removeAttribute("hidden");
-          message.setAttribute("aria-hidden", "false");
-        }
-      });
-
-      */
-    </script>
-
-    <script>
-   function removeSpaces(string) {
-return string.split(' ').join('');
- }
-
-    // const button = document.querySelectorAll('input[type=checkbox]');
-
-        var listapol = document.querySelectorAll('input[type=text]');
-
-
-for (let i = 0; i < listapol.length; i++) {
-//alert('ds');
-
+    for (let i = 0; i < listapol.length; i++) {
 
       window.addEventListener("DOMContentLoaded", () => {
         const button = listapol[i].nextElementSibling.firstElementChild;
         const result = listapol[i];
-       // alert(button);
 
         let listening = false;
         const SpeechRecognition =
@@ -168,9 +97,7 @@ for (let i = 0; i < listapol.length; i++) {
           message.setAttribute("aria-hidden", "false");
         }
       });
-
-
-      }
+    }
 
     </script>
   </body>
