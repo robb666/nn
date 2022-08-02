@@ -68,7 +68,7 @@ span.inner-icon {
   color: #f22f46;
 }
 
-#m4wkod{
+input[id=m4wkod] {
     padding: 1px 2px;
     width: 200px;
     height: 50px;
