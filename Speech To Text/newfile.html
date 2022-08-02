@@ -25,7 +25,12 @@
           <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'>
             <input id="ddd" placeholder="Nr. rej." type="text" maxlength="9"  oninput="this.className = ''"
                    name="fname" style="text-transform: uppercase;" required>
-           <label><input type="checkbox" id="button"><span class="label"><i class="fa fa-microphone fa-2x" aria-hidden="true"></i></span></label>
+            <label>
+              <input type="checkbox" id="button">
+                <span class="label">
+                    <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
+                </span>
+            </label>
           </p>
       <div style="text-align:center;line-height:16px;"></div>
       <br><br>
@@ -35,13 +40,14 @@
 <!--    button 2-->
       <div class="switch btn"></div>
 
-      <p data-tooltip="Kod pocztowy">
-        <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod">
-      <label>  <input type="checkbox" id="button2">
-          <span class="inner-icon">
-            <i class="fa fa-microphone" aria-hidden="true"></i></span>
-</label>
-
+        <p data-tooltip="Kod pocztowy">
+            <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod">
+        <label>
+          <input type="checkbox" id="button2">
+            <span class="inner-icon">
+                <i class="fa fa-microphone" aria-hidden="true"></i>
+            </span>
+        </label>
       </p>
 
       <p id="message" hidden aria-hidden="true">
