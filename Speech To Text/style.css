@@ -2,6 +2,7 @@
   box-sizing: border-box;
 }
 html,
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -51,8 +52,9 @@ input[type=checkbox]:checked + .label {
 input[type=checkbox]:checked + span i {
   color: #f22f46;
 }
+
 label{
-cursor:pointer;
+  cursor:pointer;
 }
 
 
@@ -65,10 +67,10 @@ span.inner-icon {
 }
 
 #span.inner-icon:checked + .label {
-  color: #f22f46;
-}
+#  color: #f22f46;
+#}
 
-input[id=m4wkod] {
+#m4wkod {
     padding: 1px 2px;
     width: 200px;
     height: 50px;
@@ -81,12 +83,7 @@ input[id=m4wkod] {
 
 
 
-
-
 .error {
   color: #f22f46;
   text-align: center;
 }
-
-
-
