@@ -20,37 +20,48 @@
 
 
 <!--    button 1-->
-        <div class="switch btn">
+
 
           <p data-tooltip='Pole "A" w dowodzie rejestracyjnym'>
-            <input id="ddd" placeholder="Nr. rej." type="text" maxlength="9"  oninput="this.className = ''"
+            <input id="ddd" type="text" placeholder="Nr. rej."  maxlength="9"  oninput="this.className = ''"
                    name="fname" style="text-transform: uppercase;" required>
+
+
+
+
+
             <label>
-              <input type="checkbox" id="button">
-                <span class="label">
+              <input type="checkbox" name="mic">
+                <span class="outer-mic">
                     <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
                 </span>
             </label>
-          </p>
-        </div>
+</p>
+
+
       <div style="text-align:center;line-height:16px;"></div>
       <br><br>
 
 
 
 <!--    button 2-->
-      <div class="switch btn">
 
+
+<!--    <div class="switch btn">-->
         <p data-tooltip="Kod pocztowy">
           <input id="m4wkod"  type="tel" placeholder="Kod pocztowy" oninput="this.className = ''" name="kod">
+
+
+
           <label>
-            <input type="checkbox" id="button2">
-              <span class="inner-icon">
+            <input type="checkbox" name="mic">
+              <span class="inner-mic">
                   <i class="fa fa-microphone" aria-hidden="true"></i>
               </span>
           </label>
-        </div>
         </p>
+<!--        </div>-->
+
 
       <p id="message" hidden aria-hidden="true">
         Your browser doesn't support Speech Recognition. Sorry.

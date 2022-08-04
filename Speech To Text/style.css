@@ -37,43 +37,35 @@ main {
 
 
 
-input[type=checkbox] {
+span.outer-mic {
+  position: relative;
+  left: 26px
+}
+
+span.inner-mic {
+    position: relative;
+    left: 160px;
+    top: -36px;
+    font-size: 32px;
+}
+
+input[name=mic] + span i {
+  transition: all 0.4s ease 0s;
+  cursor: pointer;
+}
+
+
+input[name=mic] {
   display: none;
 }
 
-.switch.btn label:hover {
-  color: #58c248;
+
+input[name=mic]:hover + span i {
+  color: #4CAF50;
 }
 
-input[type=checkbox]:checked + .label {
+input[name=mic]:checked + span i {
   color: #f22f46;
-}
-
-input[type=checkbox]:checked + span i {
-  color: #f22f46;
-}
-
-label{
-  cursor:pointer;
-}
-
-
-
-span.inner-icon {
-    position: relative;
-    left: -35px;
-    top: 4px;
-    font-size: 28px;
-}
-
-#span.inner-icon:checked + .label {
-#  color: #f22f46;
-#}
-
-#m4wkod {
-    padding: 1px 2px;
-    width: 200px;
-    height: 50px;
 }
 
 
