@@ -85,7 +85,7 @@ print('Final bias, after optimization: ' + str(model.final_bias.data))
 input_doses = torch.linspace(start=0, end=1, steps=11)
 print(input_doses)
 
-output_values = model(np.array([5, 2, 1]))
+output_values = model(input_doses)
 print(output_values)
 
 sns.set(style='whitegrid')
