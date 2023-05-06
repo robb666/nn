@@ -5,7 +5,7 @@ import numpy as np
 
 
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2')
+    env = gym.make('LunarLander-v2', render_mode="rgb_array")
     print(env.action_space)
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
                   eps_end=0.01, input_dims=[8], lr=0.003)

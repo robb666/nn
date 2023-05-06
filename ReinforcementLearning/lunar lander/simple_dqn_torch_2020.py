@@ -18,6 +18,7 @@ class DeepQNetwork(nn.Module):
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.loss = nn.MSELoss()
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        print(self.device)
         self.to(self.device)
 
     def forward(self, state):
@@ -100,3 +101,9 @@ class Agent():
         self.Q_eval.optimizer.step()
 
         self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min else self.eps_min
+
+
+Q = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
+                  eps_end=0.01, input_dims=[8], lr=0.003)
+
+Q
