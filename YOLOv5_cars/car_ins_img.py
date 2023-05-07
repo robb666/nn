@@ -1,11 +1,11 @@
 import os
-import subprocess
 import glob
 import matplotlib.pyplot as plt
 import cv2
 import requests
 import random
 import numpy as np
+import zipfile
 
 
 SEED = 42
@@ -14,13 +14,17 @@ np.random.seed(SEED)
 TRAIN = True
 EPOCHS = 25
 
+
 if not os.path.exists('roboflow_unzipped'):
     print('Downloading...')
     r = requests.get('https://public.roboflow.com/ds/xKLV14HbTF?key=aJzo7msVta')
     with open('roboflow.zip', 'wb') as f:
         f.write(r.content)
-    subprocess.call(['unzip', '-o', './roboflow.zip', '-d', './roboflow_unzipped'])
-    subprocess.call(['rm', 'roboflow.zip'])
+
+    with zipfile.ZipFile('./roboflow.zip', 'r') as zip_ref:
+        zip_ref.extractall(os.getcwd() + '/roboflow_unzipped')
+    os.remove('./roboflow.zip')
+    os.chdir('./roboflow_unzipped')
 
     dirs = ['train', 'valid', 'test']
 
@@ -37,6 +41,11 @@ else:
 
 class_names = ['Ambulance', 'Bus', 'Car', 'Motorcycle', 'Truck']
 colors = np.random.uniform(0, 255, size=(len(class_names), 3))
+
+
+
+
+
 
 
 def yolo2bbox(bboxes):
