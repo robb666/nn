@@ -7,6 +7,8 @@ import random
 import numpy as np
 import zipfile
 
+import subprocess
+
 
 SEED = 42
 np.random.seed(SEED)
@@ -110,6 +112,7 @@ def plot_box(image, bboxes, labels):
 
 # Function to plot images with the bounding boxes
 def plot(image_paths, label_paths, num_samples):
+    os.chdir('./roboflow_unzipped')
     all_training_images = glob.glob(image_paths)
     all_training_labels = glob.glob(label_paths)
     all_training_images.sort()
@@ -145,13 +148,41 @@ def plot(image_paths, label_paths, num_samples):
     plt.show()
 
 
+def set_res_dir():
+    # Directory to store results
+    res_dir_count = len(glob.glob('runs/train/*'))
+    print(f'Current number of results directories: {res_dir_count}')
+    if TRAIN:
+        RES_DIR = f'results_{res_dir_count + 1}'
+        print(RES_DIR)
+    else:
+        RES_DIR = f'results_{res_dir_count}'
+    return RES_DIR
+
+
+def monitor_tensorboard():
+    import tensorflow as tf
+    # %load_ext tensorboard
+    # %tensorboard --logdir runs/train
+
+
+# Clone YOLOv5 repo
+if not os.path.exists('yolov5'):
+    subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
+
+os.chdir('yolov5')
+
+
+
 plot(image_paths='train/images/*',
      label_paths='train/labels/*',
      num_samples=4)
 
 
+monitor_tensorboard()
 
-
+RES_DIR = set_res_dir()
+if TRAIN:
 
 
 
