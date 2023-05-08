@@ -112,6 +112,7 @@ def plot_box(image, bboxes, labels):
 
 # Function to plot images with the bounding boxes
 def plot(image_paths, label_paths, num_samples):
+    print(os.getcwd())
     os.chdir('./roboflow_unzipped')
     all_training_images = glob.glob(image_paths)
     all_training_labels = glob.glob(label_paths)
@@ -162,7 +163,9 @@ def set_res_dir():
 
 def monitor_tensorboard():
     import tensorflow as tf
+    # subprocess.run('tensorboard')
     # %load_ext tensorboard
+    subprocess.run(['tensorboard', '--logdir', 'runs/train'])
     # %tensorboard --logdir runs/train
 
 
@@ -170,7 +173,7 @@ def monitor_tensorboard():
 if not os.path.exists('yolov5'):
     subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
 
-os.chdir('yolov5')
+# os.chdir('yolov5')
 
 
 
@@ -182,7 +185,7 @@ plot(image_paths='train/images/*',
 monitor_tensorboard()
 
 RES_DIR = set_res_dir()
-if TRAIN:
+# if TRAIN:
 
 
 
