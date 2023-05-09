@@ -178,9 +178,10 @@ def monitor_wandb():
 
 # Clone YOLOv5 repo
 if not os.path.exists('yolov5'):
+    print('Cloning YOLOv5...')
     subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
 
-# os.chdir('yolov5')
+
 
 
 
@@ -189,7 +190,12 @@ plot(image_paths='train/images/*',
      num_samples=4)
 
 
-monitor_wandb()
+# monitor_wandb()
+
+print(os.getcwd())
+os.chdir('..')
+print(os.getcwd())
+os.chdir('yolov5')
 
 RES_DIR = set_res_dir()
 
@@ -199,7 +205,7 @@ if TRAIN:
 
 
 
-wandb.finish()
+# wandb.finish()
 
 
 
