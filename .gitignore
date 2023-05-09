@@ -46,3 +46,4 @@ Speech To Text/compare1.py
 Speech To Text/compare2.py
 roboflow_unzipped
 YOLOv5_cars/yolov5/
+wandb/

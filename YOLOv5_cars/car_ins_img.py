@@ -3,6 +3,7 @@ import glob
 import matplotlib.pyplot as plt
 import cv2
 import requests
+import wandb
 import random
 import numpy as np
 import zipfile
@@ -161,12 +162,18 @@ def set_res_dir():
     return RES_DIR
 
 
-def monitor_tensorboard():
-    import tensorflow as tf
-    # subprocess.run('tensorboard')
-    # %load_ext tensorboard
-    subprocess.run(['tensorboard', '--logdir', 'runs/train'])
-    # %tensorboard --logdir runs/train
+def monitor_wandb():
+    wandb.init(
+        project='YOLOv5 Cars'
+    )
+
+
+# def monitor_tensorboard():
+    # import tensorflow as tf
+    # # subprocess.run('tensorboard')
+    # # %load_ext tensorboard
+    # subprocess.run(['tensorboard', '--logdir', 'runs/train'])
+    # # %tensorboard --logdir runs/train
 
 
 # Clone YOLOv5 repo
@@ -182,10 +189,17 @@ plot(image_paths='train/images/*',
      num_samples=4)
 
 
-monitor_tensorboard()
+monitor_wandb()
 
 RES_DIR = set_res_dir()
-# if TRAIN:
+
+if TRAIN:
+    subprocess.run(['train.py', '--data', '../data.yaml', '--weights', 'yolov5s.pt',
+                    '--img 640', '--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'])
+
+
+
+wandb.finish()
 
 
 
@@ -195,14 +209,32 @@ RES_DIR = set_res_dir()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+# import wandb
+# import random
+#
+# # start a new wandb run to track this script
+# wandb.init(
+#     # set the wandb project where this run will be logged
+#     project="my-awesome-project",
+#
+#     # track hyperparameters and run metadata
+#     config={
+#         "learning_rate": 0.02,
+#         "architecture": "CNN",
+#         "dataset": "CIFAR-100",
+#         "epochs": 10,
+#     }
+# )
+#
+# # simulate training
+# epochs = 10
+# offset = random.random() / 5
+# for epoch in range(2, epochs):
+#     acc = 1 - 2 ** -epoch - random.random() / epoch - offset
+#     loss = 2 ** -epoch + random.random() / epoch + offset
+#
+#     # log metrics to wandb
+#     wandb.log({"acc": acc, "loss": loss})
+#
+# # [optional] finish the wandb run, necessary in notebooks
+# wandb.finish()
