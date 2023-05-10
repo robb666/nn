@@ -228,7 +228,11 @@ def inference(RES_DIR, data_path):
                     f'--source {data_path}', f'--name {INFER_DIR}'])
     return INFER_DIR
 
-wandb.finish()
+
+def visualize(INFER_DIR):pass
+
+
+# wandb.finish()
 
 
 
