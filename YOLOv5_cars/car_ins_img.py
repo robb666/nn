@@ -198,11 +198,35 @@ print(os.getcwd())
 RES_DIR = set_results_dir()
 
 # if TRAIN:
-#     subprocess.run(['python', 'train.py', '--data', '../data.yaml', '--weights', 'yolov5s.pt',
-#                     '--img 640', '--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'],
+#     subprocess.run(['python', 'train.py', '--data', '../roboflow_unzipped/data.yaml', '--weights', 'yolov5s.pt',
+#                     '--img 640', f'--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'],
 #                    shell=True)
 
+# python train.py --data ../roboflow_unzipped/data.yaml --weights yolov5s.pt --img 640 --epochs 25 --batch-size 16 --name {RES_DIR}
 
+
+def show_valid_results(RES_DIR):
+    subprocess.run(['ls', 'runs/train/{RES_DIR}'])
+    EXP_PATH = f'runs/train/{RES_DIR}'
+    validation_pred_images = glob.glob(f'{EXP_PATH}/*_pred.jpg')
+    print(validation_pred_images)
+    for pred_image in validation_pred_images:
+        image = cv2.imread(pred_image)
+        plt.figure(figsize=(19, 16))
+        plt.imshow(image[:, :, ::-1])
+        plt.axis('off')
+        plt.show()
+
+
+def inference(RES_DIR, data_path):
+    infer_dir_count = len(glob.glob('runs/detect/*'))
+    print(f'Current number of inference detection directories: {infer_dir_count}')
+    INFER_DIR = f'inference_{infer_dir_count + 1}'
+    print(INFER_DIR)
+    # Inferecne on images.
+    subprocess.run(['python', 'detect.py', '--weights', 'runs/train/{RES_DIR}/weights/best.pt',
+                    f'--source {data_path}', f'--name {INFER_DIR}'])
+    return INFER_DIR
 
 wandb.finish()
 
