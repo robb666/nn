@@ -150,7 +150,7 @@ def plot(image_paths, label_paths, num_samples):
     plt.show()
 
 
-def set_res_dir():
+def set_results_dir():
     # Directory to store results
     res_dir_count = len(glob.glob('runs/train/*'))
     print(f'Current number of results directories: {res_dir_count}')
@@ -182,30 +182,29 @@ if not os.path.exists('yolov5'):
     subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
 
 
-
-
-
 plot(image_paths='train/images/*',
      label_paths='train/labels/*',
      num_samples=4)
 
 
-# monitor_wandb()
+monitor_wandb()
 
 print(os.getcwd())
-os.chdir('..')
+# os.chdir('..')
 print(os.getcwd())
-os.chdir('yolov5')
+# os.chdir('yolov5')
+print(os.getcwd())
 
-RES_DIR = set_res_dir()
+RES_DIR = set_results_dir()
 
-if TRAIN:
-    subprocess.run(['train.py', '--data', '../data.yaml', '--weights', 'yolov5s.pt',
-                    '--img 640', '--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'])
+# if TRAIN:
+#     subprocess.run(['python', 'train.py', '--data', '../data.yaml', '--weights', 'yolov5s.pt',
+#                     '--img 640', '--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'],
+#                    shell=True)
 
 
 
-# wandb.finish()
+wandb.finish()
 
 
 
