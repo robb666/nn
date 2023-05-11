@@ -182,9 +182,9 @@ if not os.path.exists('yolov5'):
     subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
 
 
-plot(image_paths='train/images/*',
-     label_paths='train/labels/*',
-     num_samples=4)
+# plot(image_paths='train/images/*',
+#      label_paths='train/labels/*',
+#      num_samples=4)
 
 
 monitor_wandb()
@@ -192,15 +192,15 @@ monitor_wandb()
 print(os.getcwd())
 # os.chdir('..')
 print(os.getcwd())
-# os.chdir('yolov5')
+os.chdir('yolov5')
 print(os.getcwd())
 
 RES_DIR = set_results_dir()
 
-# if TRAIN:
-#     subprocess.run(['python', 'train.py', '--data', '../roboflow_unzipped/data.yaml', '--weights', 'yolov5s.pt',
-#                     '--img 640', f'--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'],
-#                    shell=True)
+if TRAIN:
+    subprocess.run(['python', 'train.py', '--data', '../roboflow_unzipped/data.yaml', '--weights', 'yolov5s.pt',
+                    '--img 640', f'--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'],
+                   shell=True)
 
 # python train.py --data ../roboflow_unzipped/data.yaml --weights yolov5s.pt --img 640 --epochs 25 --batch-size 16 --name {RES_DIR}
 # --freeze 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
@@ -225,7 +225,7 @@ def inference(RES_DIR, data_path):
     INFER_DIR = f'inference_{infer_dir_count + 1}'
     print(INFER_DIR)
     # Inferecne on images.
-    subprocess.run(['python', 'detect.py', '--weights', 'runs/train/{RES_DIR}/weights/best.pt',
+    subprocess.run(['python', 'detect.py', '--weights', f'runs/train/{RES_DIR}/weights/best.pt',
                     f'--source {data_path}', f'--name {INFER_DIR}'])
     return INFER_DIR
 
@@ -246,7 +246,9 @@ def visualize(INFER_DIR):
         plt.show()
 
 
-# wandb.finish()
+show_valid_results(RES_DIR)
+
+wandb.finish()
 
 
 
