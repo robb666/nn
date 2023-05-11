@@ -203,6 +203,7 @@ RES_DIR = set_results_dir()
 #                    shell=True)
 
 # python train.py --data ../roboflow_unzipped/data.yaml --weights yolov5s.pt --img 640 --epochs 25 --batch-size 16 --name {RES_DIR}
+# --freeze 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 
 
 def show_valid_results(RES_DIR):
@@ -229,7 +230,20 @@ def inference(RES_DIR, data_path):
     return INFER_DIR
 
 
-def visualize(INFER_DIR):pass
+rnd_array = np.random.randint(0, 50, size=10)
+
+
+def visualize(INFER_DIR):
+    INFER_PATH = f'runs/detect/{INFER_DIR}'
+    infer_images = glob.glob(f'{INFER_PATH}/*.jpg')
+    for i, pred_image in enumerate(infer_images):
+        if i == 4:
+            break
+        image = cv2.imread(infer_images[rnd_array[i]])
+        plt.figure(figsize=(12, 9))
+        plt.imshow(image[:, :, ::-1])
+        plt.axis('off')
+        plt.show()
 
 
 # wandb.finish()
