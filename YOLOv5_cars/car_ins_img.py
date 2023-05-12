@@ -7,14 +7,14 @@ import wandb
 import random
 import numpy as np
 import zipfile
-
+import sys
 import subprocess
 
 
 SEED = 42
 np.random.seed(SEED)
 
-TRAIN = True
+TRAIN = False
 EPOCHS = 25
 
 
@@ -189,9 +189,6 @@ if not os.path.exists('yolov5'):
 
 monitor_wandb()
 
-print(os.getcwd())
-# os.chdir('..')
-print(os.getcwd())
 os.chdir('yolov5')
 print(os.getcwd())
 
@@ -199,15 +196,13 @@ RES_DIR = set_results_dir()
 
 if TRAIN:
     subprocess.run(['python', 'train.py', '--data', '../roboflow_unzipped/data.yaml', '--weights', 'yolov5s.pt',
-                    '--img 640', f'--epochs {EPOCHS}', '--batch-size 16', f'--name {RES_DIR}'],
-                   shell=True)
+                    '--img', '640', '--epochs', f'{EPOCHS}', '--batch-size', '16', '--name', f'{RES_DIR}'])
 
-# python train.py --data ../roboflow_unzipped/data.yaml --weights yolov5s.pt --img 640 --epochs 25 --batch-size 16 --name {RES_DIR}
 # --freeze 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 
 
 def show_valid_results(RES_DIR):
-    subprocess.run(['ls', 'runs/train/{RES_DIR}'])
+    subprocess.run(['ls', f'runs/train/{RES_DIR}'])
     EXP_PATH = f'runs/train/{RES_DIR}'
     validation_pred_images = glob.glob(f'{EXP_PATH}/*_pred.jpg')
     print(validation_pred_images)
@@ -224,9 +219,9 @@ def inference(RES_DIR, data_path):
     print(f'Current number of inference detection directories: {infer_dir_count}')
     INFER_DIR = f'inference_{infer_dir_count + 1}'
     print(INFER_DIR)
-    # Inferecne on images.
-    subprocess.run(['python', 'detect.py', '--weights', f'runs/train/{RES_DIR}/weights/best.pt',
-                    f'--source {data_path}', f'--name {INFER_DIR}'])
+    # Inference on images.
+    subprocess.run([sys.executable, 'detect.py', '--weights', f'runs/train/{RES_DIR}/weights/best.pt',
+                    '--source', f'{data_path}', '--name', f'{INFER_DIR}'])
     return INFER_DIR
 
 
