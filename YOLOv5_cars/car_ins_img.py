@@ -50,7 +50,7 @@ if not os.path.exists('roboflow_unzipped'):
 else:
     print('Skipping download. Folder exists.')
 
-class_names = ['Ambulance', 'Bus', 'Car', 'Motorcycle', 'Truck']
+class_names = ['Lewy przód', 'Prawy tył', 'VIN', 'Wnętrze', 'Przebieg', 'Kluczyk(i)', 'Dowód rej.']
 colors = np.random.uniform(0, 255, size=(len(class_names), 3))
 
 
