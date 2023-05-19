@@ -25,3 +25,13 @@ tensor_image = transforms.ToTensor()(resized_image)
 
 print(tensor_image.shape)
 
+save_path = Path('/home/robb/Desktop/resized.jpg')
+resized_image.save(save_path)
+
+
+
+# with open(save_path, 'wb') as f:
+#     f.write(resized_image)
+
+
+
