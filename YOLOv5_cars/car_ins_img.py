@@ -40,17 +40,18 @@ if not os.path.exists('roboflow_unzipped'):
 
     dirs = ['train', 'valid', 'test']
 
-    for i, dir_name in enumerate(dirs):
-        all_image_names = sorted(os.listdir(f"{dir_name}/images/"))
-        for j, image_name in enumerate(all_image_names):
-            if (j % 2) == 0:
-                file_name = image_name.split('.jpg')[0]
-                os.remove(f'{dir_name}/images/{image_name}')
-                os.remove(f'{dir_name}/labels/{file_name}.txt')
+    # for i, dir_name in enumerate(dirs):
+    #     all_image_names = sorted(os.listdir(f"{dir_name}/images/"))
+    #     for j, image_name in enumerate(all_image_names):
+    #         if (j % 2) == 0:
+    #             file_name = image_name.split('.jpg')[0]
+    #             os.remove(f'{dir_name}/images/{image_name}')
+    #             os.remove(f'{dir_name}/labels/{file_name}.txt')
 else:
     print('Skipping download. Folder exists.')
 
-class_names = ['Lewy przód', 'Prawy tył', 'VIN', 'Wnętrze', 'Przebieg', 'Kluczyk(i)', 'Dowód rej.']
+class_names = ['Dowód rej.', 'Kuczyk(i)', 'Lewy przód', 'Numer rej.', 'Prawy tył', 'Przebieg', 'VIN', 'Wnętrze']
+# class_names = ['Lewy przód', 'Prawy tył', 'Numer rej.', 'VIN', 'Wnętrze', 'Przebieg', 'Kluczyk(i)', 'Dowód rej.']
 colors = np.random.uniform(0, 255, size=(len(class_names), 3))
 
 

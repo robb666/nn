@@ -9,6 +9,8 @@ import time
 
 data_path = Path('/home/robb/Desktop/labels yolo')
 
+print(os.listdir(data_path))
+
 image_path = data_path / 'zegary/3847fc_mv2.webp'
 
 
