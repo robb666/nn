@@ -48,3 +48,4 @@ roboflow_unzipped
 YOLOv5_cars/yolov5/
 wandb/
 YOLOv5_cars/html_yolo_readme.html
+YOLOv5_cars/creds.py
