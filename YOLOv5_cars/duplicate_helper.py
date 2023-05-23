@@ -6,10 +6,13 @@ import subprocess
 import requests
 import re
 from creds import TOKEN
+import http.server
+import socketserver
+import uuid
+import time
 from pprint import pprint
 
 
-# share_path = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/dow rej"
 
 # response = requests.get('http://localhost:8080/api/projects/',
 response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=200',
@@ -21,8 +24,8 @@ images_range = len(response)
 imgs_uploaded = set()
 
 for idx in range(images_range):
-    strip_LS_id = re.search('([a-z0-9]+-)?(.+)', response[idx]['data']['image'])
-    imgs_uploaded.add(strip_LS_id.group(2))
+    strip_LS_id = re.search('[a-z0-9]+-(.+)', response[idx]['data']['image'])
+    imgs_uploaded.add(strip_LS_id.group(1))
 
 print(imgs_uploaded)
 
@@ -33,30 +36,44 @@ print()
 data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/dow rej")
 reg_certificates = os.listdir(data_path)
 
-print(reg_certificates)
+os.chdir(data_path)
+# subprocess.run(['python3', 'http.server', '8082'])
 
-# share_path = "/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/dow rej"
-# cd "/home/robb/Desktop/labels yolo/dow rej" && python3 -m http.server 8082
+# json_data = [
+#     {
+#         'image': 'http://0.0.0.0:8082/20180607_065400.jpg'
+#     }
+# ]
 
-subprocess.run(['python', 'duplicate_helper.py', data_path, '&&', 'python3', '-m', 'http.server', '8082'])
+# print(json_data)
 
-json_data = [
-    {
-        'image': 'http://0.0.0.0:8082/20180607_065400.jpg'
-    }
-]
+PORT = 8082
+Handler = http.server.SimpleHTTPRequestHandler
 
-print(json_data)
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print("Serving at port", PORT)
 
-# response = requests.post('http://localhost:8080/api/projects/1/import',
-#                          headers={'Authorization': TOKEN},
-#                          json=json_data).json()
+    time.sleep(2)
 
-# for img in reg_certificates:
-#     if img not in imgs_uploaded:
-#         print(img)
+    # for img in reg_certificates:
+    if '20180607_065400.jpg' not in imgs_uploaded:
+        uu_id = str(uuid.uuid1()).split('-')[0]
+        json_data = [
+            {
+                'image': f'http://0.0.0.0:8082/{uu_id}-20180607_065400.jpg'
+            }
+        ]
+
+        print(json_data)
+        requests.post('http://localhost:8080/api/projects/1/import',
+                      headers={'Authorization': TOKEN},
+                      json=json_data).json()
+        
+        time.sleep(2)
 
 
 
-# pprint(response)
+
+
+
 
