@@ -12,7 +12,7 @@ def merge(all_images, uploaded_images):
     PORT = 8082
     Handler = http.server.SimpleHTTPRequestHandler
     i = 0
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    with socketserver.TCPServer(('', PORT), Handler) as httpd:
         print('\nServing at port:', PORT)
         for img in all_images:
             if img not in uploaded_images:
