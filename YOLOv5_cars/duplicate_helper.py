@@ -22,8 +22,7 @@ def merge(all_images, uploaded_images):
                               headers={'Authorization': TOKEN},
                               json=[json_data]).json()
                 i += 1
-                break
-        info = f'Uploaded {i} image(s).' if i > 0 else 'No images uploaded'
+        info = f'Uploaded {i} image(s).' if i > 0 else 'No images uploaded.'
         print(info)
 
         try:
@@ -33,7 +32,7 @@ def merge(all_images, uploaded_images):
 
 
 def check_Label_Studio_images():
-    response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=200',
+    response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=2000',
                             headers={'Authorization': TOKEN}).json()
     images_range = len(response)
     uploaded_images = set()
