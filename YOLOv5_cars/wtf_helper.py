@@ -11,7 +11,7 @@ from creds import TOKEN
 import cv2
 
 def get_files_list():
-    response = requests.get('http://localhost:8080/api/tasks',
+    response = requests.get('http://localhost:8080/api/tasks/1',
                             headers={'Authorization': TOKEN}).json()
     return response
 
@@ -49,6 +49,8 @@ def images_vs_labels():
             print(lab)
 
     print(images_list)
+    print(len(images_list), 'images after export')
+    print(len(labels_list), 'labels after export')
 
 
 print(get_files_list())
