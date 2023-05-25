@@ -30,6 +30,7 @@ def merge(all_images, uploaded_images):
         except KeyboardInterrupt:
             httpd.shutdown()
 
+
 def check_Label_Studio_images():
     response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=2000',
                             headers={'Authorization': TOKEN}).json()
