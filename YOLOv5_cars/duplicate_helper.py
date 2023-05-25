@@ -15,7 +15,7 @@ def merge(all_images, uploaded_images):
     with socketserver.TCPServer(('', PORT), Handler) as httpd:
         print('\nServing at port:', PORT)
         for img in all_images:
-            if img not in uploaded_images:
+            if img not in uploaded_images and img not in ('Thumbs.db', 'desktop.ini'):
                 json_data = {'image': f'http://0.0.0.0:{PORT}/{img}'}
 
                 requests.post('http://localhost:8080/api/projects/1/import',
@@ -29,7 +29,6 @@ def merge(all_images, uploaded_images):
             httpd.serve_forever()
         except KeyboardInterrupt:
             httpd.shutdown()
-
 
 def check_Label_Studio_images():
     response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=2000',
