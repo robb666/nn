@@ -10,16 +10,20 @@ import requests
 from creds import TOKEN
 import cv2
 import subprocess
+import shutil
 from pprint import pprint
 
 
 def get_export():
-    path = Path('/home/robb/Desktop/output/').mkdir(parents=True, exist_ok=True)
 
-    images_dir = (path / 'images').mkdir(parents=True, exist_ok=True)
-    labels_dir = path / 'labels'
+    images_dir = Path('/home/robb/Desktop/output/images')
+    labels_dir = Path('/home/robb/Desktop/output/labels')
 
     print(images_dir.is_dir())
+
+    shutil.copy(images_dir / 'output', labels_dir)
+
+
 
     # response = requests.get('http://localhost:8080/api/projects/1/export',
     #                         timeout=10,
@@ -29,15 +33,22 @@ def get_export():
     #                             },
     #                         )
     #
+    # # pprint(response)
+    #
     # if response.status_code == 200:
     #     tasks = response.json()
     #     for task in tasks:
     #         task_id = task['id']
     #         image_url = task['data']['image']
+    #         print(image_url)
     #         annotations = task['annotations']
     #
     #         image_filename = f'{task_id}.jpg'
-    #         image_data = requests.get(image_url).content
+    #         if image_url.startswith('http'):
+    #             image_data = requests.get(image_url).content
+    #         else:
+    #             image_data = shutil.copy(image_url)
+    #
     #         with open(images_dir / image_filename, 'wb') as image_file:
     #             image_file.write(image_data)
     #
