@@ -9,12 +9,64 @@ import time
 import requests
 from creds import TOKEN
 import cv2
+import subprocess
+from pprint import pprint
 
 
-def get_files_list():
-    response = requests.get('http://localhost:8080/api/tasks/1',
-                            headers={'Authorization': TOKEN}).json()
-    return response
+def get_export():
+    path = Path('/home/robb/Desktop/output/').mkdir(parents=True, exist_ok=True)
+
+    images_dir = (path / 'images').mkdir(parents=True, exist_ok=True)
+    labels_dir = path / 'labels'
+
+    print(images_dir.is_dir())
+
+    # response = requests.get('http://localhost:8080/api/projects/1/export',
+    #                         timeout=10,
+    #                         headers={
+    #                             'Authorization': TOKEN,
+    #                             'Content-Type': 'application/json'
+    #                             },
+    #                         )
+    #
+    # if response.status_code == 200:
+    #     tasks = response.json()
+    #     for task in tasks:
+    #         task_id = task['id']
+    #         image_url = task['data']['image']
+    #         annotations = task['annotations']
+    #
+    #         image_filename = f'{task_id}.jpg'
+    #         image_data = requests.get(image_url).content
+    #         with open(images_dir / image_filename, 'wb') as image_file:
+    #             image_file.write(image_data)
+    #
+    #         label_filename = f'{task_id}.txt'
+    #         with open(labels_dir / label_filename) as label_file:
+    #             for annotation in annotations:
+    #                 label_file.write(f'{annotation}\n')
+    #
+    #     print('Task exported successfully.')
+    # else:
+    #     print(f'Error: {response.status_code} -> {response.text}')
+
+
+    # pprint(response)
+
+
+    # with open(str(output), 'wb') as f:
+    #     f.write(response.content)
+
+
+
+    # subprocess.run(['label-studio', 'export', '1', 'JSON', f'path={output}'])
+
+
+    # subprocess.run(['curl', '-X', 'GET', 'http://localhost:8080/api/projects/1/export?exportType=YOLO',
+    #                 '-H' f'Authorization: {TOKEN}', '--output', '/home/robb/Desktop/output/annotations.json'])
+
+
+    # return response
 
 
 def check_Label_Studio_images():
@@ -55,8 +107,8 @@ def images_vs_labels():
     print(len(labels_list), 'labels after export')
 
 
-# print(get_files_list())
+print(get_export())
 
 # check_Label_Studio_images()
-images_vs_labels()
+# images_vs_labels()
 
