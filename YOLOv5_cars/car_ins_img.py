@@ -14,8 +14,8 @@ import subprocess
 SEED = 42
 np.random.seed(SEED)
 
-TRAIN = False
-EPOCHS = 25
+TRAIN = True
+EPOCHS = 40
 
 
 def download_file(url, save_name):

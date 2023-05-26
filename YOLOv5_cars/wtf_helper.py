@@ -10,10 +10,12 @@ import requests
 from creds import TOKEN
 import cv2
 
+
 def get_files_list():
     response = requests.get('http://localhost:8080/api/tasks/1',
                             headers={'Authorization': TOKEN}).json()
     return response
+
 
 def check_Label_Studio_images():
     response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=2000',
@@ -53,8 +55,8 @@ def images_vs_labels():
     print(len(labels_list), 'labels after export')
 
 
-print(get_files_list())
+# print(get_files_list())
 
 # check_Label_Studio_images()
-# images_vs_labels()
+images_vs_labels()
 
