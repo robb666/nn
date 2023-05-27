@@ -52,7 +52,7 @@ def get_export():
                     image_file.write(image_data)
             else:
                 print(get_local_path(image_url))
-                shutil.copytree(get_local_path(image_url),
+                shutil.copy(get_local_path(image_url),
                                 images_dir / image_filename)
 
             label_filename = f'{task_id}.txt'
