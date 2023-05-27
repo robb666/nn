@@ -12,6 +12,8 @@ import cv2
 import subprocess
 import shutil
 from pprint import pprint
+from label_studio_tools.core.utils.io \
+    import get_local_path
 
 
 def get_export():
@@ -20,62 +22,61 @@ def get_export():
     labels_dir = Path('/home/robb/Desktop/output/labels')
 
     print(images_dir.is_dir())
+    print()
 
-    shutil.copy(images_dir / 'output', labels_dir)
+    # labels_dir.mkdir(parents=True, exist_ok=True)
+    # shutil.copy(images_dir / 'output', labels_dir)
+
+    response = requests.get('http://localhost:8080/api/projects/1/export',
+                            timeout=10,
+                            headers={
+                                'Authorization': TOKEN,
+                                'Content-Type': 'application/json'
+                                },
+                            )
+
+    # pprint(response.json())
+
+    if response.status_code == 200:
+        tasks = response.json()
+        for task in tasks:
+            task_id = task['id']
+            image_url = task['data']['image']
+            print(image_url)
+            annotations = task['annotations']
+
+            image_filename = f'{task_id}.jpg'
+            if image_url.startswith('http'):
+                image_data = requests.get(image_url).content
+                with open(images_dir / image_filename, 'wb') as image_file:
+                    image_file.write(image_data)
+            else:
+                print(get_local_path(image_url))
+                shutil.copytree(get_local_path(image_url),
+                                images_dir / image_filename)
+
+            label_filename = f'{task_id}.txt'
+            with open(labels_dir / label_filename, 'w') as label_file:
+                for annotation in annotations:
+                    label_file.write(f'{annotation}\n')
+
+        print('Task exported successfully.')
+    else:
+        print(f'Error: {response.status_code} -> {response.text}')
 
 
-
-    # response = requests.get('http://localhost:8080/api/projects/1/export',
-    #                         timeout=10,
-    #                         headers={
-    #                             'Authorization': TOKEN,
-    #                             'Content-Type': 'application/json'
-    #                             },
-    #                         )
-    #
-    # # pprint(response)
-    #
-    # if response.status_code == 200:
-    #     tasks = response.json()
-    #     for task in tasks:
-    #         task_id = task['id']
-    #         image_url = task['data']['image']
-    #         print(image_url)
-    #         annotations = task['annotations']
-    #
-    #         image_filename = f'{task_id}.jpg'
-    #         if image_url.startswith('http'):
-    #             image_data = requests.get(image_url).content
-    #         else:
-    #             image_data = shutil.copy(image_url)
-    #
-    #         with open(images_dir / image_filename, 'wb') as image_file:
-    #             image_file.write(image_data)
-    #
-    #         label_filename = f'{task_id}.txt'
-    #         with open(labels_dir / label_filename) as label_file:
-    #             for annotation in annotations:
-    #                 label_file.write(f'{annotation}\n')
-    #
-    #     print('Task exported successfully.')
-    # else:
-    #     print(f'Error: {response.status_code} -> {response.text}')
 
 
     # pprint(response)
 
-
     # with open(str(output), 'wb') as f:
     #     f.write(response.content)
-
-
 
     # subprocess.run(['label-studio', 'export', '1', 'JSON', f'path={output}'])
 
 
     # subprocess.run(['curl', '-X', 'GET', 'http://localhost:8080/api/projects/1/export?exportType=YOLO',
     #                 '-H' f'Authorization: {TOKEN}', '--output', '/home/robb/Desktop/output/annotations.json'])
-
 
     # return response
 
