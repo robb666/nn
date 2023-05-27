@@ -13,6 +13,8 @@ import cv2
 import subprocess
 import shutil
 from pprint import pprint
+from label_studio_tools.core.utils.io \
+    import get_local_path
 
 
 def get_export():
@@ -36,24 +38,23 @@ def get_export():
         tasks = response.json()
         for task in tasks:
             task_id = task['id']
-            image_url = task['data']['image']
-            print(image_url)
+            image_src = task['data']['image']
             annotations = task['annotations']
 
             image_filename = f'{task_id}.jpg'
-            if image_url.startswith('http'):
-                image_data = requests.get(image_url).content
+            if image_src.startswith('http'):
+                image_data = requests.get(image_src).content
+                with open(images_dir / image_filename, 'wb') as image_file:
+                    image_file.write(image_data)
             else:
-                image_data = shutil.copy(image_url)
-
-            with open(images_dir / image_filename, 'wb') as image_file:
-                image_file.write(image_data)
+                shutil.copy(get_local_path(image_src), images_dir / image_filename)
 
             label_filename = f'{task_id}.txt'
-            with open(labels_dir / label_filename) as label_file:
+            with open(labels_dir / label_filename, 'w') as label_file:
                 for annotation in annotations:
                     label_file.write(f'{annotation}\n')
-
-        print('Task exported successfully.')
+            print(image_src)
+            break
+        return '\nTasks exported successfully.'
     else:
-        print(f'Error: {response.status_code} -> {response.text}')
+        return f'Error: {response.status_code} -> {response.text}'

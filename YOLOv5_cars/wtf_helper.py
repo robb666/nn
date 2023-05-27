@@ -17,15 +17,8 @@ from label_studio_tools.core.utils.io \
 
 
 def get_export():
-
     images_dir = Path('/home/robb/Desktop/output/images')
     labels_dir = Path('/home/robb/Desktop/output/labels')
-
-    print(images_dir.is_dir())
-    print()
-
-    # labels_dir.mkdir(parents=True, exist_ok=True)
-    # shutil.copy(images_dir / 'output', labels_dir)
 
     response = requests.get('http://localhost:8080/api/projects/1/export',
                             timeout=10,
@@ -35,50 +28,75 @@ def get_export():
                                 },
                             )
 
-    # pprint(response.json())
+    # pprint(response.json()[0])
+    task = response.json()
+    annotation = task[0]['annotations']
+    # pprint(annotation)
+    print()
+    result = annotation[0]['result'][0]#['value']
+    # pprint(result)
 
-    if response.status_code == 200:
-        tasks = response.json()
-        for task in tasks:
-            task_id = task['id']
-            image_url = task['data']['image']
-            print(image_url)
-            annotations = task['annotations']
-
-            image_filename = f'{task_id}.jpg'
-            if image_url.startswith('http'):
-                image_data = requests.get(image_url).content
-                with open(images_dir / image_filename, 'wb') as image_file:
-                    image_file.write(image_data)
-            else:
-                print(get_local_path(image_url))
-                shutil.copy(get_local_path(image_url),
-                                images_dir / image_filename)
-
-            label_filename = f'{task_id}.txt'
-            with open(labels_dir / label_filename, 'w') as label_file:
-                for annotation in annotations:
-                    label_file.write(f'{annotation}\n')
-
-        print('Task exported successfully.')
-    else:
-        print(f'Error: {response.status_code} -> {response.text}')
+    return result
 
 
+    # if response.status_code == 200:
+    #     tasks = response.json()
+    #     for task in tasks:
+    #         task_id = task['id']
+    #         image_src = task['data']['image']
+    #         annotations = task['annotations']
+    #
+    #         image_filename = f'{task_id}.jpg'
+    #         if image_src.startswith('http'):
+    #             image_data = requests.get(image_src).content
+    #             with open(images_dir / image_filename, 'wb') as image_file:
+    #                 image_file.write(image_data)
+    #         else:
+    #             shutil.copy(get_local_path(image_src), images_dir / image_filename)
+    #
+    #         label_filename = f'{task_id}.txt'
+    #         with open(labels_dir / label_filename, 'w') as label_file:
+    #             for annotation in annotations:
+    #                 label_file.write(f'{annotation}\n')
+    #         print(image_src)
+    #         break
+    #     return '\nTasks exported successfully.'
+    # else:
+    #     return f'Error: {response.status_code} -> {response.text}'
 
 
-    # pprint(response)
 
-    # with open(str(output), 'wb') as f:
-    #     f.write(response.content)
+# convert from LS percent units to pixels
+def convert_from_ls(result):
+    if 'original_width' not in result or 'original_height' not in result:
+        return None
 
-    # subprocess.run(['label-studio', 'export', '1', 'JSON', f'path={output}'])
+    class_map = {
+        'Dowód rej.': 0,
+        'Kuczyk(i)': 1,
+        'Lewy przód': 2,
+        'Numer rej.': 3,
+        'Prawy tył': 4,
+        'Przebieg': 5,
+        'VIN': 6,
+        'Wnętrze': 7
+        }
+
+    value = result['value']
+    w, h = result['original_width'], result['original_height']
+
+    if all([key in value for key in ['x', 'y', 'width', 'height']]):
+        return w * value['x'] / 100.0, \
+               h * value['y'] / 100.0, \
+               w * value['width'] / 100.0, \
+               h * value['height'] / 100.0
+
+print()
+result = get_export()
+
+print(convert_from_ls(result))
 
 
-    # subprocess.run(['curl', '-X', 'GET', 'http://localhost:8080/api/projects/1/export?exportType=YOLO',
-    #                 '-H' f'Authorization: {TOKEN}', '--output', '/home/robb/Desktop/output/annotations.json'])
-
-    # return response
 
 
 def check_Label_Studio_images():
