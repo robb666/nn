@@ -18,61 +18,55 @@ from label_studio_tools.core.utils.io \
 
 
 def train_test_valid_split():
-    train_dir,  test_dir, valid_dir = resolve_directories()
+    train_dir, test_dir, valid_dir = resolve_directories()
 
     images_dir = Path('/home/robb/Desktop/output/images')
     labels_dir = Path('/home/robb/Desktop/output/labels')
 
-    num_images = len(os.listdir(images_dir))
-    im_test_set = round(num_images * 0.2)
-    im_valid_set = round(num_images * 0.1)
+    assert len(os.listdir(images_dir)) == len(os.listdir(labels_dir))
 
-    # print(sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)]))
-    # print(sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)]))
+    dataset_size = len(os.listdir(images_dir))
+    test_set = round(dataset_size * 0.2)
+    valid_set = round(dataset_size * 0.1)
 
     random.seed(42)
-    sorted_im_arr = sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)])[-im_test_set:]
+    sorted_im_arr = sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)])
     sorted_im_arr = [str(x) + '.jpg' for x in sorted_im_arr]
     # random.shuffle(sorted_im_arr)
-    print(sorted_im_arr)
-    for test_image in sorted_im_arr:
-        # print(test_image)
-        shutil.copy(images_dir / test_image, test_dir / 'images')
-    #     # shutil.move(test_image, test_dir / 'images')
+    # print(sorted_im_arr)
+    for test_image in sorted_im_arr[-test_set:]:
+        shutil.move(images_dir / test_image, test_dir / 'images')
 
-    # for valid_image in os.listdir(images_dir)[-im_valid_set:]:
-    #     shutil.copy(valid_image, valid_dir / 'images')
-    #
-    # for train_image in os.listdir(images_dir):
-    #     shutil.copy(train_image, train_dir / 'images')
+    sorted_im_arr = [x for x in sorted_im_arr]
+    for valid_image in sorted_im_arr[-valid_set:]:
+        shutil.move(images_dir / valid_image, valid_dir / 'images')
 
+    for train_image in sorted_im_arr[:test_set + valid_set]:
+        shutil.move(images_dir / train_image, train_dir / 'images')
 
-
-    num_labels = len(os.listdir(labels_dir))
-    labels_test_set = round(num_labels * 0.2)
-    labels_valid_set = round(num_labels * 0.1)
-
-    sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])[-labels_test_set:]
+    sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])
     sorted_label_arr = [str(x) + '.txt' for x in sorted_label_arr]
     # random.shuffle(sorted_im_arr)
-    print(sorted_label_arr)
+    # print(sorted_label_arr)
 
-    for test_label in sorted_label_arr:
-        shutil.copy(labels_dir / test_label, test_dir / 'labels')
-    #     # shutil.move(test_image, test_dir / 'images')
-    #
-    # for valid_label in os.listdir(labels_dir)[-im_valid_set:]:
-    #     shutil.copy(valid_label, valid_dir / 'labels')
-    #
-    # for train_label in os.listdir(labels_dir):
-    #     shutil.copy(train_label, train_dir / 'labels')
-    #
-    # return f'{num_images} images, {num_labels} labels.\n\n' \
-    #        f'From these:\n\n' \
-    #        f'{im_test_set} test images, {labels_test_set} test labels.\n' \
-    #        f'{im_valid_set} validation images, {labels_valid_set} validation labels.\n' \
-    #        f'Left {num_images - im_test_set - im_valid_set} images with ' \
-    #        f'{num_labels - labels_test_set - labels_valid_set} labels to train.'
+    for test_label in sorted_label_arr[-test_set:]:
+        shutil.move(labels_dir / test_label, test_dir / 'labels')
+
+    for valid_label in sorted_label_arr[-valid_set:]:
+        shutil.move(labels_dir / valid_label, valid_dir / 'labels')
+
+    for train_label in sorted_label_arr[:test_set + valid_set]:
+        shutil.move(labels_dir / train_label, train_dir / 'labels')
+
+    shutil.rmtree(images_dir)
+    shutil.rmtree(labels_dir)
+
+    return f'{dataset_size} images, {dataset_size} labels.\n\n' \
+           f'From these:\n\n' \
+           f'{test_set} test images, {test_set} test labels.\n' \
+           f'{valid_set} validation images, {valid_set} validation labels.\n' \
+           f'Left {dataset_size - test_set - valid_set} images with ' \
+           f'{dataset_size - test_set - valid_set} labels to train.'
 
 
 def resolve_directories():
