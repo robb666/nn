@@ -5,12 +5,8 @@ from PIL import Image
 import os
 import re
 from pathlib import Path
-import glob
-import time
 import requests
 from creds import TOKEN
-import cv2
-import subprocess
 import shutil
 from pprint import pprint
 from label_studio_tools.core.utils.io \
