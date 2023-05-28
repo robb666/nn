@@ -31,7 +31,7 @@ def get_export():
     # pprint(response.json()[0])
     task = response.json()
     annotation = task[0]['annotations']
-    # pprint(annotation)
+    pprint(annotation)
     print()
     result = annotation[0]['result'][0]#['value']
     # pprint(result)
@@ -63,11 +63,16 @@ def get_export():
     #     return '\nTasks exported successfully.'
     # else:
     #     return f'Error: {response.status_code} -> {response.text}'
-
-
+# def convert_ls2yolo(x, y, width, height):
+#     x_c = (x + width / 2) / 100
+#     y_c = (y + height / 2) / 100
+#     width = width / 100
+#     height = height / 100
+#
+#     return x_c, y_c, width, height
 
 # convert from LS percent units to pixels
-def convert_from_ls(result):
+def convert_ls2yolo(result):
     if 'original_width' not in result or 'original_height' not in result:
         return None
 
@@ -83,18 +88,22 @@ def convert_from_ls(result):
         }
 
     value = result['value']
-    w, h = result['original_width'], result['original_height']
 
     if all([key in value for key in ['x', 'y', 'width', 'height']]):
-        return w * value['x'] / 100.0, \
-               h * value['y'] / 100.0, \
-               w * value['width'] / 100.0, \
-               h * value['height'] / 100.0
+        return (value['x'] + value['width'] / 2) / 100.0, \
+               (value['y'] + value['height'] / 2) / 100.0, \
+               value['width'] / 100.0, \
+               value['height'] / 100.0
 
-print()
+# print()
 result = get_export()
+#
+print(convert_ls2yolo(result))
+# print(get_export())
 
-print(convert_from_ls(result))
+
+
+
 
 
 
@@ -137,7 +146,7 @@ def images_vs_labels():
     print(len(labels_list), 'labels after export')
 
 
-print(get_export())
+
 
 # check_Label_Studio_images()
 # images_vs_labels()

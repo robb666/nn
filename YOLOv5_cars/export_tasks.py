@@ -18,11 +18,8 @@ from label_studio_tools.core.utils.io \
 
 
 def get_export():
-
     images_dir = Path('/home/robb/Desktop/output/images')
     labels_dir = Path('/home/robb/Desktop/output/labels')
-
-    print(images_dir.is_dir())
 
     response = requests.get('http://localhost:8080/api/projects/1/export',
                             timeout=10,
@@ -31,8 +28,6 @@ def get_export():
                                 'Content-Type': 'application/json'
                                 },
                             )
-
-    # pprint(response)
 
     if response.status_code == 200:
         tasks = response.json()
