@@ -1,16 +1,11 @@
 #!../.env/bin/python3
-import torch
-import torchvision.transforms as transforms
-from PIL import Image
 import os
-import re
 from pathlib import Path
 import requests
-from creds import TOKEN
 import shutil
 import random
 from natsort import natsorted
-from pprint import pprint
+from creds import TOKEN
 from label_studio_tools.core.utils.io \
     import get_local_path
 
