@@ -73,8 +73,7 @@ def get_export():
 
 # convert from LS percent units to pixels
 def convert_ls2yolo(result):
-    if 'original_width' not in result or 'original_height' not in result:
-        return None
+    value = result['value']
 
     class_map = {
         'Dowód rej.': 0,
@@ -87,13 +86,17 @@ def convert_ls2yolo(result):
         'Wnętrze': 7
         }
 
-    value = result['value']
+    if 'width' not in value or 'height' not in value:
+        return None
 
+    label = class_map[value['rectanglelabels'][0]]
     if all([key in value for key in ['x', 'y', 'width', 'height']]):
-        return (value['x'] + value['width'] / 2) / 100.0, \
-               (value['y'] + value['height'] / 2) / 100.0, \
-               value['width'] / 100.0, \
-               value['height'] / 100.0
+        x_c = (value['x'] + value['width'] / 2) / 100.0
+        y_c = (value['y'] + value['height'] / 2) / 100.0
+        width = value['width'] / 100.0
+        height = value['height'] / 100.0
+
+        return f"{label} {x_c} {y_c} {width} {height}"
 
 # print()
 result = get_export()
