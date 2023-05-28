@@ -16,9 +16,49 @@ from label_studio_tools.core.utils.io \
     import get_local_path
 
 
+def train_test_valid_split():
+    directory_list = resolve_directories()
+
+    images_dir = Path('/home/robb/Desktop/output/images')
+    labels_dir = Path('/home/robb/Desktop/output/labels')
+
+    num_images = len(os.listdir(images_dir))
+    num_images = round(num_images * 0.1)
+    num_labels = len(os.listdir(labels_dir))
+    num_labels = round(num_labels * 0.1)
+
+    return f'{num_images} images, {num_labels} labels'
+
+
+def resolve_directories():
+
+    dataset_dir = Path('/home/robb/Desktop/output/dataset')
+    dataset_dir.mkdir(exist_ok=True)
+
+    train_dir = dataset_dir / 'train'
+    test_dir = dataset_dir / 'test'
+    valid_dir = dataset_dir / 'valid'
+    train_dir.mkdir(exist_ok=True)
+    test_dir.mkdir(exist_ok=True)
+    valid_dir.mkdir(exist_ok=True)
+
+    directory_list = [train_dir, test_dir, valid_dir]
+
+    for directory in directory_list:
+        images = directory / 'images'
+        labels = directory / 'labels'
+        images.mkdir(exist_ok=True)
+        labels.mkdir(exist_ok=True)
+
+    return directory_list
+
+
+
 def get_export():
     images_dir = Path('/home/robb/Desktop/output/images')
     labels_dir = Path('/home/robb/Desktop/output/labels')
+    images_dir.mkdir(exist_ok=True)
+    labels_dir.mkdir(exist_ok=True)
 
     response = requests.get('http://localhost:8080/api/projects/1/export',
                             timeout=10,
@@ -83,7 +123,10 @@ def convert_ls2yolo(result):
 # result = get_export()
 #
 # print(convert_ls2yolo(result))
-print(get_export())
+# print(get_export())
+print(train_test_valid_split())
+
+
 
 
 
