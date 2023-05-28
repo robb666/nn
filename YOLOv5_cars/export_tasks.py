@@ -31,10 +31,12 @@ def get_export():
 
     if response.status_code == 200:
         tasks = response.json()
+        tasks_num = 0
         for task in tasks:
             task_id = task['id']
             image_src = task['data']['image']
             annotations = task['annotations']
+            print(image_src)
             # images
             image_filename = f'{task_id}.jpg'
             if image_src.startswith('http'):
@@ -51,7 +53,8 @@ def get_export():
                     for result in results:
                         yolo_bbox = convert_ls2yolo(result)
                         label_file.write(f'{yolo_bbox}\n')
-        return '\nTasks exported successfully.'
+            tasks_num += 1
+        return f'\n{tasks_num} tasks exported successfully.'
     else:
         return f'Error: {response.status_code} -> {response.text}'
 
@@ -81,7 +84,6 @@ def convert_ls2yolo(result):
                f"{value['width'] / 100.0} " \
                f"{value['height'] / 100.0}" \
 
-# result = get_export()
-#
-# print(convert_ls2yolo(result))
+
+
 print(get_export())
