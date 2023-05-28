@@ -28,50 +28,33 @@ def get_export():
                                 },
                             )
 
-    # pprint(response.json()[0])
-    task = response.json()
-    annotation = task[0]['annotations']
-    pprint(annotation)
-    print()
-    result = annotation[0]['result'][0]#['value']
-    # pprint(result)
+    if response.status_code == 200:
+        tasks = response.json()
+        for task in tasks:
+            task_id = task['id']
+            image_src = task['data']['image']
+            annotations = task['annotations']
+            # images
+            image_filename = f'{task_id}.jpg'
+            if image_src.startswith('http'):
+                image_data = requests.get(image_src).content
+                with open(images_dir / image_filename, 'wb') as image_file:
+                    image_file.write(image_data)
+            else:
+                shutil.copy(get_local_path(image_src), images_dir / image_filename)
+            # labels
+            label_filename = f'{task_id}.txt'
+            with open(labels_dir / label_filename, 'w') as label_file:
+                for annotation in annotations:
+                    results = annotation['result']
+                    for result in results:
+                        yolo_bbox = convert_ls2yolo(result)
+                        label_file.write(f'{yolo_bbox}\n')
+        return '\nTasks exported successfully.'
+    else:
+        return f'Error: {response.status_code} -> {response.text}'
 
-    return result
 
-
-    # if response.status_code == 200:
-    #     tasks = response.json()
-    #     for task in tasks:
-    #         task_id = task['id']
-    #         image_src = task['data']['image']
-    #         annotations = task['annotations']
-    #
-    #         image_filename = f'{task_id}.jpg'
-    #         if image_src.startswith('http'):
-    #             image_data = requests.get(image_src).content
-    #             with open(images_dir / image_filename, 'wb') as image_file:
-    #                 image_file.write(image_data)
-    #         else:
-    #             shutil.copy(get_local_path(image_src), images_dir / image_filename)
-    #
-    #         label_filename = f'{task_id}.txt'
-    #         with open(labels_dir / label_filename, 'w') as label_file:
-    #             for annotation in annotations:
-    #                 label_file.write(f'{annotation}\n')
-    #         print(image_src)
-    #         break
-    #     return '\nTasks exported successfully.'
-    # else:
-    #     return f'Error: {response.status_code} -> {response.text}'
-# def convert_ls2yolo(x, y, width, height):
-#     x_c = (x + width / 2) / 100
-#     y_c = (y + height / 2) / 100
-#     width = width / 100
-#     height = height / 100
-#
-#     return x_c, y_c, width, height
-
-# convert from LS percent units to pixels
 def convert_ls2yolo(result):
     value = result['value']
 
@@ -84,25 +67,23 @@ def convert_ls2yolo(result):
         'Przebieg': 5,
         'VIN': 6,
         'Wnętrze': 7
-        }
+    }
 
     if 'width' not in value or 'height' not in value:
         return None
 
     label = class_map[value['rectanglelabels'][0]]
     if all([key in value for key in ['x', 'y', 'width', 'height']]):
-        x_c = (value['x'] + value['width'] / 2) / 100.0
-        y_c = (value['y'] + value['height'] / 2) / 100.0
-        width = value['width'] / 100.0
-        height = value['height'] / 100.0
+        return f"{label} " \
+               f"{(value['x'] + value['width'] / 2) / 100.0} " \
+               f"{(value['y'] + value['height'] / 2) / 100.0} " \
+               f"{value['width'] / 100.0} " \
+               f"{value['height'] / 100.0}" \
 
-        return f"{label} {x_c} {y_c} {width} {height}"
-
-# print()
-result = get_export()
+# result = get_export()
 #
-print(convert_ls2yolo(result))
-# print(get_export())
+# print(convert_ls2yolo(result))
+print(get_export())
 
 
 
