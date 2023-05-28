@@ -11,6 +11,7 @@ from creds import TOKEN
 import cv2
 import subprocess
 import shutil
+import random
 from pprint import pprint
 from label_studio_tools.core.utils.io \
     import get_local_path
@@ -25,26 +26,39 @@ def train_test_valid_split():
     num_images = len(os.listdir(images_dir))
     im_test_set = round(num_images * 0.2)
     im_valid_set = round(num_images * 0.1)
-    print(im_test_set)
-    print(im_valid_set)
-    print(os.listdir(images_dir))
 
-    # for test_image in os.listdir(images_dir)[-im_test_set:]:
-    #     shutil.copy(test_image, test_dir / 'images')
+    # print(sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)]))
+    # print(sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)]))
+
+    random.seed(42)
+    sorted_im_arr = sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)])[-im_test_set:]
+    sorted_im_arr = [str(x) + '.jpg' for x in sorted_im_arr]
+    # random.shuffle(sorted_im_arr)
+    print(sorted_im_arr)
+    for test_image in sorted_im_arr:
+        # print(test_image)
+        shutil.copy(images_dir / test_image, test_dir / 'images')
     #     # shutil.move(test_image, test_dir / 'images')
-    #
+
     # for valid_image in os.listdir(images_dir)[-im_valid_set:]:
     #     shutil.copy(valid_image, valid_dir / 'images')
     #
     # for train_image in os.listdir(images_dir):
     #     shutil.copy(train_image, train_dir / 'images')
-    #
-    # num_labels = len(os.listdir(labels_dir))
-    # labels_test_set = round(num_labels * 0.2)
-    # labels_valid_set = round(num_labels * 0.1)
-    #
-    # for test_label in os.listdir(labels_dir)[-im_test_set:]:
-    #     shutil.copy(test_label, test_dir / 'labels')
+
+
+
+    num_labels = len(os.listdir(labels_dir))
+    labels_test_set = round(num_labels * 0.2)
+    labels_valid_set = round(num_labels * 0.1)
+
+    sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])[-labels_test_set:]
+    sorted_label_arr = [str(x) + '.txt' for x in sorted_label_arr]
+    # random.shuffle(sorted_im_arr)
+    print(sorted_label_arr)
+
+    for test_label in sorted_label_arr:
+        shutil.copy(labels_dir / test_label, test_dir / 'labels')
     #     # shutil.move(test_image, test_dir / 'images')
     #
     # for valid_label in os.listdir(labels_dir)[-im_valid_set:]:
