@@ -68,7 +68,7 @@ def train_test_valid_split():
            f'{test_set} test images, {test_set} test labels.\n' \
            f'{valid_set} validation images, {valid_set} validation labels.\n' \
            f'Left {dataset_size - test_set - valid_set} images with ' \
-           f'{dataset_size - test_set - valid_set} labels to train.'
+           f'{dataset_size - test_set - valid_set} labels to train.\n'
 
 
 def resolve_directories():
@@ -114,6 +114,7 @@ def get_export():
             task_id = task['id']
             image_src = task['data']['image']
             annotations = task['annotations']
+            print(image_src)
             # images
             image_filename = f'{task_id}.jpg'
             if image_src.startswith('http'):
@@ -130,9 +131,9 @@ def get_export():
                     for result in results:
                         yolo_bbox = convert_ls2yolo(result)
                         label_file.write(f'{yolo_bbox}\n')
-        return '\nTasks exported successfully.'
+        return '\nTasks exported successfully.\n'
     else:
-        return f'Error: {response.status_code} -> {response.text}'
+        return f'\nError: {response.status_code} -> {response.text}'
 
 
 def convert_ls2yolo(result):
@@ -162,5 +163,6 @@ def convert_ls2yolo(result):
 
 
 
+print(get_export())
 print(train_test_valid_split())
-train_test_valid_split()
+
