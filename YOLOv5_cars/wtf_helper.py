@@ -12,6 +12,7 @@ import cv2
 import subprocess
 import shutil
 import random
+from natsort import natsorted
 from pprint import pprint
 from label_studio_tools.core.utils.io \
     import get_local_path
@@ -30,8 +31,9 @@ def train_test_valid_split():
     valid_set = round(dataset_size * 0.1)
 
     random.seed(42)
-    sorted_im_arr = sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)])
-    sorted_im_arr = [str(x) + '.jpg' for x in sorted_im_arr]
+    sorted_im_arr = natsorted(os.listdir(images_dir))
+    # sorted_im_arr = sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)])
+    # sorted_im_arr = [str(x) + '.jpg' for x in sorted_im_arr]
     # random.shuffle(sorted_im_arr)
     # print(sorted_im_arr)
     for test_image in sorted_im_arr[-test_set:]:
@@ -46,8 +48,9 @@ def train_test_valid_split():
         shutil.move(images_dir / train_image, train_dir / 'images')
         sorted_im_arr.remove(train_image)
 
-    sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])
-    sorted_label_arr = [str(x) + '.txt' for x in sorted_label_arr]
+    sorted_label_arr = natsorted(os.listdir(labels_dir))
+    # sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])
+    # sorted_label_arr = [str(x) + '.txt' for x in sorted_label_arr]
     # random.shuffle(sorted_im_arr)
     # print(sorted_label_arr)
 
