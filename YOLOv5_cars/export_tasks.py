@@ -16,6 +16,8 @@ from label_studio_tools.core.utils.io \
 def get_export():
     images_dir = Path('/home/robb/Desktop/output/images')
     labels_dir = Path('/home/robb/Desktop/output/labels')
+    images_dir.mkdir(exist_ok=True)
+    labels_dir.mkdir(exist_ok=True)
 
     response = requests.get('http://localhost:8080/api/projects/1/export',
                             timeout=10,
