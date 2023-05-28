@@ -29,9 +29,10 @@ def train_test_valid_split():
     labels_test_set = round(num_labels * 0.2)
     labels_valid_set = round(num_labels * 0.1)
 
-    return f'{num_images} images, {num_labels} labels\n\n' \
-           f'{im_test_set} test images, {labels_test_set} test labels\n' \
-           f'{im_valid_set} validation images, {labels_valid_set} validation labels\n' \
+    return f'{num_images} images, {num_labels} labels.\n\n' \
+           f'From those:\n\n' \
+           f'{im_test_set} test images, {labels_test_set} test labels.\n' \
+           f'{im_valid_set} validation images, {labels_valid_set} validation labels.\n' \
            f'Left {num_images - im_test_set - im_valid_set} images with ' \
            f'{num_labels - labels_test_set - labels_valid_set} labels to train.'
 
