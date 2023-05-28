@@ -17,7 +17,7 @@ from label_studio_tools.core.utils.io \
 
 
 def train_test_valid_split():
-    directory_list = resolve_directories()
+    train_dir,  test_dir, valid_dir = resolve_directories()
 
     images_dir = Path('/home/robb/Desktop/output/images')
     labels_dir = Path('/home/robb/Desktop/output/labels')
@@ -25,16 +25,40 @@ def train_test_valid_split():
     num_images = len(os.listdir(images_dir))
     im_test_set = round(num_images * 0.2)
     im_valid_set = round(num_images * 0.1)
-    num_labels = len(os.listdir(labels_dir))
-    labels_test_set = round(num_labels * 0.2)
-    labels_valid_set = round(num_labels * 0.1)
+    print(im_test_set)
+    print(im_valid_set)
+    print(os.listdir(images_dir))
 
-    return f'{num_images} images, {num_labels} labels.\n\n' \
-           f'From those:\n\n' \
-           f'{im_test_set} test images, {labels_test_set} test labels.\n' \
-           f'{im_valid_set} validation images, {labels_valid_set} validation labels.\n' \
-           f'Left {num_images - im_test_set - im_valid_set} images with ' \
-           f'{num_labels - labels_test_set - labels_valid_set} labels to train.'
+    # for test_image in os.listdir(images_dir)[-im_test_set:]:
+    #     shutil.copy(test_image, test_dir / 'images')
+    #     # shutil.move(test_image, test_dir / 'images')
+    #
+    # for valid_image in os.listdir(images_dir)[-im_valid_set:]:
+    #     shutil.copy(valid_image, valid_dir / 'images')
+    #
+    # for train_image in os.listdir(images_dir):
+    #     shutil.copy(train_image, train_dir / 'images')
+    #
+    # num_labels = len(os.listdir(labels_dir))
+    # labels_test_set = round(num_labels * 0.2)
+    # labels_valid_set = round(num_labels * 0.1)
+    #
+    # for test_label in os.listdir(labels_dir)[-im_test_set:]:
+    #     shutil.copy(test_label, test_dir / 'labels')
+    #     # shutil.move(test_image, test_dir / 'images')
+    #
+    # for valid_label in os.listdir(labels_dir)[-im_valid_set:]:
+    #     shutil.copy(valid_label, valid_dir / 'labels')
+    #
+    # for train_label in os.listdir(labels_dir):
+    #     shutil.copy(train_label, train_dir / 'labels')
+    #
+    # return f'{num_images} images, {num_labels} labels.\n\n' \
+    #        f'From these:\n\n' \
+    #        f'{im_test_set} test images, {labels_test_set} test labels.\n' \
+    #        f'{im_valid_set} validation images, {labels_valid_set} validation labels.\n' \
+    #        f'Left {num_images - im_test_set - im_valid_set} images with ' \
+    #        f'{num_labels - labels_test_set - labels_valid_set} labels to train.'
 
 
 def resolve_directories():
@@ -58,7 +82,6 @@ def resolve_directories():
         labels.mkdir(exist_ok=True)
 
     return directory_list
-
 
 
 def get_export():
