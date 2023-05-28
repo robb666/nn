@@ -36,13 +36,15 @@ def train_test_valid_split():
     # print(sorted_im_arr)
     for test_image in sorted_im_arr[-test_set:]:
         shutil.move(images_dir / test_image, test_dir / 'images')
+        sorted_im_arr.remove(test_image)
 
-    sorted_im_arr = [x for x in sorted_im_arr]
     for valid_image in sorted_im_arr[-valid_set:]:
         shutil.move(images_dir / valid_image, valid_dir / 'images')
+        sorted_im_arr.remove(valid_image)
 
-    for train_image in sorted_im_arr[:test_set + valid_set]:
+    for train_image in sorted_im_arr[:]:
         shutil.move(images_dir / train_image, train_dir / 'images')
+        sorted_im_arr.remove(train_image)
 
     sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])
     sorted_label_arr = [str(x) + '.txt' for x in sorted_label_arr]
@@ -51,12 +53,15 @@ def train_test_valid_split():
 
     for test_label in sorted_label_arr[-test_set:]:
         shutil.move(labels_dir / test_label, test_dir / 'labels')
+        sorted_label_arr.remove(test_label)
 
     for valid_label in sorted_label_arr[-valid_set:]:
         shutil.move(labels_dir / valid_label, valid_dir / 'labels')
+        sorted_label_arr.remove(valid_label)
 
-    for train_label in sorted_label_arr[:test_set + valid_set]:
+    for train_label in sorted_label_arr[:]:
         shutil.move(labels_dir / train_label, train_dir / 'labels')
+        sorted_label_arr.remove(train_label)
 
     shutil.rmtree(images_dir)
     shutil.rmtree(labels_dir)
@@ -158,12 +163,10 @@ def convert_ls2yolo(result):
                f"{value['width'] / 100.0} " \
                f"{value['height'] / 100.0}" \
 
-# result = get_export()
-#
-# print(convert_ls2yolo(result))
-# print(get_export())
-print(train_test_valid_split())
 
+
+print(train_test_valid_split())
+train_test_valid_split()
 
 
 

@@ -8,9 +8,90 @@ from pathlib import Path
 import requests
 from creds import TOKEN
 import shutil
+import random
 from pprint import pprint
 from label_studio_tools.core.utils.io \
     import get_local_path
+
+
+def train_test_valid_split():
+    train_dir, test_dir, valid_dir = resolve_directories()
+
+    images_dir = Path('/home/robb/Desktop/output/images')
+    labels_dir = Path('/home/robb/Desktop/output/labels')
+
+    assert len(os.listdir(images_dir)) == len(os.listdir(labels_dir))
+
+    dataset_size = len(os.listdir(images_dir))
+    test_set = round(dataset_size * 0.2)
+    valid_set = round(dataset_size * 0.1)
+
+    random.seed(42)
+    sorted_im_arr = sorted([int(x.rstrip('.jpg')) for x in os.listdir(images_dir)])
+    sorted_im_arr = [str(x) + '.jpg' for x in sorted_im_arr]
+    # random.shuffle(sorted_im_arr)
+    # print(sorted_im_arr)
+    for test_image in sorted_im_arr[-test_set:]:
+        shutil.move(images_dir / test_image, test_dir / 'images')
+        sorted_im_arr.remove(test_image)
+
+    for valid_image in sorted_im_arr[-valid_set:]:
+        shutil.move(images_dir / valid_image, valid_dir / 'images')
+        sorted_im_arr.remove(valid_image)
+
+    for train_image in sorted_im_arr[:]:
+        shutil.move(images_dir / train_image, train_dir / 'images')
+        sorted_im_arr.remove(train_image)
+
+    sorted_label_arr = sorted([int(x.rstrip('.txt')) for x in os.listdir(labels_dir)])
+    sorted_label_arr = [str(x) + '.txt' for x in sorted_label_arr]
+    # random.shuffle(sorted_im_arr)
+    # print(sorted_label_arr)
+
+    for test_label in sorted_label_arr[-test_set:]:
+        shutil.move(labels_dir / test_label, test_dir / 'labels')
+        sorted_label_arr.remove(test_label)
+
+    for valid_label in sorted_label_arr[-valid_set:]:
+        shutil.move(labels_dir / valid_label, valid_dir / 'labels')
+        sorted_label_arr.remove(valid_label)
+
+    for train_label in sorted_label_arr[:]:
+        shutil.move(labels_dir / train_label, train_dir / 'labels')
+        sorted_label_arr.remove(train_label)
+
+    shutil.rmtree(images_dir)
+    shutil.rmtree(labels_dir)
+
+    return f'{dataset_size} images, {dataset_size} labels.\n\n' \
+           f'From these:\n\n' \
+           f'{test_set} test images, {test_set} test labels.\n' \
+           f'{valid_set} validation images, {valid_set} validation labels.\n' \
+           f'Left {dataset_size - test_set - valid_set} images with ' \
+           f'{dataset_size - test_set - valid_set} labels to train.'
+
+
+def resolve_directories():
+
+    dataset_dir = Path('/home/robb/Desktop/output/dataset')
+    dataset_dir.mkdir(exist_ok=True)
+
+    train_dir = dataset_dir / 'train'
+    test_dir = dataset_dir / 'test'
+    valid_dir = dataset_dir / 'valid'
+    train_dir.mkdir(exist_ok=True)
+    test_dir.mkdir(exist_ok=True)
+    valid_dir.mkdir(exist_ok=True)
+
+    directory_list = [train_dir, test_dir, valid_dir]
+
+    for directory in directory_list:
+        images = directory / 'images'
+        labels = directory / 'labels'
+        images.mkdir(exist_ok=True)
+        labels.mkdir(exist_ok=True)
+
+    return directory_list
 
 
 def get_export():
@@ -29,12 +110,10 @@ def get_export():
 
     if response.status_code == 200:
         tasks = response.json()
-        tasks_num = 0
         for task in tasks:
             task_id = task['id']
             image_src = task['data']['image']
             annotations = task['annotations']
-            print(image_src)
             # images
             image_filename = f'{task_id}.jpg'
             if image_src.startswith('http'):
@@ -51,8 +130,7 @@ def get_export():
                     for result in results:
                         yolo_bbox = convert_ls2yolo(result)
                         label_file.write(f'{yolo_bbox}\n')
-            tasks_num += 1
-        return f'\n{tasks_num} tasks exported successfully.'
+        return '\nTasks exported successfully.'
     else:
         return f'Error: {response.status_code} -> {response.text}'
 
@@ -84,4 +162,5 @@ def convert_ls2yolo(result):
 
 
 
-print(get_export())
+print(train_test_valid_split())
+train_test_valid_split()
