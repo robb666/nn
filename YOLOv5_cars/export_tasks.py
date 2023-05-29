@@ -27,30 +27,30 @@ def train_test_valid_split():
     sorted_im_arr = natsorted(os.listdir(images_dir))
     # random.shuffle(sorted_im_arr)
     for test_image in sorted_im_arr[-test_set:]:
-        shutil.move(images_dir / test_image, test_dir / 'images')
+        shutil.copy(images_dir / test_image, test_dir / 'images')
         sorted_im_arr.remove(test_image)
 
     for valid_image in sorted_im_arr[-valid_set:]:
-        shutil.move(images_dir / valid_image, valid_dir / 'images')
+        shutil.copy(images_dir / valid_image, valid_dir / 'images')
         sorted_im_arr.remove(valid_image)
 
     for train_image in sorted_im_arr[:]:
-        shutil.move(images_dir / train_image, train_dir / 'images')
+        shutil.copy(images_dir / train_image, train_dir / 'images')
         sorted_im_arr.remove(train_image)
 
     # labels
     sorted_label_arr = natsorted(os.listdir(labels_dir))
     # random.shuffle(sorted_im_arr)
     for test_label in sorted_label_arr[-test_set:]:
-        shutil.move(labels_dir / test_label, test_dir / 'labels')
+        shutil.copy(labels_dir / test_label, test_dir / 'labels')
         sorted_label_arr.remove(test_label)
 
     for valid_label in sorted_label_arr[-valid_set:]:
-        shutil.move(labels_dir / valid_label, valid_dir / 'labels')
+        shutil.copy(labels_dir / valid_label, valid_dir / 'labels')
         sorted_label_arr.remove(valid_label)
 
     for train_label in sorted_label_arr[:]:
-        shutil.move(labels_dir / train_label, train_dir / 'labels')
+        shutil.copy(labels_dir / train_label, train_dir / 'labels')
         sorted_label_arr.remove(train_label)
 
     shutil.rmtree(images_dir)

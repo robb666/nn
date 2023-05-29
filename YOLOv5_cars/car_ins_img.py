@@ -26,7 +26,7 @@ def download_file(url, save_name):
     else:
         print('File already present, skipping download...')
 
-
+### Ten fragment usunąć!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 if not os.path.exists('roboflow_unzipped'):
     print('Downloading...')
     r = requests.get('https://public.roboflow.com/ds/xKLV14HbTF?key=aJzo7msVta')
