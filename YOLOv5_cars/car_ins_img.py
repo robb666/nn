@@ -27,18 +27,18 @@ def download_file(url, save_name):
         print('File already present, skipping download...')
 
 ### Ten fragment usunąć!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-if not os.path.exists('roboflow_unzipped'):
-    print('Downloading...')
-    r = requests.get('https://public.roboflow.com/ds/xKLV14HbTF?key=aJzo7msVta')
-    with open('roboflow.zip', 'wb') as f:
-        f.write(r.content)
-
-    with zipfile.ZipFile('./roboflow.zip', 'r') as zip_ref:
-        zip_ref.extractall(os.getcwd() + '/roboflow_unzipped')
-    os.remove('./roboflow.zip')
-    os.chdir('./roboflow_unzipped')
-
-    dirs = ['train', 'valid', 'test']
+# if not os.path.exists('roboflow_unzipped'):
+#     print('Downloading...')
+#     r = requests.get('https://public.roboflow.com/ds/xKLV14HbTF?key=aJzo7msVta')
+#     with open('roboflow.zip', 'wb') as f:
+#         f.write(r.content)
+#
+#     with zipfile.ZipFile('./roboflow.zip', 'r') as zip_ref:
+#         zip_ref.extractall(os.getcwd() + '/roboflow_unzipped')
+#     os.remove('./roboflow.zip')
+#     os.chdir('./roboflow_unzipped')
+#
+#     dirs = ['train', 'valid', 'test']
 
     # for i, dir_name in enumerate(dirs):
     #     all_image_names = sorted(os.listdir(f"{dir_name}/images/"))
@@ -47,8 +47,8 @@ if not os.path.exists('roboflow_unzipped'):
     #             file_name = image_name.split('.jpg')[0]
     #             os.remove(f'{dir_name}/images/{image_name}')
     #             os.remove(f'{dir_name}/labels/{file_name}.txt')
-else:
-    print('Skipping download. Folder exists.')
+# else:
+    # print('Skipping download. Folder exists.')
 
 class_names = ['Dowód rej.', 'Kuczyk(i)', 'Lewy przód', 'Numer rej.', 'Prawy tył', 'Przebieg', 'VIN', 'Wnętrze']
 # class_names = ['Lewy przód', 'Prawy tył', 'Numer rej.', 'VIN', 'Wnętrze', 'Przebieg', 'Kluczyk(i)', 'Dowód rej.']
@@ -115,7 +115,7 @@ def plot_box(image, bboxes, labels):
 # Function to plot images with the bounding boxes
 def plot(image_paths, label_paths, num_samples):
     print(os.getcwd())
-    os.chdir('./roboflow_unzipped')
+    os.chdir('./dataset')
     all_training_images = glob.glob(image_paths)
     all_training_labels = glob.glob(label_paths)
     all_training_images.sort()
@@ -196,7 +196,7 @@ print(os.getcwd())
 RES_DIR = set_results_dir()
 
 if TRAIN:
-    subprocess.run(['python', 'train.py', '--data', '../roboflow_unzipped/data.yaml', '--weights', 'yolov5s.pt',
+    subprocess.run(['python', 'train.py', '--data', '../dataset/data.yaml', '--weights', 'yolov5s.pt',
                     '--img', '640', '--epochs', f'{EPOCHS}', '--batch-size', '16', '--name', f'{RES_DIR}'])
 
 # --freeze 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14

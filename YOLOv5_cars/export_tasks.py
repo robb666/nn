@@ -13,8 +13,8 @@ from label_studio_tools.core.utils.io \
 def train_test_valid_split():
     train_dir, test_dir, valid_dir = resolve_directories()
 
-    images_dir = Path('/home/robb/Desktop/output/images')
-    labels_dir = Path('/home/robb/Desktop/output/labels')
+    images_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/images')
+    labels_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/labels')
 
     assert len(os.listdir(images_dir)) == len(os.listdir(labels_dir))
 
@@ -66,7 +66,7 @@ def train_test_valid_split():
 
 def resolve_directories():
 
-    dataset_dir = Path('/home/robb/Desktop/output/dataset')
+    dataset_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset')
     dataset_dir.mkdir(exist_ok=True)
 
     train_dir = dataset_dir / 'train'
@@ -88,8 +88,8 @@ def resolve_directories():
 
 
 def get_export():
-    images_dir = Path('/home/robb/Desktop/output/images')
-    labels_dir = Path('/home/robb/Desktop/output/labels')
+    images_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/images')
+    labels_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/labels')
     images_dir.mkdir(exist_ok=True)
     labels_dir.mkdir(exist_ok=True)
 
