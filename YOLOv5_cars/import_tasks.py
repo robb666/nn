@@ -43,7 +43,7 @@ def check_Label_Studio_images():
 
 
 def check_local_dir():
-    data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/dow rej")
+    data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/kluczyki")
     os.chdir(data_path)
     all_certificates = os.listdir(data_path)
 

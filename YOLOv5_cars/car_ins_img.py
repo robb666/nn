@@ -159,15 +159,15 @@ if not os.path.exists('yolov5'):
     subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
 
 
-plot(image_paths='train/images/*',
-     label_paths='train/labels/*',
-     num_samples=4)
+# plot(image_paths='train/images/*',
+#      label_paths='train/labels/*',
+#      num_samples=4)
 
 
 # monitor_wandb()
 
-os.chdir('yolov5')
 print(os.getcwd())
+os.chdir('./yolov5')
 
 RES_DIR = set_results_dir()
 
@@ -221,7 +221,7 @@ def visualize(INFER_DIR):
 # show_valid_results(RES_DIR)
 
 
-inference(RES_DIR, data_path)
+inference(RES_DIR, '/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/valid/check')
 
 # wandb.finish()
 

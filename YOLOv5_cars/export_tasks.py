@@ -1,9 +1,9 @@
 #!../.env/bin/python3
 import os
-from pathlib import Path
 import requests
 import shutil
 import random
+from pathlib import Path
 from natsort import natsorted
 from creds import TOKEN
 from label_studio_tools.core.utils.io \
