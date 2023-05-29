@@ -14,7 +14,7 @@ import subprocess
 SEED = 42
 np.random.seed(SEED)
 
-TRAIN = True
+TRAIN = False
 EPOCHS = 40
 
 
@@ -26,32 +26,8 @@ def download_file(url, save_name):
     else:
         print('File already present, skipping download...')
 
-### Ten fragment usunąć!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# if not os.path.exists('roboflow_unzipped'):
-#     print('Downloading...')
-#     r = requests.get('https://public.roboflow.com/ds/xKLV14HbTF?key=aJzo7msVta')
-#     with open('roboflow.zip', 'wb') as f:
-#         f.write(r.content)
-#
-#     with zipfile.ZipFile('./roboflow.zip', 'r') as zip_ref:
-#         zip_ref.extractall(os.getcwd() + '/roboflow_unzipped')
-#     os.remove('./roboflow.zip')
-#     os.chdir('./roboflow_unzipped')
-#
-#     dirs = ['train', 'valid', 'test']
-
-    # for i, dir_name in enumerate(dirs):
-    #     all_image_names = sorted(os.listdir(f"{dir_name}/images/"))
-    #     for j, image_name in enumerate(all_image_names):
-    #         if (j % 2) == 0:
-    #             file_name = image_name.split('.jpg')[0]
-    #             os.remove(f'{dir_name}/images/{image_name}')
-    #             os.remove(f'{dir_name}/labels/{file_name}.txt')
-# else:
-    # print('Skipping download. Folder exists.')
 
 class_names = ['Dowód rej.', 'Kuczyk(i)', 'Lewy przód', 'Numer rej.', 'Prawy tył', 'Przebieg', 'VIN', 'Wnętrze']
-# class_names = ['Lewy przód', 'Prawy tył', 'Numer rej.', 'VIN', 'Wnętrze', 'Przebieg', 'Kluczyk(i)', 'Dowód rej.']
 colors = np.random.uniform(0, 255, size=(len(class_names), 3))
 
 
@@ -163,10 +139,10 @@ def set_results_dir():
     return RES_DIR
 
 
-def monitor_wandb():
-    wandb.init(
-        project='YOLOv5 Cars'
-    )
+# def monitor_wandb():
+#     wandb.init(
+#         project='YOLOv5 Cars'
+#     )
 
 
 # def monitor_tensorboard():
@@ -183,12 +159,12 @@ if not os.path.exists('yolov5'):
     subprocess.run(['git', 'clone', 'https://github.com/ultralytics/yolov5.git'])
 
 
-# plot(image_paths='train/images/*',
-#      label_paths='train/labels/*',
-#      num_samples=4)
+plot(image_paths='train/images/*',
+     label_paths='train/labels/*',
+     num_samples=4)
 
 
-monitor_wandb()
+# monitor_wandb()
 
 os.chdir('yolov5')
 print(os.getcwd())
@@ -242,9 +218,12 @@ def visualize(INFER_DIR):
         plt.show()
 
 
-show_valid_results(RES_DIR)
+# show_valid_results(RES_DIR)
 
-wandb.finish()
+
+inference(RES_DIR, data_path)
+
+# wandb.finish()
 
 
 
