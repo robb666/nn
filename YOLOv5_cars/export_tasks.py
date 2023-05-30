@@ -9,7 +9,7 @@ from creds import TOKEN
 from label_studio_tools.core.utils.io \
     import get_local_path
 
-import time
+
 def train_test_valid_split():
     train_dir, test_dir, valid_dir = resolve_directories()
 
@@ -22,11 +22,12 @@ def train_test_valid_split():
     test_set = round(dataset_size * 0.2)
     valid_set = round(dataset_size * 0.1)
 
-    random.seed(42)
+
 
     # images
     sorted_im_arr = natsorted(os.listdir(images_dir))
-    random.shuffle(sorted_im_arr)
+    random.seed(42)
+    # random.shuffle(sorted_im_arr)
     for test_image in sorted_im_arr[-test_set:]:
         shutil.copy(images_dir / test_image, test_dir / 'images')
         sorted_im_arr.remove(test_image)
@@ -40,8 +41,10 @@ def train_test_valid_split():
         sorted_im_arr.remove(train_image)
 
     # labels
+
     sorted_label_arr = natsorted(os.listdir(labels_dir))
-    random.shuffle(sorted_label_arr)
+    random.seed(42)
+    # random.shuffle(sorted_label_arr)
     for test_label in sorted_label_arr[-test_set:]:
         shutil.copy(labels_dir / test_label, test_dir / 'labels')
         sorted_label_arr.remove(test_label)
@@ -80,7 +83,6 @@ def resolve_directories():
     directory_list = [train_dir, test_dir, valid_dir]
 
     for directory in directory_list:
-        time.sleep(2)
         images = directory / 'images'
         labels = directory / 'labels'
         images.mkdir(exist_ok=True)

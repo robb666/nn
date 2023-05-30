@@ -50,3 +50,5 @@ wandb/
 YOLOv5_cars/html_yolo_readme.html
 YOLOv5_cars/creds.py
 YOLOv5_cars/dataset/
+YOLOv5_cars/images/
+YOLOv5_cars/labels/
