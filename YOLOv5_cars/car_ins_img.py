@@ -139,10 +139,10 @@ def set_results_dir():
     return RES_DIR
 
 
-# def monitor_wandb():
-#     wandb.init(
-#         project='YOLOv5 Cars'
-#     )
+def monitor_wandb():
+    wandb.init(
+        project='YOLOv5 Cars'
+    )
 
 
 # def monitor_tensorboard():
@@ -218,12 +218,12 @@ def visualize(INFER_DIR):
         plt.show()
 
 
-# show_valid_results(RES_DIR)
+show_valid_results(RES_DIR)
 
 
-inference(RES_DIR, '/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/valid/check')
+# inference(RES_DIR, '/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset/valid/check')
 
-# wandb.finish()
+wandb.finish()
 
 
 
