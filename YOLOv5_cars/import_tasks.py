@@ -1,5 +1,6 @@
 #!../.env/bin/python3
 import os
+import socket
 from pathlib import Path
 import requests
 import re
@@ -8,12 +9,19 @@ import socketserver
 from creds import TOKEN
 
 
+class HandleAll(http.server.SimpleHTTPRequestHandler):
+    data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo")
+    os.chdir(data_path)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory='all', **kwargs)
+
+
 def merge(all_images, uploaded_images):
     PORT = 8082
-    Handler = http.server.SimpleHTTPRequestHandler
+    Handler = HandleAll
 
     i = 0
-    print('top', os.getcwd())
     with socketserver.TCPServer(('', PORT), Handler) as httpd:
         print('\nServing at port:', PORT)
         for img in all_images:
@@ -45,16 +53,13 @@ def check_Label_Studio_images():
 
 
 def check_local_dir():
-    # data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/dow rej")
     data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo")
-    # os.chdir(data_path)
-    all_certificates = os.listdir(data_path / 'dow rej') + os.listdir(data_path / 'kluczyki')
+    all_images = os.listdir(data_path / 'all')
 
-    return all_certificates
+    return all_images
 
 
-all_certificates = check_local_dir()
+all_images = check_local_dir()
 imgs_uploaded = check_Label_Studio_images()
-# print(len(all_certificates))
 
-merge(all_certificates, imgs_uploaded)
+merge(all_images, imgs_uploaded)

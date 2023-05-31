@@ -22,12 +22,10 @@ def train_test_valid_split():
     test_set = round(dataset_size * 0.2)
     valid_set = round(dataset_size * 0.1)
 
-
-
     # images
     sorted_im_arr = natsorted(os.listdir(images_dir))
     random.seed(42)
-    # random.shuffle(sorted_im_arr)
+    random.shuffle(sorted_im_arr)
     for test_image in sorted_im_arr[-test_set:]:
         shutil.copy(images_dir / test_image, test_dir / 'images')
         sorted_im_arr.remove(test_image)
@@ -41,10 +39,9 @@ def train_test_valid_split():
         sorted_im_arr.remove(train_image)
 
     # labels
-
     sorted_label_arr = natsorted(os.listdir(labels_dir))
     random.seed(42)
-    # random.shuffle(sorted_label_arr)
+    random.shuffle(sorted_label_arr)
     for test_label in sorted_label_arr[-test_set:]:
         shutil.copy(labels_dir / test_label, test_dir / 'labels')
         sorted_label_arr.remove(test_label)
