@@ -15,7 +15,7 @@ SEED = 42
 np.random.seed(SEED)
 
 TRAIN = False
-EPOCHS = 40
+EPOCHS = 50
 
 
 def download_file(url, save_name):
