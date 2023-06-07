@@ -4,23 +4,17 @@ import time
 import numpy as np
 import cv2
 from pathlib import Path
+import sys
+import subprocess
+from yolov5.detect import run
 
 
-model = torch.hub.load('./yolov5', 'custom', path='yolov5/runs/train/results_11/weights/best.pt', source='local')
-
-cap = cv2.VideoCapture(0)
-
-while cap.isOpened():
-    return_, frame = cap.read()
-
-    results = model(frame)
-
-    cv2.imshow('YOLO', np.squeeze(results.render()))
-    # cv2.imshow('YOLO', frame)
-
-    if cv2.waitKey(10) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+run(weights='yolov5/runs/train/results_14/weights/best.pt',
+    source='0',
+    conf_thres=0.50,
+    device='cpu',
+    iou_thres=0.95,
+    max_det=4,
+    save_crop=True,
+    )
 

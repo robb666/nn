@@ -19,8 +19,8 @@ def train_test_valid_split():
     assert len(os.listdir(images_dir)) == len(os.listdir(labels_dir))
 
     dataset_size = len(os.listdir(images_dir))
-    test_set = round(dataset_size * 0.2)
-    valid_set = round(dataset_size * 0.1)
+    test_set = round(dataset_size * 0.05)
+    valid_set = round(dataset_size * 0.05)
 
     # images
     sorted_im_arr = natsorted(os.listdir(images_dir))
