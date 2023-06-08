@@ -1,26 +1,37 @@
 #!../.env/bin/python3
 import argparse
 import os
-from pathlib import Path
 import requests
 import http.server
+from pathlib import Path
 import socketserver
 import re
 from creds import TOKEN
 
 
+# class HandleAll(http.server.SimpleHTTPRequestHandler):
+#     data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/all")
+#     os.chdir(data_path)
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+
 class HandleAll(http.server.SimpleHTTPRequestHandler):
     def __init__(self, PATH, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.path = PATH
         os.chdir(self.path)
+        super().__init__(*args, **kwargs)
+        print(os.getcwd())
+
 
 
 def merge(PATH, PORT, TOKEN):
     all_images = check_local_dir(PATH)
-    uploaded_images = check_Label_Studio_images(TOKEN)
+    uploaded_images = check_Label_Studio_images(PORT, TOKEN)
 
     Handler = HandleAll
+    # Handler(PATH)
 
     i = 0
     with socketserver.TCPServer(('', PORT), Handler) as httpd:
@@ -42,14 +53,18 @@ def merge(PATH, PORT, TOKEN):
             httpd.shutdown()
 
 
-def check_Label_Studio_images(TOKEN):
+def check_Label_Studio_images(PORT, TOKEN):
+    """
+    Checks if any objects were previously uploaded either from LS or via API. Use one PORT from the beginning.
+    """
     response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=2000',
                             headers={'Authorization': TOKEN if 'Token' in TOKEN else f'Token {TOKEN}'}).json()
     images_range = len(response)
     uploaded_images = set()
     for idx in range(images_range):
-        strip_LS_id = re.search('(upload/1/[a-z0-9]+-|:8082/)(.+)', response[idx]['data']['image'])
-        uploaded_images.add(strip_LS_id.group(2))
+        strip_LS_id = re.search(f'(upload/1/[a-z0-9]+-|:{PORT}/)(.+)', response[idx]['data']['image'])
+        if strip_LS_id:
+            uploaded_images.add(strip_LS_id.group(2))
     return uploaded_images
 
 

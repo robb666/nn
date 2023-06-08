@@ -14,8 +14,8 @@ import subprocess
 SEED = 42
 np.random.seed(SEED)
 
-TRAIN = False
-EPOCHS = 70
+TRAIN = True
+EPOCHS = 300
 
 
 def download_file(url, save_name):
@@ -172,12 +172,12 @@ os.chdir('./yolov5')
 RES_DIR = set_results_dir()
 
 if TRAIN:
-    # subprocess.run(['python', 'train.py', '--data', '../dataset/data.yaml', '--weights', 'yolov5s.pt',
-    #                 '--img', '640', '--epochs', f'{EPOCHS}', '--batch-size', '16', '--name', f'{RES_DIR}'])
-
-    ## resume train
-    subprocess.run(['python', 'train.py', '--data', '../dataset/data.yaml', '--weights', 'runs/train/results_12/weights/last.pt',
+    subprocess.run(['python', 'train.py', '--data', '../dataset/data.yaml', '--weights', 'yolov5s.pt',
                     '--img', '640', '--epochs', f'{EPOCHS}', '--batch-size', '16', '--name', f'{RES_DIR}'])
+
+    # ## resume train
+    # subprocess.run(['python', 'train.py', '--data', '../dataset/data.yaml', '--weights', 'runs/train/results_12/weights/last.pt',
+    #                 '--img', '640', '--epochs', f'{EPOCHS}', '--batch-size', '16', '--name', f'{RES_DIR}'])
 
 
 # --freeze 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14

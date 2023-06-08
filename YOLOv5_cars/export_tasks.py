@@ -15,7 +15,7 @@ FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]
 
 
-def train_test_valid_split(TOKEN, test, valid):
+def train_test_valid_split(SEED, TOKEN, test, valid):
     get_export(TOKEN)
     train_dir, test_dir, valid_dir = resolve_directories()
 
@@ -30,7 +30,7 @@ def train_test_valid_split(TOKEN, test, valid):
 
     # images
     sorted_im_arr = natsorted(os.listdir(images_dir))
-    random.seed(42)
+    random.seed(SEED)
     random.shuffle(sorted_im_arr)
     for test_image in sorted_im_arr[-test_set:]:
         shutil.copy(images_dir / test_image, test_dir / 'images')
@@ -46,7 +46,7 @@ def train_test_valid_split(TOKEN, test, valid):
 
     # labels
     sorted_label_arr = natsorted(os.listdir(labels_dir))
-    random.seed(42)
+    random.seed(SEED)
     random.shuffle(sorted_label_arr)
     for test_label in sorted_label_arr[-test_set:]:
         shutil.copy(labels_dir / test_label, test_dir / 'labels')
@@ -169,6 +169,7 @@ def parse_options():
     parser.add_argument('-t', '--test', type=int, default=20, help='(int) percent of annotations for test')
     parser.add_argument('-v', '--valid', type=int, default=10, help='(int) percent of annotations for validation')
     parser.add_argument('-token', '--TOKEN', type=str, default=TOKEN, help='only: a-z0-9')
+    parser.add_argument('-seed', '--SEED', type=int, default=42, help='random seed (default - 42)')
     options = parser.parse_args()
     return options
 
