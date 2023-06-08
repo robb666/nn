@@ -10,7 +10,6 @@ from creds import TOKEN
 
 
 class HandleAll(http.server.SimpleHTTPRequestHandler):
-
     def __init__(self, PATH, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.path = PATH
