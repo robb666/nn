@@ -1,4 +1,5 @@
 #!../.env/bin/python3
+import argparse
 import os
 from pathlib import Path
 import requests
@@ -9,15 +10,17 @@ from creds import TOKEN
 
 
 class HandleAll(http.server.SimpleHTTPRequestHandler):
-    data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo")
-    os.chdir(data_path)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory='all', **kwargs)
+    def __init__(self, PATH, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.path = PATH
+        os.chdir(self.path)
 
 
-def merge(all_images, uploaded_images):
-    PORT = 8082
+def merge(PATH, PORT, TOKEN):
+    all_images = check_local_dir(PATH)
+    uploaded_images = check_Label_Studio_images(TOKEN)
+
     Handler = HandleAll
 
     i = 0
@@ -28,7 +31,7 @@ def merge(all_images, uploaded_images):
                 json_data = {'image': f'http://0.0.0.0:{PORT}/{img}'}
 
                 requests.post('http://localhost:8080/api/projects/1/import',
-                              headers={'Authorization': TOKEN},
+                              headers={'Authorization': TOKEN if 'Token' in TOKEN else f'Token {TOKEN}'},
                               json=[json_data]).json()
                 i += 1
         info = f'Uploaded {i} image(s).' if i > 0 else 'No images uploaded.'
@@ -40,9 +43,9 @@ def merge(all_images, uploaded_images):
             httpd.shutdown()
 
 
-def check_Label_Studio_images():
+def check_Label_Studio_images(TOKEN):
     response = requests.get('http://localhost:8080/api/projects/1/tasks/?page=1&page_size=2000',
-                            headers={'Authorization': TOKEN}).json()
+                            headers={'Authorization': TOKEN if 'Token' in TOKEN else f'Token {TOKEN}'}).json()
     images_range = len(response)
     uploaded_images = set()
     for idx in range(images_range):
@@ -51,14 +54,24 @@ def check_Label_Studio_images():
     return uploaded_images
 
 
-def check_local_dir():
-    data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo")
-    all_images = os.listdir(data_path / 'all')
+def check_local_dir(PATH):
+    data_path = Path(PATH)
+    all_images = os.listdir(data_path)
 
     return all_images
 
 
-all_images = check_local_dir()
-imgs_uploaded = check_Label_Studio_images()
+def parse_options():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-path', '--PATH', type=str,
+                        default="/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/all",
+                        help='path to the directory containing dataset')
+    parser.add_argument('-port', '--PORT', type=int, default=8082, help='specified port (default - 8082)')
+    parser.add_argument('-token', '--TOKEN', type=str, default=TOKEN, help='only: a-z0-9')
+    options = parser.parse_args()
+    return options
 
-merge(all_images, imgs_uploaded)
+
+if __name__ == '__main__':
+    args = parse_options()
+    print(merge(**vars(args)))
