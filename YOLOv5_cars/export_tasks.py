@@ -1,4 +1,5 @@
 #!../.env/bin/python3
+import argparse
 import os
 import requests
 import shutil
@@ -10,17 +11,22 @@ from label_studio_tools.core.utils.io \
     import get_local_path
 
 
-def train_test_valid_split():
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0]
+
+
+def train_test_valid_split(TOKEN, test, valid):
+    get_export(TOKEN)
     train_dir, test_dir, valid_dir = resolve_directories()
 
-    images_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/images')
-    labels_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/labels')
+    images_dir = Path(ROOT) / 'images'
+    labels_dir = Path(ROOT) / 'labels'
 
     assert len(os.listdir(images_dir)) == len(os.listdir(labels_dir))
 
     dataset_size = len(os.listdir(images_dir))
-    test_set = round(dataset_size * 0.05)
-    valid_set = round(dataset_size * 0.05)
+    test_set = round(dataset_size * (test / 100))
+    valid_set = round(dataset_size * (valid / 100))
 
     # images
     sorted_im_arr = natsorted(os.listdir(images_dir))
@@ -57,7 +63,7 @@ def train_test_valid_split():
     shutil.rmtree(images_dir)
     shutil.rmtree(labels_dir)
 
-    return f'{dataset_size} images, {dataset_size} labels.\n\n' \
+    return f'\n{dataset_size} images, {dataset_size} labels.\n\n' \
            f'From these:\n\n' \
            f'{test_set} test images, {test_set} test labels.\n' \
            f'{valid_set} validation images, {valid_set} validation labels.\n' \
@@ -67,7 +73,7 @@ def train_test_valid_split():
 
 def resolve_directories():
 
-    dataset_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/dataset')
+    dataset_dir = Path(ROOT) / 'dataset'
     dataset_dir.mkdir(exist_ok=True)
 
     train_dir = dataset_dir / 'train'
@@ -88,16 +94,16 @@ def resolve_directories():
     return directory_list
 
 
-def get_export():
-    images_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/images')
-    labels_dir = Path('/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/labels')
+def get_export(TOKEN):
+    images_dir = Path(ROOT) / 'images'
+    labels_dir = Path(ROOT) / 'labels'
     images_dir.mkdir(exist_ok=True)
     labels_dir.mkdir(exist_ok=True)
 
     response = requests.get('http://localhost:8080/api/projects/1/export',
                             timeout=10,
                             headers={
-                                'Authorization': TOKEN,
+                                'Authorization': TOKEN if 'Token' in TOKEN else f'Token {TOKEN}',
                                 'Content-Type': 'application/json'
                                 },
                             )
@@ -109,6 +115,7 @@ def get_export():
             image_src = task['data']['image']
             annotations = task['annotations']
             print(image_src)
+
             # images
             image_filename = f'{task_id}.jpg'
             if image_src.startswith('http'):
@@ -117,6 +124,7 @@ def get_export():
                     image_file.write(image_data)
             else:
                 shutil.copy(get_local_path(image_src), images_dir / image_filename)
+
             # labels
             label_filename = f'{task_id}.txt'
             with open(labels_dir / label_filename, 'w') as label_file:
@@ -153,10 +161,19 @@ def convert_ls2yolo(result):
                f"{(value['x'] + value['width'] / 2) / 100.0} " \
                f"{(value['y'] + value['height'] / 2) / 100.0} " \
                f"{value['width'] / 100.0} " \
-               f"{value['height'] / 100.0}" \
+               f"{value['height'] / 100.0}"
 
 
+def parse_options():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--test', type=int, default=20, help='(int) percent of annotations for test')
+    parser.add_argument('-v', '--valid', type=int, default=10, help='(int) percent of annotations for validation')
+    parser.add_argument('-token', '--TOKEN', type=str, default=TOKEN, help='only: a-z0-9')
+    options = parser.parse_args()
+    return options
 
-print(get_export())
-print(train_test_valid_split())
+
+if __name__ == '__main__':
+    args = parse_options()
+    print(train_test_valid_split(**vars(args)))
 
