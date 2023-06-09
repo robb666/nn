@@ -3,35 +3,25 @@ import argparse
 import os
 import requests
 import http.server
-from pathlib import Path
 import socketserver
 import re
+from pathlib import Path
 from creds import TOKEN
 
 
-# class HandleAll(http.server.SimpleHTTPRequestHandler):
-#     data_path = Path("/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/all")
-#     os.chdir(data_path)
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-
-
-class HandleAll(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, PATH, *args, **kwargs):
-        self.path = PATH
-        os.chdir(self.path)
-        super().__init__(*args, **kwargs)
-        print(os.getcwd())
-
+def handler_from_argparse(PATH):
+    class HandleAll(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            os.chdir(PATH)
+            super().__init__(*args, **kwargs)
+    return HandleAll
 
 
 def merge(PATH, PORT, TOKEN):
     all_images = check_local_dir(PATH)
     uploaded_images = check_Label_Studio_images(PORT, TOKEN)
 
-    Handler = HandleAll
-    # Handler(PATH)
+    Handler = handler_from_argparse(PATH)
 
     i = 0
     with socketserver.TCPServer(('', PORT), Handler) as httpd:
@@ -80,12 +70,13 @@ def parse_options():
     parser.add_argument('-path', '--PATH', type=str,
                         default="/run/user/1000/gvfs/smb-share:server=192.168.1.12,share=e/zzzProjekty/labels yolo/all",
                         help='path to the directory containing dataset')
-    parser.add_argument('-port', '--PORT', type=int, default=8082, help='specified port (default - 8082)')
+    parser.add_argument('-port', '--PORT', type=int, default=8082, help='specified port (default - 8082),'
+                                                                        ' use one to avoid duplicates')
     parser.add_argument('-token', '--TOKEN', type=str, default=TOKEN, help='only: a-z0-9')
     options = parser.parse_args()
     return options
 
 
 if __name__ == '__main__':
-    args = parse_options()
-    print(merge(**vars(args)))
+    options = parse_options()
+    print(merge(**vars(options)))
