@@ -7,6 +7,7 @@ run(weights='yolov5/runs/train/results_15/weights/best.pt',
     device='cpu',
     iou_thres=0.95,
     max_det=5,
-    save_crop=True,
+    save_crop=False,
     )
+
 

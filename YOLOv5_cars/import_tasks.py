@@ -34,7 +34,7 @@ def merge(PATH, PORT, TOKEN):
                               headers={'Authorization': TOKEN if 'Token' in TOKEN else f'Token {TOKEN}'},
                               json=[json_data]).json()
                 i += 1
-        info = f'Uploaded {i} image(s).' if i > 0 else 'No images uploaded.'
+        info = f'Uploaded {i} image(s) ✅.' if i > 0 else 'No images uploaded.'
         print(info)
 
         try:

@@ -63,7 +63,7 @@ def train_test_valid_split(SEED, TOKEN, test, valid):
     shutil.rmtree(images_dir)
     shutil.rmtree(labels_dir)
 
-    return f'\n{dataset_size} images, {dataset_size} labels.\n\n' \
+    return f'\n{dataset_size} images, {dataset_size} labels ✅.\n\n' \
            f'From these:\n\n' \
            f'{test_set} test images, {test_set} test labels.\n' \
            f'{valid_set} validation images, {valid_set} validation labels.\n' \
