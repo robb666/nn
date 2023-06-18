@@ -9,7 +9,7 @@ import numpy as np
 import cv2
 
 # Connect to Redis
-redis_client = rai(host='localhost', port=6379)
+redis_client = rai(debug=False, host='localhost', port=6379)
 # redis_client.loadbackend('TORCH', '../RedisAI/build/backends/redisai_torch/redisai_torch.so')
 
 # Load the ONNX model into RedisAI
@@ -25,29 +25,30 @@ redis_client.modelstore(model_name, 'torch', 'CPU', model)
 
 # Generate sample input data
 input_data = np.random.rand(1, 3, 224, 224).astype(np.float32)
-
 print(input_data.shape)
 
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     return_, frame = cap.read()
     frame = frame.squeeze()
-    print(frame.shape)
-    break
+    # frame = frame.transpose((2, 0, 1)).astype(np.float32)
+    # print(frame.shape)
+
     # results = model(frame)
-#
-#     input_tensor_name = 'input'
-#     redis_client.tensorset(input_tensor_name, 'STRING', frame)
-#
-#
-#
-#     # Store the input tensor data
-#     input_tensor_name = 'input'
-#     redis_client.tensorset(input_tensor_name, 'STRING', frame)
-#
-#     # Run inference on the ONNX model
-#     output_tensor_name = 'output'
-#     redis_client.modelexecute(model_name, [input_tensor_name], [output_tensor_name])
+
+    # Store the input tensor data
+    input_tensor_name = 'input'
+    redis_client.tensorset(input_tensor_name, frame, dtype='float32')
+
+
+
+    # Run inference on the ONNX model
+    output_tensor_name = 'output'
+    redis_client.modelexecute(model_name,
+                              [input_tensor_name],
+                              [output_tensor_name])
+    break
+
 #
 #     # Get the inference results from RedisAI
 #     output_tensor = redis_client.tensorget(output_tensor_name)
