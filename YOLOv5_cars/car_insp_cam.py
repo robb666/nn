@@ -30,42 +30,54 @@ print(input_data.shape)
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     return_, frame = cap.read()
-    frame = frame.squeeze()
-    # frame = frame.transpose((2, 0, 1)).astype(np.float32)
-    # print(frame.shape)
 
-    # results = model(frame)
+    # frame = frame.squeeze()
+    # frame = frame.transpose((2, 0, 1)).astype(np.uint8)
+    print(type(frame))
+    print()
+    print()
+    print()
+    print()
+    print()
 
-    # Store the input tensor data
+
+    # # Store the input tensor data
     input_tensor_name = 'input'
-    redis_client.tensorset(input_tensor_name, frame, dtype='float32')
+    setset = redis_client.tensorset(input_tensor_name, frame)
+    print(setset)
+    print()
+    print()
 
 
 
-    # Run inference on the ONNX model
+    # # # Run inference on the ONNX model
     output_tensor_name = 'output'
+    # getget = redis_client.tensorget(key=output_tensor_name)
+    # print(getget)
+
+
+
     redis_client.modelexecute(model_name,
                               [input_tensor_name],
                               [output_tensor_name])
-    break
+    # break
 
-#
-#     # Get the inference results from RedisAI
-#     output_tensor = redis_client.tensorget(output_tensor_name)
-#     output_data = np.array(output_tensor)
-#
-#
-#     print(output_data)
+
+    # Get the inference results from RedisAI
+    output_tensor = redis_client.tensorget(output_tensor_name)
+    output_data = np.array(output_tensor)
+
+    print(output_data)
 
 
 
 # Process and use inference data
 
 
-# Clean up: Unload the model and delete the input/output tensors
-redis_client.modeldel(model_name)
-redis_client.tensordel(input_tensor_name)
-redis_client.tensordel(output_tensor_name)
+# # Clean up: Unload the model and delete the input/output tensors
+# redis_client.modeldel(model_name)
+# redis_client.tensordel(input_tensor_name)
+# redis_client.tensordel(output_tensor_name)
 
 
 

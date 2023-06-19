@@ -74,8 +74,6 @@ cv2.destroyAllWindows()
 """
 
 
-
-
 def train_test_valid_split():
     train_dir, test_dir, valid_dir = resolve_directories()
 
