@@ -30,44 +30,33 @@ print(input_data.shape)
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     return_, frame = cap.read()
-
+    print(frame.shape)
     # frame = frame.squeeze()
     # frame = frame.transpose((2, 0, 1)).astype(np.uint8)
-    print(type(frame))
-    print()
-    print()
-    print()
+    frame = np.transpose(frame, (2, 0, 1))
+    frame = frame[None, :].astype(np.float32) / 255.0
+    print(frame.dtype)
     print()
     print()
 
 
-    # # Store the input tensor data
-    input_tensor_name = 'input'
-    setset = redis_client.tensorset(input_tensor_name, frame)
+    ## Store the input tensor data
+    setset = redis_client.tensorset('input', frame, dtype='float32')
     print(setset)
     print()
     print()
 
+    # Run inference on
+    redis_client.modelexecute(model_name, ['input'], ['output'])
 
-
-    # # # Run inference on the ONNX model
-    output_tensor_name = 'output'
-    # getget = redis_client.tensorget(key=output_tensor_name)
-    # print(getget)
-
-
-
-    redis_client.modelexecute(model_name,
-                              [input_tensor_name],
-                              [output_tensor_name])
-    # break
 
 
     # Get the inference results from RedisAI
-    output_tensor = redis_client.tensorget(output_tensor_name)
+    output_tensor = redis_client.tensorget('output')
     output_data = np.array(output_tensor)
 
     print(output_data)
+    break
 
 
 

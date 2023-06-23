@@ -52,3 +52,5 @@ YOLOv5_cars/creds.py
 YOLOv5_cars/dataset/
 YOLOv5_cars/images/
 YOLOv5_cars/labels/
+YOLOv5_cars/ll
+RedisAI/
