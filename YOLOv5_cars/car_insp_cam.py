@@ -30,9 +30,7 @@ print(input_data.shape)
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     return_, frame = cap.read()
-    print(frame.shape)
     # frame = frame.squeeze()
-    # frame = frame.transpose((2, 0, 1)).astype(np.uint8)
     frame = np.transpose(frame, (2, 0, 1))
     frame = frame[None, :].astype(np.float32) / 255.0
     print(frame.dtype)
