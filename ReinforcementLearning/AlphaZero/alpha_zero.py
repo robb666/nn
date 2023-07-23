@@ -49,6 +49,8 @@ class TicTacToe:
     def get_opponent_value(self):
         return -value
 
+    def change_perspective(self, state, player):
+        return state * player
 
 
 tictactoe = TicTacToe()
@@ -121,7 +123,17 @@ class Node:
 
         child_state = self.state.copy()
         child_state = self.game.get_next_state(child_state, action, 1)
+        child_state = self.game.change_perspective(child_state, player=-1)
 
+        child = Node(self.game, self.args, child_state, self.action)
+        self.children.append(child)
+        return child
+
+    def simulate(self):
+        value, is_teminal = self.game.get_value_and_terminated(self.state, self.action)
+        value = self.game.get_opponent_value(value)
+
+        if is_teminal:
 
 
 class MCTS:
@@ -145,7 +157,10 @@ class MCTS:
 
             if not is_terminal:
                 node = node.expand()
+
                 # expansion
+                node = node.expand()
+
 
             # simulation
             # backpropagation
