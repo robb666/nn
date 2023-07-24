@@ -59,7 +59,7 @@ class Node:
         self.args = args
         self.state = state
         self.parent = parent
-        self.action = action_taken
+        self.action_taken = action_taken
 
         self.children = []
         self.expandable_moves = game.get_valid_moves(state)
@@ -83,6 +83,7 @@ class Node:
         return best_child
 
     def get_ucb(self, child):
+        print(self.visit_count)  # self.visit_count = 0
         q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
         return q_value + self.args['C'] * math.sqrt(math.log(self.visit_count) / child.visit_count)
 
@@ -94,12 +95,12 @@ class Node:
         child_state = self.game.get_next_state(child_state, action, 1)
         child_state = self.game.change_perspective(child_state, player=-1)
 
-        child = Node(self.game, self.args, child_state, self.action)
+        child = Node(self.game, self.args, child_state, self.action_taken)
         self.children.append(child)
         return child
 
     def simulate(self):
-        value, is_teminal = self.game.get_value_and_terminated(self.state, self.action)
+        value, is_teminal = self.game.get_value_and_terminated(self.state, self.action_taken)
         value = self.game.get_opponent_value(value)
 
         if is_teminal:
@@ -144,7 +145,7 @@ class MCTS:
                 # selection
                 node = node.select()
 
-            value, is_terminal = self.game.get_value_and_terminated(node.state, node.action)
+            value, is_terminal = self.game.get_value_and_terminated(node.state, node.action_taken)
             value = self.game.get_opponent_value(value)
 
             if not is_terminal:
