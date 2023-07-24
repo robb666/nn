@@ -46,42 +46,11 @@ class TicTacToe:
     def get_opponent(self, player):
         return -player
 
-    def get_opponent_value(self):
+    def get_opponent_value(self, value):
         return -value
 
     def change_perspective(self, state, player):
         return state * player
-
-
-tictactoe = TicTacToe()
-player = 1
-
-state = tictactoe.get_initial_state()
-
-
-while True:
-    print(state)
-    valid_moves = tictactoe.get_valid_moves(state)
-    print("Valid_moves: ", [i for i in range(tictactoe.action_size) if valid_moves[i] == 1])
-    action = int(input(str(player) + ': '))
-
-    if valid_moves[action] == 0:
-        print('Action not valid')
-        continue
-
-    state = tictactoe.get_next_state(state, action, player)
-
-    value, is_terminal = tictactoe.get_value_and_terminated(state, action)
-
-    if is_terminal:
-        print(state)
-        if value == 1:
-            print(player, 'Won!')
-        else:
-            print('Draw')
-        break
-
-    player = tictactoe.get_opponent(player)
 
 
 class Node:
@@ -151,7 +120,12 @@ class Node:
             rollout_player = self.game.get_opponent(rollout_player)
 
     def backpropagate(self, value):
-        pass
+        self.value_sum += value
+        self.visit_count += 1
+
+        value = self.game.get_opponent_value(value)
+        if self.parent is not None:
+            self.parent.backpropagate(value)
 
 
 class MCTS:
@@ -170,18 +144,25 @@ class MCTS:
                 # selection
                 node = node.select()
 
-            value, is_terminal = self.game.get_value_and_terminated(node.state, node.action_taken)
+            value, is_terminal = self.game.get_value_and_terminated(node.state, node.action)
             value = self.game.get_opponent_value(value)
 
             if not is_terminal:
                 # expansion
                 node = node.expand()
 
-
                 # simulation
-
+                value = node.simulate()
 
             # backpropagation
+            node.backpropagate(value)
+
+        action_probs = np.zeros(self.game.action_size)
+        for child in root.children:
+            action_probs[child.action_taken] = child.visit_count
+        action_probs /= np.sum(action_probs)
+        return action_probs
+
 
         # return visit_count
 
@@ -190,9 +171,50 @@ class MCTS:
 
 
 
+tictactoe = TicTacToe()
+player = 1
+
+args = {
+    'C': 1.41,
+    'num_searches': 1000
+}
+
+mcts = MCTS(tictactoe, args)
+
+state = tictactoe.get_initial_state()
 
 
+while True:
+    print(state)
 
+    if player == 1:
+
+        valid_moves = tictactoe.get_valid_moves(state)
+        print("Valid_moves: ", [i for i in range(tictactoe.action_size) if valid_moves[i] == 1])
+        action = int(input(str(player) + ': '))
+
+        if valid_moves[action] == 0:
+            print('Action not valid')
+            continue
+
+    else:
+        neutral_state = tictactoe.change_perspective(state, player)
+        mcts_probs = mcts.search(state)
+        action = np.argmax(mcts_probs)
+
+    state = tictactoe.get_next_state(state, action, player)
+
+    value, is_terminal = tictactoe.get_value_and_terminated(state, action)
+
+    if is_terminal:
+        print(state)
+        if value == 1:
+            print(player, 'Won!')
+        else:
+            print('Draw')
+        break
+
+    player = tictactoe.get_opponent(player)
 
 
 
