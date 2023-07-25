@@ -95,7 +95,7 @@ class Node:
         child_state = self.game.get_next_state(child_state, action, 1)
         child_state = self.game.change_perspective(child_state, player=-1)
 
-        child = Node(self.game, self.args, child_state, self.action_taken)
+        child = Node(self.game, self.args, child_state, self, action)
         self.children.append(child)
         return child
 
@@ -164,12 +164,7 @@ class MCTS:
         action_probs /= np.sum(action_probs)
         return action_probs
 
-
         # return visit_count
-
-
-
-
 
 
 tictactoe = TicTacToe()
@@ -205,7 +200,8 @@ while True:
 
     state = tictactoe.get_next_state(state, action, player)
 
-    value, is_terminal = tictactoe.get_value_and_terminated(state, action)
+    value, is_terminal = tictactoe.get_value_and_terminated(state,
+                                                            action)
 
     if is_terminal:
         print(state)
