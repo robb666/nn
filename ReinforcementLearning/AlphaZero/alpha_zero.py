@@ -3,10 +3,6 @@ import numpy as np
 print(np.__version__)
 
 
-def get_valid_moves(state):
-    return (state.reshape(-1) == 0).astype(np.uint8)
-
-
 class TicTacToe:
     def __init__(self):
         self.row_count = 3
@@ -21,6 +17,9 @@ class TicTacToe:
         column = action % self.column_count
         state[row, column] = player
         return state
+
+    def get_valid_moves(self, state):
+        return (state.reshape(-1) == 0).astype(np.uint8)
 
     def check_win(self, state, action):
         if action is None:
@@ -40,7 +39,7 @@ class TicTacToe:
     def get_value_and_terminated(self, state, action):
         if self.check_win(state, action):
             return 1, True
-        if np.sum(get_valid_moves(state)) == 0:
+        if np.sum(self.get_valid_moves(state)) == 0:
             return 0, True
         return 0, False
 
@@ -177,7 +176,6 @@ args = {
 }
 
 mcts = MCTS(tictactoe, args)
-
 state = tictactoe.get_initial_state()
 
 
@@ -186,7 +184,7 @@ while True:
 
     if player == 1:
 
-        valid_moves = get_valid_moves(state)
+        valid_moves = tictactoe.get_valid_moves(state)
         print("Valid_moves: ", [i for i in range(tictactoe.action_size) if valid_moves[i] == 1])
         action = int(input(str(player) + ': '))
 
@@ -213,21 +211,3 @@ while True:
         break
 
     player = tictactoe.get_opponent(player)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
