@@ -1,13 +1,9 @@
-### 1 - It takes the current game state
- 
-### 2 - It runs multiple random game simulations starting from this game state
- 
-### 3 - For each simulation, the final state is evaluated by a score (higher score = better outcome)
- 
-### 4 - It only remembers the next move of each simulation and accumulates the scores for that move
- 
-### 5 - Finally, it returns the next move with the highest score
- 
+# 1 - It takes the current game state
+# 2 - It runs multiple random game simulations starting from this game state
+# 3 - For each simulation, the final state is evaluated by a score (higher score = better outcome)
+# 4 - It only remembers the next move of each simulation and accumulates the scores for that move
+# 5 - Finally, it returns the next move with the highest score
+
 import random
 import ast
  
