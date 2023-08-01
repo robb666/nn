@@ -6,17 +6,17 @@
 
 import random
 import ast
- 
+
 userPlayer = 'O'
 boardSize = 3
 numberOfSimulations = 200
- 
+
 board = [
     list('...'),
     list('...'),
     list('...')
 ]
- 
+
 startingPlayer = 'X'
 currentPlayer = startingPlayer
 
@@ -61,7 +61,7 @@ def hasWon(currentBoard, player):
     
     for y in range(len(currentBoard)):
         column = [currentBoard[index][y] for index in range(boardSize)]
-        
+
         if column == winningSet:
             return True
     
