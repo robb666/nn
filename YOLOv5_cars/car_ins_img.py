@@ -14,7 +14,7 @@ import subprocess
 SEED = 42
 np.random.seed(SEED)
 
-TRAIN = True
+TRAIN = False
 EPOCHS = 300
 
 

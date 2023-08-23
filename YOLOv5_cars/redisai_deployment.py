@@ -9,11 +9,7 @@ redis_client = rai(host='localhost', port=6379)
 
 img = '/home/robb/Desktop/PROJEKTY/nn/YOLOv5_cars/yolov5/data/images/bus.jpg'
 img = cv2.imread(img)
-print(img)
-img = np.transpose(img, (2, 0, 1))
-print(img)
-img = img[None, :].astype(np.float32) / 255.0  # adds batch size (1, 3, 1080, 810)
-print(img)
+
 
 with open(model_path, 'rb') as f:
     model = f.read()
