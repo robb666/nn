@@ -5,6 +5,9 @@ print(np.__version__)
 import torch
 print(torch.__version__)
 
+import torch.nn as nn
+import torch.nn.functional as F
+
 
 class TicTacToe:
     def __init__(self):
@@ -56,6 +59,57 @@ class TicTacToe:
         return state * player
 
 
+class ResNet(nn.Module):
+    def __init__(self, game, num_resBlocks, num_hidden):
+        super().__init__()
+        self.startBlock = nn.Sequential(
+            nn.Conv2d(3, num_hidden, kernel_size=3, padding=1),
+            nn.BatchNorm2d(num_hidden),
+            nn.ReLU(),
+        )
+
+        self.backBone = nn.ModuleList(
+            [ResBlock(num_hidden) for i in range(num_resBlocks)]
+        )
+
+        self.policyHead = nn.Sequential(
+            nn.Conv2d(num_hidden, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(32 * game.row_count * game.column_count, game.action_size)
+        )
+
+        self.valueHead = nn.Sequential(
+            nn.Conv2d(num_hidden, 3, kernel_size=3, padding=1),
+            nn.BatchNorm2d(3),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(3 * game.row_count * game.column_count, 1),
+            nn.Tanh(),
+        )
+
+    def forward(self, x):
+        x =
+
+class ResBlock(nn.Module):
+    def __init__(self, num_hidden):
+        super().__init__()
+        self.conv1 = nn.Conv2d(num_hidden, num_hidden, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(num_hidden)
+        self.conv2 = nn.Conv2d(num_hidden, num_hidden, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(num_hidden)
+
+    def forward(self, x):
+        residual = x
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = self.bn2(self.conv2(x))
+        x += residual
+        x = F.relu(x)
+        return x
+
+
+
 class Node:
     def __init__(self, game, args, state, parent=None, action_taken=None):
         self.game = game
@@ -86,7 +140,7 @@ class Node:
         return best_child
 
     def get_ucb(self, child):
-        print(self.visit_count)  # self.visit_count = 0
+        # print(self.visit_count)  # self.visit_count = 0
         q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
         return q_value + self.args['C'] * math.sqrt(math.log(self.visit_count) / child.visit_count)
 
@@ -183,7 +237,7 @@ state = tictactoe.get_initial_state()
 
 
 while True:
-    # print(state)
+    print(state)
 
     if player == 1:
 
