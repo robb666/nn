@@ -2,6 +2,9 @@ import math
 import numpy as np
 print(np.__version__)
 
+import torch
+print(torch.__version__)
+
 
 class TicTacToe:
     def __init__(self):
@@ -180,7 +183,7 @@ state = tictactoe.get_initial_state()
 
 
 while True:
-    print(state)
+    # print(state)
 
     if player == 1:
 
