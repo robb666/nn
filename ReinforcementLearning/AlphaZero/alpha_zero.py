@@ -8,6 +8,8 @@ print(torch.__version__)
 import torch.nn as nn
 import torch.nn.functional as F
 
+torch.manual_seed(0)
+
 
 class TicTacToe:
     def __init__(self):
@@ -58,6 +60,12 @@ class TicTacToe:
     def change_perspective(self, state, player):
         return state * player
 
+    def get_encoded_state(self, state):
+        encoded_state = np.stack(
+            (state == -1, state == 0, state == 1)
+        ).astype(np.float32)
+        return encoded_state
+
 
 class ResNet(nn.Module):
     def __init__(self, game, num_resBlocks, num_hidden):
@@ -90,7 +98,13 @@ class ResNet(nn.Module):
         )
 
     def forward(self, x):
-        x =
+        x = self.startBlock(x)
+        for resBlock in self.backBone:
+            x = resBlock(x)
+        policy = self.policyHead(x)
+        value = self.valueHead(x)
+        return policy, value
+
 
 class ResBlock(nn.Module):
     def __init__(self, num_hidden):
@@ -109,23 +123,52 @@ class ResBlock(nn.Module):
         return x
 
 
+import matplotlib.pyplot as plt
+
+tictactoe = TicTacToe()
+
+state = tictactoe.get_initial_state()
+state = tictactoe.get_next_state(state, 2, 1)
+state = tictactoe.get_next_state(state, 7, -1)
+
+print(state)
+
+encoded_state = tictactoe.get_encoded_state(state)
+print(encoded_state)
+
+tensor_state = torch.tensor(encoded_state).unsqueeze(0)
+
+model = ResNet(tictactoe, 4, 64)
+policy, value = model(tensor_state)
+
+value = value.item()
+policy = torch.softmax(policy, axis=1).squeeze(0).detach().cpu().numpy()
+
+print(value, policy)
+
+plt.bar(range(tictactoe.action_size), policy)
+plt.show()
+
+
 
 class Node:
-    def __init__(self, game, args, state, parent=None, action_taken=None):
+    def __init__(self, game, args, state, parent=None, action_taken=None, prior=0):
         self.game = game
         self.args = args
         self.state = state
         self.parent = parent
         self.action_taken = action_taken
+        self.prior = prior
 
         self.children = []
-        self.expandable_moves = game.get_valid_moves(state)
+        # self.expandable_moves = game.get_valid_moves(state)
 
         self.visit_count = 0
         self.value_sum = 0
 
     def is_fully_expanded(self):
-        return np.sum(self.expandable_moves) == 0 and len(self.children) > 0
+        return len(self.children) > 0
+        # return np.sum(self.expandable_moves) == 0 and len(self.children) > 0
 
     def select(self):
         best_child = None
@@ -140,42 +183,49 @@ class Node:
         return best_child
 
     def get_ucb(self, child):
-        # print(self.visit_count)  # self.visit_count = 0
-        q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
-        return q_value + self.args['C'] * math.sqrt(math.log(self.visit_count) / child.visit_count)
+        if child.visit_count == 0:
+            q_value = 0
+        else:
+            q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
+        return q_value + self.args['C'] * (math.sqrt(self.visit_count) / (child.visit_count + 1)) * child.prior
+        # return q_value + self.args['C'] * math.sqrt(math.log(self.visit_count) / child.visit_count)
 
-    def expand(self):
-        action = np.random.choice(np.where(self.expandable_moves == 1)[0])
-        self.expandable_moves[action] = 0
+    def expand(self, policy):
+        for action, prob in enumerate(policy):
+            if prob > 0:
 
-        child_state = self.state.copy()
-        child_state = self.game.get_next_state(child_state, action, 1)
-        child_state = self.game.change_perspective(child_state, player=-1)
+                # action = np.random.choice(np.where(self.expandable_moves == 1)[0])
+                # self.expandable_moves[action] = 0
 
-        child = Node(self.game, self.args, child_state, self, action)
-        self.children.append(child)
+                child_state = self.state.copy()
+                child_state = self.game.get_next_state(child_state, action, 1)
+                child_state = self.game.change_perspective(child_state, player=-1)
+
+                child = Node(self.game, self.args, child_state, self, action, prob)
+                self.children.append(child)
+
         return child
 
-    def simulate(self):
-        value, is_teminal = self.game.get_value_and_terminated(self.state, self.action_taken)
-        value = self.game.get_opponent_value(value)
-
-        if is_teminal:
-            return value
-
-        rollout_state = self.state.copy()
-        rollout_player = 1
-        while True:
-            valid_moves = self.game.get_valid_moves(rollout_state)
-            action = np.random.choice(np.where(valid_moves == 1)[0])
-            rollout_state = self.game.get_next_state(rollout_state, action, rollout_player)
-            value, is_terminal = self.game.get_value_and_terminated(rollout_state, action)
-            if is_terminal:
-                if rollout_player == -1:
-                    value = self.game.get_opponent_value(value)
-                return value
-
-            rollout_player = self.game.get_opponent(rollout_player)
+    # def simulate(self):
+    #     value, is_teminal = self.game.get_value_and_terminated(self.state, self.action_taken)
+    #     value = self.game.get_opponent_value(value)
+    #
+    #     if is_teminal:
+    #         return value
+    #
+    #     rollout_state = self.state.copy()
+    #     rollout_player = 1
+    #     while True:
+    #         valid_moves = self.game.get_valid_moves(rollout_state)
+    #         action = np.random.choice(np.where(valid_moves == 1)[0])
+    #         rollout_state = self.game.get_next_state(rollout_state, action, rollout_player)
+    #         value, is_terminal = self.game.get_value_and_terminated(rollout_state, action)
+    #         if is_terminal:
+    #             if rollout_player == -1:
+    #                 value = self.game.get_opponent_value(value)
+    #             return value
+    #
+    #         rollout_player = self.game.get_opponent(rollout_player)
 
     def backpropagate(self, value):
         self.value_sum += value
@@ -187,9 +237,10 @@ class Node:
 
 
 class MCTS:
-    def __init__(self, game, args):
+    def __init__(self, game, args, model):
         self.game = game
         self.args = args
+        self.model = model
 
     def search(self, state):
         # define root
@@ -206,11 +257,23 @@ class MCTS:
             value = self.game.get_opponent_value(value)
 
             if not is_terminal:
-                # expansion
-                node = node.expand()
 
-                # simulation
-                value = node.simulate()
+                policy, value = self.model(
+                    torch.tensor(self.game.get_encoded_state(node.state)).unsqueeze(0)
+                )
+                policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
+                valid_moves = self.game.get_valid_moves(node.state)
+                policy *= valid_moves
+                policy /= np.sum(policy)
+                # # expansion
+                # node = node.expand()
+
+
+                value = value.item()
+                node.expand(policy)
+                # # simulation
+                # value = node.simulate()
+
 
             # backpropagation
             node.backpropagate(value)
@@ -224,47 +287,47 @@ class MCTS:
         # return visit_count
 
 
-tictactoe = TicTacToe()
-player = 1
-
-args = {
-    'C': 1.41,
-    'num_searches': 1000
-}
-
-mcts = MCTS(tictactoe, args)
-state = tictactoe.get_initial_state()
-
-
-while True:
-    print(state)
-
-    if player == 1:
-
-        valid_moves = tictactoe.get_valid_moves(state)
-        print("Valid_moves: ", [i for i in range(tictactoe.action_size) if valid_moves[i] == 1])
-        action = int(input(str(player) + ': '))
-
-        if valid_moves[action] == 0:
-            print('Action not valid')
-            continue
-
-    else:
-        neutral_state = tictactoe.change_perspective(state, player)
-        mcts_probs = mcts.search(state)
-        action = np.argmax(mcts_probs)
-
-    state = tictactoe.get_next_state(state, action, player)
-
-    value, is_terminal = tictactoe.get_value_and_terminated(state,
-                                                            action)
-
-    if is_terminal:
-        print(state)
-        if value == 1:
-            print(player, 'Won!')
-        else:
-            print('Draw')
-        break
-
-    player = tictactoe.get_opponent(player)
+# tictactoe = TicTacToe()
+# player = 1
+#
+# args = {
+#     'C': 1.41,
+#     'num_searches': 1000
+# }
+#
+# mcts = MCTS(tictactoe, args)
+# state = tictactoe.get_initial_state()
+#
+#
+# while True:
+#     print(state)
+#
+#     if player == 1:
+#
+#         valid_moves = tictactoe.get_valid_moves(state)
+#         print("Valid_moves: ", [i for i in range(tictactoe.action_size) if valid_moves[i] == 1])
+#         action = int(input(str(player) + ': '))
+#
+#         if valid_moves[action] == 0:
+#             print('Action not valid')
+#             continue
+#
+#     else:
+#         neutral_state = tictactoe.change_perspective(state, player)
+#         mcts_probs = mcts.search(state)
+#         action = np.argmax(mcts_probs)
+#
+#     state = tictactoe.get_next_state(state, action, player)
+#
+#     value, is_terminal = tictactoe.get_value_and_terminated(state,
+#                                                             action)
+#
+#     if is_terminal:
+#         print(state)
+#         if value == 1:
+#             print(player, 'Won!')
+#         else:
+#             print('Draw')
+#         break
+#
+#     player = tictactoe.get_opponent(player)
