@@ -285,7 +285,23 @@ class MCTS:
         action_probs /= np.sum(action_probs)
         return action_probs
 
-        # return visit_count
+
+class AlphaZero:
+    def __init__(self, model, optimizer, game, args):
+        self.model = model
+        self.optimizer = optimizer
+        self.game = game
+        self.args = args
+        self.mcts = MCTS(game, args, model)
+
+    def selfPlay(self):
+        pass
+
+    def train(self):
+        pass
+
+
+
 
 
 tictactoe = TicTacToe()
