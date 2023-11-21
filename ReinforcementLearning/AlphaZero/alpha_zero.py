@@ -10,6 +10,10 @@ import torch.nn.functional as F
 
 torch.manual_seed(0)
 
+import random
+from tqdm.notebook import trange
+
+
 
 class TicTacToe:
     def __init__(self):
@@ -314,7 +318,7 @@ class AlphaZero:
             if is_terminal:
                 returnMemory = []
                 for hist_neutral_state, hist_action_probs, hist_player in memory:
-                    hist_outcome = value if hist_player == player else -value
+                    hist_outcome = value if hist_player == player else self.game.get_opponent_value(value)
                     returnMemory.append((
                         self.game.get_encoded_state(hist_neutral_state),
                         hist_action_probs,
@@ -322,24 +326,65 @@ class AlphaZero:
                     ))
                 return returnMemory
 
+            player = self.game.get_opponent(player)
 
     def train(self, memory):
-        pass
+        random.shuffle(memory)
+        for batchIdx in range(0, len(memory), self.args['batch_size']):
+            sample = memory[batchIdx:min(len(memory) - 1, batchIdx + self.args['batch_size'])]
+            state, policy_targets, value_targets = zip(*sample)
+
+            state, policy_targets, value_targets = np.array(state), np.array(policy_targets), np.array(value_targets).reshape(-1, 1)
+
+            state = torch.tensor(state, dtype=torch.float32)
+            policy_targets = torch.tensor(policy_targets, dtype=torch.float32)
+            value_targets = torch.tensor(value_targets.float32)
+
+            out_policy, out_value = self.model(state)
+
+            policy_loss = F.cross_entropy(out_policy, policy_targets)
+            value_loss = F.mse_loss(out_value, value_targets)
+            loss = policy_loss + value_loss
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
     def learn(self):
         for iteration in self.args['num_iterations']:
             memory = []
 
             self.model.eval()
-            for selfPlay_iteration in range(self.args['num_selfPlay_iterations']):
+            for selfPlay_iteration in trange(self.args['num_selfPlay_iterations']):
                 memory += self.selfPlay()
 
             self.model.train()
-            for epoch in range(self.args['num_epochs']):
+            for epoch in trange(self.args['num_epochs']):
                 self.train(memory)
 
             torch.save(self.model.state_dict(), f'model_{iteration}.pt')
             torch.save(self.optimizer.state_dict(), f'optimizer_{iteration}.pt')
+
+
+tictactoe = TicTacToe()
+
+model = ResNet(tictactoe, 4, 64)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+args = {
+    'C': 2,
+    'num_searches': 60,
+    'num_iterations': 3,
+    'num_selfPlay_iterations': 500,
+    'num_epochs': 4,
+    'batch_size': 64,
+}
+
+alphaZero = AlphaZero(model, optimizer, tictactoe, args)
+alphaZero.learn()
+
+
 
 
 
