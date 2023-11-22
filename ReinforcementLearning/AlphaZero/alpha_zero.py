@@ -14,7 +14,6 @@ import random
 from tqdm.notebook import trange
 
 
-
 class TicTacToe:
     def __init__(self):
         self.row_count = 3
@@ -72,8 +71,10 @@ class TicTacToe:
 
 
 class ResNet(nn.Module):
-    def __init__(self, game, num_resBlocks, num_hidden):
+    def __init__(self, game, num_resBlocks, num_hidden, device):
         super().__init__()
+
+        self.device = device
         self.startBlock = nn.Sequential(
             nn.Conv2d(3, num_hidden, kernel_size=3, padding=1),
             nn.BatchNorm2d(num_hidden),
@@ -100,6 +101,7 @@ class ResNet(nn.Module):
             nn.Linear(3 * game.row_count * game.column_count, 1),
             nn.Tanh(),
         )
+        self.to(device)
 
     def forward(self, x):
         x = self.startBlock(x)
@@ -142,13 +144,19 @@ print(encoded_state)
 
 tensor_state = torch.tensor(encoded_state).unsqueeze(0)
 
-model = ResNet(tictactoe, 4, 64)
-policy, value = model(tensor_state)
+model = ResNet(tictactoe, 4, 64, device=torch.device('cpu'))
+# policy, value = model(tensor_state)
+model.load_state_dict(torch.load('model_2.pt'))
+model.eval()
 
+# value = value.item()
+# policy = torch.softmax(policy, axis=1).squeeze(0).detach().cpu().numpy()
+policy, value = model(tensor_state)
 value = value.item()
 policy = torch.softmax(policy, axis=1).squeeze(0).detach().cpu().numpy()
 
-print(value, policy)
+
+print(value, policy, state, tensor_state)
 
 plt.bar(range(tictactoe.action_size), policy)
 plt.show()
@@ -156,7 +164,7 @@ plt.show()
 
 
 class Node:
-    def __init__(self, game, args, state, parent=None, action_taken=None, prior=0):
+    def __init__(self, game, args, state, parent=None, action_taken=None, prior=0, visit_count=0):
         self.game = game
         self.args = args
         self.state = state
@@ -167,7 +175,7 @@ class Node:
         self.children = []
         # self.expandable_moves = game.get_valid_moves(state)
 
-        self.visit_count = 0
+        self.visit_count = visit_count
         self.value_sum = 0
 
     def is_fully_expanded(self):
@@ -246,9 +254,23 @@ class MCTS:
         self.args = args
         self.model = model
 
+    @torch.no_grad()
     def search(self, state):
         # define root
-        root = Node(self.game, self.args, state)
+        root = Node(self.game, self.args, state, visit_count=1)
+
+        policy, _ = self.model(
+            torch.tensor(self.game.get_encoded_state(state), device=self.model.device).unsqueeze(0)
+        )
+        policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
+
+        policy = (1 - self.args['dirichlet_epsilon']) * policy + self.args['dirichlet_epsilon'] \
+                 * np.random.dirichlet([self.args['dirichlet_alpha']] * self.game.action_size)
+
+        valid_moves = self.game.get_valid_moves(state)
+        policy *= valid_moves
+        policy /= np.sum(policy)
+
 
         for search in range(self.args['num_searches']):
             node = root
@@ -263,7 +285,7 @@ class MCTS:
             if not is_terminal:
 
                 policy, value = self.model(
-                    torch.tensor(self.game.get_encoded_state(node.state)).unsqueeze(0)
+                    torch.tensor(self.game.get_encoded_state(node.state), device=self.model.device).unsqueeze(0)
                 )
                 # policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
                 policy = torch.softmax(policy, axis=1).squeeze(0).detach().numpy()
@@ -309,7 +331,8 @@ class AlphaZero:
 
             memory.append((neutral_state, action_probs, player))
 
-            action = np.random.choice(self.game.action_size, p=action_probs)
+            temperature_action_probs = action_probs ** (1 / self.args['temperature'])
+            action = np.random.choice(self.game.action_size, p=temperature_action_probs)
 
             state = self.game.get_next_state(state, action, player)
 
@@ -336,9 +359,9 @@ class AlphaZero:
 
             state, policy_targets, value_targets = np.array(state), np.array(policy_targets), np.array(value_targets).reshape(-1, 1)
 
-            state = torch.tensor(state, dtype=torch.float32)
-            policy_targets = torch.tensor(policy_targets, dtype=torch.float32)
-            value_targets = torch.tensor(value_targets.float32)
+            state = torch.tensor(state, dtype=torch.float32, device=self.model.device)
+            policy_targets = torch.tensor(policy_targets, dtype=torch.float32, device=self.model.device)
+            value_targets = torch.tensor(value_targets.float32, device=self.model.device)
 
             out_policy, out_value = self.model(state)
 
@@ -368,9 +391,11 @@ class AlphaZero:
 
 tictactoe = TicTacToe()
 
-model = ResNet(tictactoe, 4, 64)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+model = ResNet(tictactoe, 4, 64, device)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0001 )
 
 args = {
     'C': 2,
@@ -379,6 +404,9 @@ args = {
     'num_selfPlay_iterations': 500,
     'num_epochs': 4,
     'batch_size': 64,
+    'temperature': 1.25,
+    'dirichlet_epsilon': 0.25,
+    'dirichlet_alpha': 0.3,
 }
 
 alphaZero = AlphaZero(model, optimizer, tictactoe, args)
