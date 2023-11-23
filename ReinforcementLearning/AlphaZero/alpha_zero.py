@@ -12,6 +12,7 @@ torch.manual_seed(0)
 
 import random
 from tqdm.notebook import trange
+from tqdm import tqdm
 
 
 class TicTacToe:
@@ -352,7 +353,6 @@ class MCTS:
         policy *= valid_moves
         policy /= np.sum(policy)
 
-
         for search in range(self.args['num_searches']):
             node = root
 
@@ -413,6 +413,7 @@ class AlphaZero:
             memory.append((neutral_state, action_probs, player))
 
             temperature_action_probs = action_probs ** (1 / self.args['temperature'])
+            temperature_action_probs /= np.sum(temperature_action_probs)
             action = np.random.choice(self.game.action_size, p=temperature_action_probs)
 
             state = self.game.get_next_state(state, action, player)
@@ -455,15 +456,15 @@ class AlphaZero:
             optimizer.step()
 
     def learn(self):
-        for iteration in self.args['num_iterations']:
+        for iteration in range(self.args['num_iterations']):
             memory = []
 
             self.model.eval()
-            for selfPlay_iteration in trange(self.args['num_selfPlay_iterations']):
+            for selfPlay_iteration in tqdm(range(self.args['num_selfPlay_iterations'])):
                 memory += self.selfPlay()
 
             self.model.train()
-            for epoch in trange(self.args['num_epochs']):
+            for epoch in tqdm(range(self.args['num_epochs'])):
                 self.train(memory)
 
             torch.save(self.model.state_dict(), f'model_{iteration}_{self.game}.pt')
@@ -479,7 +480,7 @@ class MCTSParallel:
     @torch.no_grad()
     def search(self, states, spGames):
         policy, _ = self.model(
-            torch.tensor(self.game.get_encoded_state(states), device=self.model.device).unsqueeze(0)
+            torch.tensor(self.game.get_encoded_state(states), device=self.model.device)
         )
         policy = torch.softmax(policy, axis=1).cpu().numpy()
 
@@ -513,7 +514,7 @@ class MCTSParallel:
                 else:
                     spg.node = node
 
-            expandable_spGames = [mappingIdx for mappingIdx in range(len(spGames)) is spGames[mappingIdx].node is not None]
+            expandable_spGames = [mappingIdx for mappingIdx in range(len(spGames)) if spGames[mappingIdx].node is not None]
 
             if len(expandable_spGames) > 0:
                 states = np.stack([spGames[mappingIdx].node.state for mappingIdx in expandable_spGames])
@@ -521,9 +522,9 @@ class MCTSParallel:
                 policy, value = self.model(
                     torch.tensor(self.game.get_encoded_state(states), device=self.model.device)
                 )
-                # policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
+                policy = torch.softmax(policy, axis=1).cpu().numpy()
                 # policy = torch.softmax(policy, axis=1).squeeze(0).detach().numpy()
-                value = value.cpu().numpy()
+                # value = value.cpu().numpy()
 
             for i, mappingIdx in enumerate(expandable_spGames):
                 node = spGames[mappingIdx].node
@@ -556,7 +557,7 @@ class AlphaZeroParallel:
 
             self.mcts.search(neutral_states, spGames)
 
-            for i in range(len(spGames)):
+            for i in range(len(spGames))[::-1]:
                 spg = spGames[i]
 
                 action_probs = np.zeros(self.game.action_size)
@@ -567,6 +568,7 @@ class AlphaZeroParallel:
                 spg.memory.append((spg.root.state, action_probs, player))
 
                 temperature_action_probs = action_probs ** (1 / self.args['temperature'])
+                temperature_action_probs /= np.sum(temperature_action_probs)
                 action = np.random.choice(self.game.action_size, p=temperature_action_probs)
 
                 spg.state = self.game.get_next_state(spg.state, action, player)
@@ -611,15 +613,15 @@ class AlphaZeroParallel:
             optimizer.step()
 
     def learn(self):
-        for iteration in self.args['num_iterations']:
+        for iteration in range(self.args['num_iterations']):
             memory = []
 
             self.model.eval()
-            for selfPlay_iteration in trange(self.args['num_selfPlay_iterations'] // self.args['num_parallel_games']):
+            for selfPlay_iteration in tqdm(range(self.args['num_selfPlay_iterations'] // self.args['num_parallel_games'])):
                 memory += self.selfPlay()
 
             self.model.train()
-            for epoch in trange(self.args['num_epochs']):
+            for epoch in tqdm(range(self.args['num_epochs'])):
                 self.train(memory)
 
             torch.save(self.model.state_dict(), f'model_{iteration}_{self.game}.pt')
