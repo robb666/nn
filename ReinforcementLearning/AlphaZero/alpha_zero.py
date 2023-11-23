@@ -564,7 +564,7 @@ class AlphaZeroParallel:
                     action_probs[child.action_taken] = child.visit_count
                 action_probs /= np.sum(action_probs)
 
-                spg.memory.append((spg.root.state, action_probs, player)) #neutral_states?
+                spg.memory.append((spg.root.state, action_probs, player))
 
                 temperature_action_probs = action_probs ** (1 / self.args['temperature'])
                 action = np.random.choice(self.game.action_size, p=temperature_action_probs)
@@ -640,7 +640,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model = ResNet(game, 9, 128, device)
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0001 )
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
 
 args = {
     'C': 2,
