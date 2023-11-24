@@ -443,7 +443,7 @@ class AlphaZero:
 
             state = torch.tensor(state, dtype=torch.float32, device=self.model.device)
             policy_targets = torch.tensor(policy_targets, dtype=torch.float32, device=self.model.device)
-            value_targets = torch.tensor(value_targets.float32, device=self.model.device)
+            value_targets = torch.tensor(value_targets, dtype=torch.float32, device=self.model.device)
 
             out_policy, out_value = self.model(state)
 
@@ -600,7 +600,7 @@ class AlphaZeroParallel:
 
             state = torch.tensor(state, dtype=torch.float32, device=self.model.device)
             policy_targets = torch.tensor(policy_targets, dtype=torch.float32, device=self.model.device)
-            value_targets = torch.tensor(value_targets.float32, device=self.model.device)
+            value_targets = torch.tensor(value_targets, dtype=torch.float32, device=self.model.device)
 
             out_policy, out_value = self.model(state)
 
