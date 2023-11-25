@@ -132,7 +132,8 @@ class ConnectFour:
             return 0, True
         return 0, False
 
-    def get_opponent(self, player):
+    @staticmethod
+    def get_opponent(player):
         return -player
 
     def get_opponent_value(self, value):
@@ -368,20 +369,18 @@ class MCTS:
                 policy, value = self.model(
                     torch.tensor(self.game.get_encoded_state(node.state), device=self.model.device).unsqueeze(0)
                 )
-                # policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
-                policy = torch.softmax(policy, axis=1).squeeze(0).detach().numpy()
+                policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
+                # policy = torch.softmax(policy, axis=1).squeeze(0).detach().numpy()
                 valid_moves = self.game.get_valid_moves(node.state)
                 policy *= valid_moves
                 policy /= np.sum(policy)
                 # # expansion
                 # node = node.expand()
 
-
                 value = value.item()
                 node.expand(policy)
                 # # simulation
                 # value = node.simulate()
-
 
             # backpropagation
             node.backpropagate(value)
@@ -636,29 +635,29 @@ class SPG:
         self.node = None
 
 
-game = ConnectFour()
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-model = ResNet(game, 9, 128, device)
-
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
-
-args = {
-    'C': 2,
-    'num_searches': 600,
-    'num_iterations': 8,
-    'num_selfPlay_iterations': 500,
-    'num_parallel_games': 100,
-    'num_epochs': 4,
-    'batch_size': 128,
-    'temperature': 1.25,
-    'dirichlet_epsilon': 0.25,
-    'dirichlet_alpha': 0.3,
-}
-
-alphaZero = AlphaZeroParallel(model, optimizer, game, args)
-alphaZero.learn()
+# game = ConnectFour()
+#
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+#
+# model = ResNet(game, 9, 128, device)
+#
+# optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
+#
+# args = {
+#     'C': 2,
+#     'num_searches': 600,
+#     'num_iterations': 8,
+#     'num_selfPlay_iterations': 500,
+#     'num_parallel_games': 100,
+#     'num_epochs': 4,
+#     'batch_size': 128,
+#     'temperature': 1.25,
+#     'dirichlet_epsilon': 0.25,
+#     'dirichlet_alpha': 0.3,
+# }
+#
+# alphaZero = AlphaZeroParallel(model, optimizer, game, args)
+# alphaZero.learn()
 
 
 
@@ -715,8 +714,8 @@ alphaZero.learn()
 
 
 
-# game = TicTacToe()
-game = ConnectFour()
+game = TicTacToe()
+# game = ConnectFour()
 player = 1
 
 args = {
@@ -728,8 +727,9 @@ args = {
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = ResNet(game, 9, 128, device)
-model.load_state_dict(torch.load('model_0_ConnectFour.pt', map_location=device))
+model = ResNet(game, 4, 64, device)
+# model = ResNet(game, 9, 128, device)
+model.load_state_dict(torch.load('model_1.pt', map_location=device))
 model.eval()
 
 mcts = MCTS(game, args, model)
