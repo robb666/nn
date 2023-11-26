@@ -29,7 +29,7 @@ class DeepQNetwork(nn.Module):
         return actions
 
 
-class Agent():
+class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
                  max_mem_size=100000, eps_end=0.01, eps_dec=5e-4):
         self.gamma = gamma
