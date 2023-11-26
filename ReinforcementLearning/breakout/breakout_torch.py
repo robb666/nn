@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-
+print(T.cuda.is_available())
 
 class DeepQNetwork(nn.Module):
     def __init__(self, lr, input_dims, fc1_dims, fc2_dims,
@@ -19,7 +19,8 @@ class DeepQNetwork(nn.Module):
 
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.loss = nn.MSELoss()
-        self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
+        self.device = T.device('cuda' if T.cuda.is_available() else 'cpu')
+        # self.device = T.device('cpu')
         self.to(self.device)
 
     def forward(self, state):

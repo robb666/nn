@@ -1,5 +1,5 @@
 import gym
-from breakout_tf import DeepQNetwork, Agent
+from breakout_torch import DeepQNetwork, Agent
 import numpy as np
 from gym import wrappers
 
