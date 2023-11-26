@@ -25,8 +25,8 @@ def stack_frames(stacked_frames, frame, buffer_size):
 if __name__ == '__main__':
     env = gym.make('Breakout-v0')
     load_checkpoint = False
-    agent = Agent(gamma=0.99, epsilon=1.0, alpha=0.00025, input_dims=(180, 160, 4),
-                  n_actions=3, mem_size=25000, batch_size=32)
+    agent = Agent(gamma=0.99, epsilon=1.0, lr=0.0001, input_dims=(180, 160, 4),
+                  n_actions=3, batch_size=32)
     if load_checkpoint:
         agent.load_models()
     scores = []
