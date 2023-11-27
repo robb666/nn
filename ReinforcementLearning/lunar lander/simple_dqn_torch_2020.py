@@ -50,7 +50,7 @@ class Agent:
                                          dtype=np.float32)
         self.action_memory = np.zeros(self.mem_size, dtype=np.int32)
         self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
-        self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool)
+        self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool_)
 
     def store_transition(self, state, action, reward, state_, done):
         index = self.mem_cntr % self.mem_size
@@ -102,8 +102,3 @@ class Agent:
 
         self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min else self.eps_min
 
-
-Q = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
-                  eps_end=0.01, input_dims=[8], lr=0.003)
-
-Q

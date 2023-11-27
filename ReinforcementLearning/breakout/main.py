@@ -3,6 +3,7 @@ from breakout_torch import DeepQNetwork, Agent
 import numpy as np
 from ReinforcementLearning.util import plot_learning_curve
 from gym import wrappers
+from icecream import ic
 
 
 def preprocess(observation):
@@ -11,6 +12,7 @@ def preprocess(observation):
 
 
 def stack_frames(stacked_frames, frame, buffer_size):
+    # print(stacked_frames, frame.shape, buffer_size)
     if stacked_frames is None:
         stacked_frames = np.zeros((buffer_size, *frame.shape))
         for idx, _ in enumerate(stacked_frames):
@@ -20,7 +22,7 @@ def stack_frames(stacked_frames, frame, buffer_size):
         stacked_frames[buffer_size-1, :] = frame
 
     stacked_frames = stacked_frames.reshape(1, *frame.shape[0:2], buffer_size)
-    print(stacked_frames.shape, type(stacked_frames))
+    # print(stacked_frames.shape, type(stacked_frames))
     return stacked_frames
 
 
@@ -28,7 +30,7 @@ if __name__ == '__main__':
     env = gym.make('Breakout-v4')
     load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.0001, input_dims=(180, 160, 4),
-                  n_actions=3, batch_size=32)
+                  n_actions=3, batch_size=1)
     # if load_checkpoint:
     #     agent.load_models()
     scores = []
@@ -65,6 +67,8 @@ if __name__ == '__main__':
 
         observation = env.reset()
         observation = preprocess(observation[0])
+        # print('obezrvation: ', observation)
+        ic('obezrvation shape: ', observation.shape)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
         score = 0
@@ -73,6 +77,7 @@ if __name__ == '__main__':
             action += 1
             observation_, reward, done, _, info = env.step(action)
             n_steps += 1
+            ic(n_steps)
             observation_ = stack_frames(stacked_frames, preprocess(observation_), stack_size)
             score += reward
             action -= 1

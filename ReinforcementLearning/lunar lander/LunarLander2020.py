@@ -1,6 +1,6 @@
 import gym
 from simple_dqn_torch_2020 import Agent
-from util import plot_learning_curve
+from ReinforcementLearning.util import plot_learning_curve
 import numpy as np
 
 
