@@ -68,7 +68,7 @@ if __name__ == '__main__':
         observation = env.reset()
         observation = preprocess(observation[0])
         # print('obezrvation: ', observation)
-        ic('obezrvation shape: ', observation.shape)
+        ic('obezrvation 1 shape: ', observation.shape)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
         score = 0
@@ -76,6 +76,7 @@ if __name__ == '__main__':
             action = agent.choose_action(observation)
             action += 1
             observation_, reward, done, _, info = env.step(action)
+            ic('obezrvation 2 shape: ', observation_.shape)
             n_steps += 1
             ic(n_steps)
             observation_ = stack_frames(stacked_frames, preprocess(observation_), stack_size)
