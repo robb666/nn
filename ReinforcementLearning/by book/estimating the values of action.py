@@ -41,13 +41,12 @@ mean, variance = 0, 1  # mean and standard deviation
 # sigma = np.sqrt(variance)
 
 action_chosen = []
+actions = np.array(range(1, num_of_actions + 1))
 
 for bandit_problem in range(num_of_games):
 
-    actions = np.array(range(1, num_of_actions + 1))
+    rewards = np.round(np.random.normal(mean, variance, num_of_actions)).astype(int)
 
-    reward_samples = np.random.normal(mean, variance, num_of_actions)
-    rewards = np.round(reward_samples).astype(int)
     print(rewards)
     if np.random.random() > epsilon:
         action = np.random.choice(rewards)
