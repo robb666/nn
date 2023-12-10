@@ -1,27 +1,29 @@
-import gym
+# import gym
+import gymnasium as gym
 from simple_dqn_torch_2020 import Agent
-from util import plot_learning_curve
+from ReinforcementLearning.util import plot_learning_curve
 import numpy as np
+from icecream import ic
 
 
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2', render_mode="rgb_array")
-    print(env.action_space)
+    env = gym.make('LunarLander-v2', render_mode="human")
+    print(env.reset())
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
                   eps_end=0.01, input_dims=[8], lr=0.003)
     scores, eps_history = [], []
     n_games = 100
     for i in range(n_games):
-
         score = 0
         done = False
         observation = env.reset()
         while not done:
             env.render()
-            action = agent.choose_action(observation)
-            observation_, reward, done, info = env.step(action)
+            action = agent.choose_action(observation[0])
+            observation_, reward, done, _, info = env.step(action)
+            ic(observation_, reward, done, _, info)
             score += reward
-            agent.store_transition(observation, action, reward,
+            agent.store_transition(observation[0], action, reward,
                                    observation_, done)
             agent.learn()
             observation = observation_
