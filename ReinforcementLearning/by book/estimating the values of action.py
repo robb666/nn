@@ -1,0 +1,74 @@
+import random
+import time
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from icecream import ic
+import numpy as np
+
+
+def epsilon_greedy(Q, state, epsilon):
+    # If a random number is less than epsilon, choose a random action (explore)
+    if np.random.random() < epsilon:
+        return np.random.choice(len(Q[state]))
+    # Otherwise, choose the best action for the current state (exploit)
+    else:
+        return np.argmax(Q[state])
+
+
+# Suppose we have 5 states and 3 actions, and we're currently in state 2
+Q_example = np.random.rand(5, 3)  # Random Q-table for demonstration
+
+current_state = 2
+epsilon_example = 0.5  # 10% chance to explore
+chosen_action = epsilon_greedy(Q_example, current_state, epsilon_example)
+
+
+
+
+
+
+
+
+num_of_games = 11
+num_of_actions = 10
+epsilon = .90
+lambda_ = .99
+
+
+mean, variance = 0, 1  # mean and standard deviation
+
+# sigma = np.sqrt(variance)
+
+action_chosen = []
+
+for bandit_problem in range(num_of_games):
+
+    actions = np.array(range(1, num_of_actions + 1))
+
+    reward_samples = np.random.normal(mean, variance, num_of_actions)
+    rewards = np.round(reward_samples).astype(int)
+    print(rewards)
+    if np.random.random() > epsilon:
+        action = np.random.choice(rewards)
+        action_chosen.append(actions[action])
+    else:
+        action = np.argmax(rewards)
+        action_chosen.append(actions[action])
+
+
+time.sleep(.3)
+ic(action_chosen)
+
+
+
+
+
+# sns.set_theme()
+# sns.relplot(
+#     data=action_value,
+#     x=[i for i in range(len(action_value))],
+#     y=action_value,
+# )
+#
+# plt.show()
