@@ -38,22 +38,23 @@ lambda_ = .99
 
 mean, variance = 0, 1  # mean and standard deviation
 
-# sigma = np.sqrt(variance)
-
 action_chosen = []
-# actions = np.array(range(1, num_of_actions + 1))
-
 
 true_values = np.random.normal(mean, variance, num_of_actions)
 
 ic(true_values)
 
+rewards = []
+# print(rewards_distribution)
+
 
 for action, true_value in enumerate(true_values, 1):
 
-    rewards_distribution = np.random.normal(true_value, variance, num_of_actions)
-    ic(action, rewards_distribution)
-#
+    rewards_distribution = np.random.normal(true_value, variance, 10)
+    rewards.append(rewards_distribution)
+ic(rewards)
+
+
 #     print(rewards)
 #     if np.random.random() > epsilon:
 #         action = np.random.choice(rewards)
@@ -66,20 +67,23 @@ for action, true_value in enumerate(true_values, 1):
 # time.sleep(.3)
 # ic(action_chosen)
 
+print(len(true_values))
+print(len(rewards))
+
+
+fig, ax = plt.subplots(figsize=(10, 6))
+plt.violinplot(rewards, positions=true_values)
 
 
 
-
-
-
-
-
+ax.xaxis.grid(True)
+ax.set_xticks(true_values)
 
 # sns.set_theme()
 # sns.relplot(
-#     data=action_value,
-#     x=[i for i in range(len(action_value))],
-#     y=action_value,
+#     data=rewards_distribution,
+#     x=[i for i in range(10)],
+#     y=rewards_distribution,
 # )
-#
-# plt.show()
+
+plt.show()
