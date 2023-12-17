@@ -89,7 +89,7 @@ for i in range(len(probs)):
     # Each cell is number of times the action i was selected for time step j across all experiments
     steps = list(np.array(range(len(A_pct))) + 1)
     # Plotting line chart for one action at a time.
-    plt.plots(steps, A_pct, '-',
+    plt.plot(steps, A_pct, '-',
               linewidth=4,
               label='Arm {} ({:.0f}%)'.format(i + 1, 100 * probs[i]))  # Incrementing Arm + 1 as they start with 0 index
     # We should ideally see as timesteps go on, the slot with the largest probability of success is chosen the most.
