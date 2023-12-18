@@ -78,7 +78,7 @@ ax = plt.gca()
 plt.xlim([1, N_steps])
 if save_fig:
     if not os.path.exists(output_dir): os.mkdir(output_dir)
-    plt.savefig(os.path.join(output_dir, 'rewarsd.png'), bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'rewards.png'), bbox_inches='tight')
 else:
     plt.show()
 plt.close()
