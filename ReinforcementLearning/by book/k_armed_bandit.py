@@ -1,4 +1,6 @@
 import os
+import time
+
 import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(0)
@@ -19,9 +21,13 @@ class Agent:
         self.n = np.zeros(nActions, dtype=int)
         self.Q = np.zeros(nActions, dtype=float)
 
-    def update_Q(self, action, reward):
+    def update_Q(self, action, reward, i):
         self.n[action] += 1
         self.Q[action] += (1.0 / self.n[action]) * (reward - self.Q[action])
+        if i / 499 == 1:
+            time.sleep(2.8)
+            print()
+            print(self.Q)
 
     def get_action(self):
         if np.random.random() < self.eps:
@@ -38,7 +44,7 @@ def experiment(probs, N_episodes):
     for episode in range(N_episodes):
         action = agent.get_action()
         reward = env.step(action)
-        agent.update_Q(action, reward)
+        agent.update_Q(action, reward, episode)
         actions.append(action)
         rewards.append(reward)
     return np.array(actions), np.array(rewards)
@@ -49,7 +55,7 @@ probs = [.10, .50, .60, .80, .10, .25, .60, .45, .75, .65]
 
 N_steps = 500
 N_experiments = 10_000
-eps = 0.1
+eps = 0.115
 save_fig = True
 output_dir = os.path.join(os.getcwd(), 'output')
 
@@ -64,6 +70,7 @@ for i in range(N_experiments):
         print('[Experiment {}/{}] '.format(i + 1, N_experiments) +
               'n_steps = {}, '.format(N_steps) +
               'reward_avg = {}'.format(np.sum(rewards) / len(rewards)))
+        print('sum rewards; ', np.sum(rewards), 'len rewards; ', len(rewards))
     R += rewards  # Adding rewards for every time step across all experiments: 500x1
     for j, a in enumerate(actions):
         A[j][a] += 1
