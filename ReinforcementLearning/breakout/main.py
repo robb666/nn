@@ -1,8 +1,8 @@
-import gym
+import gymnasium as gym
 from breakout_torch import DeepQNetwork, Agent
 import numpy as np
 from ReinforcementLearning.util import plot_learning_curve
-from gym import wrappers
+# from gym import wrappers
 from icecream import ic
 
 
@@ -27,7 +27,7 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
 
 if __name__ == '__main__':
-    env = gym.make('Breakout-v4')
+    env = gym.make('ALE/Breakout-v5', render_mode='human')
     load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.0001, input_dims=(180, 160, 4),
                   n_actions=3, batch_size=1)
@@ -65,12 +65,13 @@ if __name__ == '__main__':
     for i in range(numGames):
         done = False
 
-        observation = env.reset()
-        observation = preprocess(observation[0])
+        # observation = env.reset()
+        observation, info = env.reset()
+        # observation = preprocess(observation[0])
         # print('obezrvation: ', observation)
         ic('obezrvation 1 shape: ', observation.shape)
         stacked_frames = None
-        observation = stack_frames(stacked_frames, observation, stack_size)
+        # observation = stack_frames(stacked_frames, observation, stack_size)
         score = 0
         while not done:
             action = agent.choose_action(observation)

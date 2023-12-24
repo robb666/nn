@@ -7,7 +7,7 @@ from icecream import ic
 
 
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2', render_mode="human")
+    env = gym.make('LunarLander-v2')  #, render_mode="human")
     # print(env.observation_space)
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
                   eps_end=0.01, input_dims=[8], lr=0.003)
@@ -18,7 +18,7 @@ if __name__ == '__main__':
         done = False
         observation, info = env.reset()
         while not done:
-            env.render()
+            # env.render()
             action = agent.choose_action(observation)
             observation_, reward, terminated, truncated, info = env.step(action)
             done = terminated or truncated

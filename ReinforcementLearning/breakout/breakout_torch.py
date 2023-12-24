@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-print(T.cuda.is_available())
+print('CUDA: ', T.cuda.is_available())
 
 
 class DeepQNetwork(nn.Module):
@@ -49,17 +49,24 @@ class Agent:
         self.Q_eval = DeepQNetwork(lr, n_actions=n_actions,
                                    input_dims=input_dims,
                                    fc1_dims=256, fc2_dims=256)
+        # self.state_memory = np.zeros((self.mem_size, *input_dims),
+        #                              dtype=np.float32)
         self.state_memory = np.zeros((self.mem_size, *input_dims),
-                                     dtype=np.float32)
+                                     dtype=np.uint8)
+        # self.new_state_memory = np.zeros((self.mem_size, *input_dims),
+        #                                  dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims),
-                                         dtype=np.float32)
+                                         dtype=np.uint8)
         self.action_memory = np.zeros(self.mem_size, dtype=np.int32)
-        self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
+        # self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
+        self.reward_memory = np.zeros(self.mem_size, dtype=np.uint8)
         self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool_)
 
     def store_transition(self, state, action, reward, state_, terminal):
         index = self.mem_cntr % self.mem_size
-        self.state_memory[index] = state
+        # self.state_memory[index] = state
+        self.state_memory = np.zeros((self.mem_size, 210, 160, 3), dtype=np.uint8)  # or another appropriate dtype
+
         self.new_state_memory[index] = state_
         self.reward_memory[index] = reward
         self.action_memory[index] = action
