@@ -24,7 +24,7 @@ class DeepQNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state):
-        x = F.relu(self.fc1(state))
+        x = F.relu(self.fc1(state.float()))
         x = F.relu(self.fc2(x))
         actions = self.fc3(x)
 
@@ -33,7 +33,7 @@ class DeepQNetwork(nn.Module):
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
-                 max_mem_size=100000, eps_end=0.05, eps_dec=5e-4):
+                 max_mem_size=12500, eps_end=0.05, eps_dec=5e-4):
         self.gamma = gamma
         self.epsilon = epsilon
         self.eps_min = eps_end
@@ -49,23 +49,23 @@ class Agent:
         self.Q_eval = DeepQNetwork(lr, n_actions=n_actions,
                                    input_dims=input_dims,
                                    fc1_dims=256, fc2_dims=256)
-        # self.state_memory = np.zeros((self.mem_size, *input_dims),
-        #                              dtype=np.float32)
         self.state_memory = np.zeros((self.mem_size, *input_dims),
-                                     dtype=np.uint8)
-        # self.new_state_memory = np.zeros((self.mem_size, *input_dims),
-        #                                  dtype=np.float32)
+                                     dtype=np.float32)
+        # self.state_memory = np.zeros((self.mem_size, *input_dims),
+        #                              dtype=np.uint8)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims),
-                                         dtype=np.uint8)
+                                         dtype=np.float32)
+        # self.new_state_memory = np.zeros((self.mem_size, *input_dims),
+        #                                  dtype=np.uint8)
         self.action_memory = np.zeros(self.mem_size, dtype=np.int32)
-        # self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
-        self.reward_memory = np.zeros(self.mem_size, dtype=np.uint8)
+        self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
+        # self.reward_memory = np.zeros(self.mem_size, dtype=np.uint8)
         self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool_)
 
     def store_transition(self, state, action, reward, state_, terminal):
         index = self.mem_cntr % self.mem_size
-        # self.state_memory[index] = state
-        self.state_memory = np.zeros((self.mem_size, 210, 160, 3), dtype=np.uint8)  # or another appropriate dtype
+        self.state_memory[index] = state
+        # self.state_memory = np.zeros((self.mem_size, 180, 160, 3), dtype=np.uint8)  # or another appropriate dtype
 
         self.new_state_memory[index] = state_
         self.reward_memory[index] = reward
@@ -96,13 +96,10 @@ class Agent:
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
         state_batch = T.tensor(self.state_memory[batch]).to(self.Q_eval.device)
-        new_state_batch = T.tensor(
-                self.new_state_memory[batch]).to(self.Q_eval.device)
+        new_state_batch = T.tensor(self.new_state_memory[batch]).to(self.Q_eval.device)
         action_batch = self.action_memory[batch]
-        reward_batch = T.tensor(
-                self.reward_memory[batch]).to(self.Q_eval.device)
-        terminal_batch = T.tensor(
-                self.terminal_memory[batch]).to(self.Q_eval.device)
+        reward_batch = T.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
+        terminal_batch = T.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)
 
         q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
         q_next = self.Q_eval.forward(new_state_batch)
