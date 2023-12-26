@@ -12,7 +12,7 @@ def preprocess(observation):
 
 
 def stack_frames(stacked_frames, frame, buffer_size):
-    # print(stacked_frames, frame.shape, buffer_size)
+
     if stacked_frames is None:
         stacked_frames = np.zeros((buffer_size, *frame.shape))
         for idx, _ in enumerate(stacked_frames):
@@ -22,7 +22,7 @@ def stack_frames(stacked_frames, frame, buffer_size):
         stacked_frames[buffer_size-1, :] = frame
 
     stacked_frames = stacked_frames.reshape(1, *frame.shape[0:2], buffer_size)
-    # print(stacked_frames.shape, type(stacked_frames))
+    # ic(stacked_frames.shape, type(stacked_frames))
     return stacked_frames
 
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     ic(env)
     load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.00025, input_dims=(180, 160, 4),
-                  n_actions=3, batch_size=1)
+                  n_actions=3, batch_size=32)
     if load_checkpoint:
         agent.load_models()
     scores = []
@@ -40,28 +40,27 @@ if __name__ == '__main__':
     stack_size = 4
     score = 0
 
-    while agent.mem_cntr < 12500:
-        done = False
-        observation, info = env.reset()
-        observation = preprocess(observation)
-        stacked_frames = None
-        observation = stack_frames(stacked_frames, observation, stack_size)
-        while not done:
-            action = np.random.choice([0, 1, 2])
-            action += 1
-            observation_, reward, terminated, truncated, info = env.step(action)
-            observation_ = stack_frames(stacked_frames, preprocess(observation_),
-                                        stack_size)
-            action -= 1
-            agent.store_transition(observation, action, reward,
-                                   observation_, int(done))
-            observation = observation_
-
-            # env.render()
-    print('Done with random gameplay, game on.')
+    # while agent.mem_cntr < 12500:
+    #     terminated = False
+    #     observation, info = env.reset()
+    #     observation = preprocess(observation)
+    #     stacked_frames = None
+    #     observation = stack_frames(stacked_frames, observation, stack_size)
+    #     while not terminated:
+    #         action = np.random.choice([0, 1, 2])
+    #         action += 1
+    #         observation_, reward, terminated, truncated, info = env.step(action)
+    #         observation_ = stack_frames(stacked_frames, preprocess(observation_),
+    #                                     stack_size)
+    #         action -= 1
+    #         agent.store_transition(observation, action, reward,
+    #                                observation_, int(terminated))
+    #         observation = observation_
+    #
+    # print('terminated (Done) with random gameplay, game on.')
 
     for i in range(numGames):
-        done = False
+        terminated = False
         if i % 10 == 0 and i > 0:
             avg_score = np.mean(scores[max(0, i-10): (i+1)])
             print('episode', i, 'score', score,
@@ -71,22 +70,25 @@ if __name__ == '__main__':
         else:
             print('episode: ', i, 'score', score)
         observation, info = env.reset()
+        ic(observation.shape)
+
         observation = preprocess(observation)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
 
-        while not done:
-            action = agent.choose_action([0, 1, 2])
+        while not terminated:
+            action = agent.choose_action(observation)
             action += 1
             observation_, reward, terminated, truncated, info = env.step(action)
             observation_ = stack_frames(stacked_frames, preprocess(observation_),
                                         stack_size)
             action -= 1
+            # ic(observation_.shape)
             agent.store_transition(observation, action, reward,
-                                   observation_, int(done))
+                                   observation_, int(terminated))
             observation = observation_
-
             agent.learn()
+            score += reward
     scores.append(score)
 
 
