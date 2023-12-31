@@ -27,7 +27,7 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
 
 if __name__ == '__main__':
-    env = gym.make('ALE/Breakout-v5', render_mode='human')
+    env = gym.make('ALE/Breakout-v5')  #, render_mode='human')
     ic(env)
     load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.00025, input_dims=(180, 160, 4),
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         agent.load_models()
     scores = []
     eps_history = []
-    numGames = 200
+    numGames = 30
     stack_size = 4
     score = 0
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # print('terminated (Done) with random gameplay, game on.')
 
     for i in range(numGames):
-        terminated = False
+        done = False
         if i % 10 == 0 and i > 0:
             avg_score = np.mean(scores[max(0, i-10): (i+1)])
             print('episode', i, 'score', score,
@@ -75,22 +75,28 @@ if __name__ == '__main__':
         observation = preprocess(observation)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
+        ic(observation.shape)
 
-        while not terminated:
+        while not done:
             action = agent.choose_action(observation)
             action += 1
             observation_, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
             observation_ = stack_frames(stacked_frames, preprocess(observation_),
                                         stack_size)
             action -= 1
-            # ic(observation_.shape)
-            agent.store_transition(observation, action, reward,
-                                   observation_, int(terminated))
-            observation = observation_
-            agent.learn()
-            score += reward
-    scores.append(score)
 
+            agent.store_transition(observation, action, reward,
+                                   observation_, int(done))
+            agent.learn()
+            observation = observation_
+            score += reward
+
+        eps_history.append(agent.epsilon)
+        scores.append(score)
+
+    x = [i + 1 for i in range(numGames)]
+    plot_learning_curve(x, scores, eps_history, 'training_plot.jpg')
 
 
 

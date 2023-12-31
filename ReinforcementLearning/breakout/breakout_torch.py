@@ -3,8 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-print('CUDA: ', T.cuda.is_available())
 from icecream import ic
+
+print('CUDA: ', T.cuda.is_available())
 
 
 class DeepQNetwork(nn.Module):
@@ -15,7 +16,8 @@ class DeepQNetwork(nn.Module):
         self.fc1_dims = fc1_dims
         self.fc2_dims = fc2_dims
         self.n_actions = n_actions
-        self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
+        # self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
+        self.fc1 = nn.Linear(115200, self.fc1_dims)
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
         self.fc3 = nn.Linear(self.fc2_dims, self.n_actions)
 
@@ -25,9 +27,10 @@ class DeepQNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state):
+        state = state.view(state.size(0), -1)
         # ic(state.shape)
-        # state = state.view(state.size(1), -1)
-        ic(state.shape)
+        # ic(state.ndim)
+
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         actions = self.fc3(x)
@@ -53,7 +56,7 @@ class Agent:
         self.Q_eval = DeepQNetwork(lr, n_actions=n_actions,
                                    input_dims=input_dims,
                                    fc1_dims=256, fc2_dims=256)
-        ic(*input_dims)
+        # ic(*input_dims)
         self.state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.action_memory = np.zeros(self.mem_size, dtype=np.int32)
@@ -62,10 +65,8 @@ class Agent:
 
     def store_transition(self, state, action, reward, state_, terminal):
         index = self.mem_cntr % self.mem_size
+        # ic(index)
         self.state_memory[index] = state
-        # ic(self.state_memory.shape)
-        # self.state_memory = np.zeros((self.mem_size, 180, 160, 3), dtype=np.uint8)  # or another appropriate dtype
-
         self.new_state_memory[index] = state_
         self.reward_memory[index] = reward
         self.action_memory[index] = action
@@ -75,8 +76,8 @@ class Agent:
 
     def choose_action(self, observation):
         if np.random.random() > self.epsilon:
-            state = T.tensor([observation]).to(self.Q_eval.device)
-            actions = self.Q_eval.forward(state)
+            state = T.tensor(np.array([observation])).to(self.Q_eval.device)
+            actions = self.Q_eval.forward(state.float())
             action = T.argmax(actions).item()
         else:
             action = np.random.choice(self.action_space)
@@ -92,6 +93,7 @@ class Agent:
         max_mem = min(self.mem_cntr, self.mem_size)
 
         batch = np.random.choice(max_mem, self.batch_size, replace=False)
+        # ic(batch)
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
         state_batch = T.tensor(self.state_memory[batch]).to(self.Q_eval.device)
@@ -100,8 +102,10 @@ class Agent:
         action_batch = self.action_memory[batch]
         reward_batch = T.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
         terminal_batch = T.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)
-        ic(state_batch.shape, batch_index, action_batch)
+        # ic(state_batch.shape, batch_index, action_batch)
 
+        # state_batch = state_batch.view(state_batch.size(0), -1)
+        # ic(state_batch.shape)
         q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
         q_next = self.Q_eval.forward(new_state_batch)
         q_next[terminal_batch] = 0.0

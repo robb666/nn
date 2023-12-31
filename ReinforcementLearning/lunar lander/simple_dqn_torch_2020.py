@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
+from icecream import ic
 
 
 class DeepQNetwork(nn.Module):
@@ -22,6 +23,8 @@ class DeepQNetwork(nn.Module):
         self.to(self.device)
 
     def forward(self, state):
+        ic(state.shape)
+        ic(state.ndim)
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         actions = self.fc3(x)
