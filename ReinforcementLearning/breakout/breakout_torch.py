@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
+import os
 from icecream import ic
 
 print('CUDA: ', T.cuda.is_available())
@@ -10,7 +11,7 @@ print('CUDA: ', T.cuda.is_available())
 
 class DeepQNetwork(nn.Module):
     def __init__(self, lr, input_dims, fc1_dims, fc2_dims,
-                 n_actions):
+                 n_actions, chkpt_dir='./'):
         super(DeepQNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -25,6 +26,8 @@ class DeepQNetwork(nn.Module):
         self.loss = nn.MSELoss()
         self.device = T.device('cuda' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
+        self.checkpoint_dir = chkpt_dir
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, '_dqn')
 
     def forward(self, state):
         state = state.view(state.size(0), -1)
@@ -37,10 +40,18 @@ class DeepQNetwork(nn.Module):
 
         return actions
 
+    def save_checkpoint(self):
+        print('... saving checkpoint ...')
+        T.save(self.state_dict(), self.checkpoint_file)
+
+    def load_checkpoint(self):
+        print('... loading checkpoint ...')
+        self.load_state_dict(T.load(self.checkpoint_file))
+
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
-                 max_mem_size=12500, eps_end=0.05, eps_dec=5e-4):
+                 max_mem_size=10000, eps_end=0.05, eps_dec=5e-4):
         self.gamma = gamma
         self.epsilon = epsilon
         self.eps_min = eps_end
@@ -119,3 +130,9 @@ class Agent:
         self.iter_cntr += 1
         self.epsilon = self.epsilon - self.eps_dec \
             if self.epsilon > self.eps_min else self.eps_min
+
+    def save_model(self):
+        self.Q_eval.save_checkpoint()
+
+    def load_model(self):
+        self.Q_eval.load_checkpoint()

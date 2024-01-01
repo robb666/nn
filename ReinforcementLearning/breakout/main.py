@@ -27,20 +27,20 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
 
 if __name__ == '__main__':
-    env = gym.make('ALE/Breakout-v5')  #, render_mode='human')
+    env = gym.make('ALE/Breakout-v5', render_mode='human')
     ic(env)
-    load_checkpoint = False
+    load_checkpoint = True
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.00025, input_dims=(180, 160, 4),
                   n_actions=3, batch_size=32)
     if load_checkpoint:
-        agent.load_models()
+        agent.load_model()
     scores = []
     eps_history = []
-    numGames = 30
+    numGames = 200  # było 100, 200, 200
     stack_size = 4
     score = 0
 
-    # while agent.mem_cntr < 12500:
+    # while agent.mem_cntr < 10000:
     #     terminated = False
     #     observation, info = env.reset()
     #     observation = preprocess(observation)
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             print('episode', i, 'score', score,
                   'average_score %.3f' % avg_score,
                   'epsilon %.3f' % agent.epsilon)
-            # agent.save_model()
+            agent.save_model()
         else:
             print('episode: ', i, 'score', score)
         observation, info = env.reset()
@@ -145,4 +145,4 @@ if __name__ == '__main__':
     #     scores.append(score)
     #
     # x = [i + 1 for i in range(numGames)]
-    # plot_learning_curve(x, scores, eps_history, 'training_plot.jpg')
+    # plot_learning_curve(x, scores, eps_history, 'training_plot_1.jpg')
