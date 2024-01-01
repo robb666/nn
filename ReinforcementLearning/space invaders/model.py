@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-
+np.set_printoptions(threshold=np.inf)
 
 class DeepQNetwork(nn.Module):
     def __init__(self, ALPHA):
@@ -78,16 +78,20 @@ class Agent(object):
             memStart = int(np.random.choice(range(self.memCntr)))
         else:
             memStart = int(np.random.choice(range(self.memCntr - batch_size - 1)))
-        miniBatch = self[memStart:memStart + batch_size]
+        miniBatch = self.memory[memStart:memStart + batch_size]
+        # print('len of miniBatch: ', len(miniBatch[0]))
+        print([e for e in miniBatch])
+        # for item in miniBatch:
+        #     print(item[0])
         memory = np.array(miniBatch)
 
-        Qpred = self.Q_eval.forward(list(memory[:, 0][:])).to(self.Q_eval.device)
-        Qnext = self.Q_next.forward(list(memory[:, 3][:])).to(self.Q_eval.device)
+        Qpred = self.Q_eval.forward(list(memory[:, 0])).to(self.Q_eval.device)
+        Qnext = self.Q_next.forward(list(memory[:, 3])).to(self.Q_eval.device)
 
         maxA = T.argmax(Qnext, dim=1).to(self.Q_eval.device)
         rewards = T.Tensor(list(memory[:, 2])).to(self.Q_eval.device)
         Qtarget = Qpred
-        Qtarget[:, maxA] = rewards + self.Gamma * T.mac(Qnext[1])
+        Qtarget[:, maxA] = rewards + self.GAMMA * T.mac(Qnext[1])
 
         if self.steps > 500:
             if self.EPSILON - 1e-4 > self.EPS_END:
