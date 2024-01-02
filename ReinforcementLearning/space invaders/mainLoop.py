@@ -2,29 +2,38 @@ import gymnasium as gym
 from model import DeepQNetwork, Agent
 from ReinforcementLearning.util import plot_learning_curve
 import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+
+
+print(np.__version__)
+# np.set_printoptions(precision = 2, suppress= True)
+# np.set_printoptions(linewidth=200)
+# np.set_printoptions(precision=3)
+# np.set_printoptions(formatter={"float_kind": lambda x: "%.1f" % x})
 
 
 if __name__ == '__main__':
-    env = gym.make('ALE/SpaceInvaders-v5') #, render_mode='human')
+    env = gym.make('ALE/SpaceInvaders-v5', render_mode='human')
     brain = Agent(gamma=0.95, epsilon=1.0,
                   alpha=0.003, maxMemorySize=5000, replace=None)
 
-    while brain.memCntr < brain.memSize:
-        observation, info = env.reset()
-        print(observation.shape)
-        done = False
-        while not done:
-            # 0 no action, 1 fire, 2 move right, 3 move left, 4 move right fire, 5 move left fire
-            action = env.action_space.sample()
-            observation_, reward, terminated, truncated, info = env.step(action)
-            # print(info)
-            done = terminated or truncated
-            if done and info['lives'] == 0:
-                reward = -100
-            brain.storeTransition(np.mean(observation[15:200, 30:126], axis=2), action, reward,
-                                  np.mean(observation_[15:200, 30:126], axis=2))
-            observation = observation_
-    print('done initializing memory')
+    # while brain.memCntr < brain.memSize:
+    #     observation, info = env.reset()
+    #     print(observation.shape)
+    #     done = False
+    #     while not done:
+    #         # 0 no action, 1 fire, 2 move right, 3 move left, 4 move right fire, 5 move left fire
+    #         action = env.action_space.sample()
+    #         observation_, reward, terminated, truncated, info = env.step(action)
+    #         # print(info)
+    #         done = terminated or truncated
+    #         if done and info['lives'] == 0:
+    #             reward = -100
+    #         brain.storeTransition(np.mean(observation[15:200, 30:126], axis=2), action, reward,
+    #                               np.mean(observation_[15:200, 30:126], axis=2))
+    #         observation = observation_
+    # print('done initializing memory')
 
     scores = []
     epsHistory = []
@@ -32,10 +41,13 @@ if __name__ == '__main__':
     batch_size = 32
 
     for i in range(numGames):
-        print('starting game ', i+1, 'epsilon: %.4f' % brain.EPSILON)
+        print('starting game ', i + 1, 'epsilon: %.4f' % brain.EPSILON)
         done = False
         observation, info = env.reset()
-        print(observation[:50])
+        print(np.array2string(observation))
+        # print(observation)
+
+        # print('OBSERVATION LEN: \n', observation)
         frames = [np.sum(observation[15:200, 30:125], axis=2)]
         score = 0
         lastAction = 0
@@ -48,13 +60,18 @@ if __name__ == '__main__':
                 action = lastAction
 
             observation_, reward, terminated, truncated, info = env.step(action)
+            print(info)
             done = terminated or truncated
             score += reward
-            frames.append(np.sum(observation[15:200, 30:125], axis=2))
-            if done and info['ale.lives'] == 0:
+            frames.append(np.sum(observation_[15:200, 30:125], axis=2))
+
+            # cv2.imshow('observation', observation_[15:200, 30:125])
+            # cv2.waitKey(0)
+
+            if done and info['lives'] == 0:
                 reward = -100
-            brain.storeTransition(np.mean(observation[15:200, 30:126], axis=2), action, reward,
-                                  np.mean(observation_[15:200, 30:126], axis=2))
+            brain.storeTransition(np.mean(observation[15:200, 30:125], axis=2), action, reward,
+                                  np.mean(observation_[15:200, 30:125], axis=2))
             observation = observation_
             brain.learn(batch_size)
             lastAction = action

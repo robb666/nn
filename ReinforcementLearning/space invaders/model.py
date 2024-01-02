@@ -3,7 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-np.set_printoptions(threshold=np.inf)
+
+# np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+
 
 class DeepQNetwork(nn.Module):
     def __init__(self, ALPHA):
@@ -79,14 +81,16 @@ class Agent(object):
         else:
             memStart = int(np.random.choice(range(self.memCntr - batch_size - 1)))
         miniBatch = self.memory[memStart:memStart + batch_size]
-        # print('len of miniBatch: ', len(miniBatch[0]))
-        print([e for e in miniBatch])
-        # for item in miniBatch:
-        #     print(item[0])
-        memory = np.array(miniBatch)
+        print()
+        # print('shape of miniBatch: \n', miniBatch)
+        # for arr in miniBatch[0][0]:
+        #     print(len(arr))
+        memory = np.array(miniBatch[0][0])
+        print('shape of memory: \n', memory.shape)
 
-        Qpred = self.Q_eval.forward(list(memory[:, 0])).to(self.Q_eval.device)
-        Qnext = self.Q_next.forward(list(memory[:, 3])).to(self.Q_eval.device)
+
+        Qpred = self.Q_eval.forward(list(memory[:, 0][:])).to(self.Q_eval.device)
+        Qnext = self.Q_next.forward(list(memory[:, 3][:])).to(self.Q_eval.device)
 
         maxA = T.argmax(Qnext, dim=1).to(self.Q_eval.device)
         rewards = T.Tensor(list(memory[:, 2])).to(self.Q_eval.device)
