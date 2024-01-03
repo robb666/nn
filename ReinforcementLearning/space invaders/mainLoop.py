@@ -3,18 +3,19 @@ from model import DeepQNetwork, Agent
 from ReinforcementLearning.util import plot_learning_curve
 import numpy as np
 import cv2
+import sys
 import matplotlib.pyplot as plt
 
-
 print(np.__version__)
-# np.set_printoptions(precision = 2, suppress= True)
-# np.set_printoptions(linewidth=200)
-# np.set_printoptions(precision=3)
-# np.set_printoptions(formatter={"float_kind": lambda x: "%.1f" % x})
+
+# np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+np.set_printoptions(threshold=sys.maxsize)
+
+
 
 
 if __name__ == '__main__':
-    env = gym.make('ALE/SpaceInvaders-v5', render_mode='human')
+    env = gym.make('ALE/SpaceInvaders-v5') #, render_mode='human')
     brain = Agent(gamma=0.95, epsilon=1.0,
                   alpha=0.003, maxMemorySize=5000, replace=None)
 
@@ -65,8 +66,10 @@ if __name__ == '__main__':
             score += reward
             frames.append(np.sum(observation_[15:200, 30:125], axis=2))
 
-            # cv2.imshow('observation', observation_[15:200, 30:125])
-            # cv2.waitKey(0)
+            scale_factor = 3 # You can adjust this value to make it larger or smaller
+            resized_image = cv2.resize(observation_[15:200, 30:125], None, fx=scale_factor, fy=scale_factor)
+            cv2.imshow('observation', resized_image)
+            cv2.waitKey(0)
 
             if done and info['lives'] == 0:
                 reward = -100
@@ -84,6 +87,3 @@ if __name__ == '__main__':
     fileName = str(numGames) + 'Games' + 'Gamma' + str(brain.GAMMA) + \
                'Alpha' + str(brain.ALPHA) + 'Memory' + str(brain.memSize) + '.png'
     plot_learning_curve(x, scores, epsHistory, fileName)
-
-
-
