@@ -54,3 +54,5 @@ YOLOv5_cars/images/
 YOLOv5_cars/labels/
 YOLOv5_cars/ll
 RedisAI/
+ReinforcementLearning/breakout/_dqn
+ReinforcementLearning/breakout/training_plot.jpg

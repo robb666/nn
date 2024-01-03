@@ -7,10 +7,13 @@ from icecream import ic
 
 
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2')  #, render_mode="human")
+    env = gym.make('LunarLander-v2', render_mode="human")
     ic(env.observation_space)
+    load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
                   eps_end=0.01, input_dims=[8], lr=0.003)
+    if load_checkpoint:
+        agent.load_model()
     scores, eps_history = [], []
     n_games = 100
     for i in range(n_games):
@@ -35,9 +38,12 @@ if __name__ == '__main__':
 
         avg_score = np.mean(scores[-100:])
 
-        print('episode ', i, 'score %.2f' % score,
-              'average score %.2f' % avg_score,
-              'epsilon %.2f' % agent.epsilon)
+        if i % 10 == 0 and i > 0:
+            print('episode ', i, 'score %.2f' % score,
+                  'average score %.2f' % avg_score,
+                  'epsilon %.2f' % agent.epsilon)
+            agent.save_model()
+
     x = [i + 1 for i in range(n_games)]
     filename = 'lunar_lander_2020.png'
     plot_learning_curve(x, scores, eps_history, filename)
