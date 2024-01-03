@@ -26,8 +26,8 @@ class DeepQNetwork(nn.Module):
         self.checkpoint_file = os.path.join(self.checkpoint_dir, '_dqn')
 
     def forward(self, state):
-        ic(state.shape)
-        ic(state.ndim)
+        # ic(state.shape)
+        # ic(state.ndim)
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         actions = self.fc3(x)

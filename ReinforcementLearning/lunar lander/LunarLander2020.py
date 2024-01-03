@@ -7,7 +7,7 @@ from icecream import ic
 
 
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2', render_mode="human")
+    env = gym.make('LunarLander-v2') #, render_mode="human")
     ic(env.observation_space)
     load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
@@ -15,12 +15,12 @@ if __name__ == '__main__':
     if load_checkpoint:
         agent.load_model()
     scores, eps_history = [], []
-    n_games = 100
+    n_games = 600
     for i in range(n_games):
         score = 0
         done = False
         observation, info = env.reset()
-        ic(observation)
+        # ic(observation)
 
         while not done:
             # env.render()
@@ -47,4 +47,3 @@ if __name__ == '__main__':
     x = [i + 1 for i in range(n_games)]
     filename = 'lunar_lander_2020.png'
     plot_learning_curve(x, scores, eps_history, filename)
-    #plotLearning
