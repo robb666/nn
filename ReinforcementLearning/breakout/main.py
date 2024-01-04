@@ -42,31 +42,31 @@ if __name__ == '__main__':
     stack_size = 4
     score = 0
 
-    while agent.mem_cntr < 10000:
-        terminated = False
-        observation, info = env.reset()
-        observation = preprocess(observation)
-        stacked_frames = None
-        observation = stack_frames(stacked_frames, observation, stack_size)
-        while not terminated:
-            action = np.random.choice([0, 1, 2])
-            action += 1
-            observation_, reward, terminated, truncated, info = env.step(action)
-            observation_ = stack_frames(stacked_frames, preprocess(observation_),
-                                        stack_size)
-            action -= 1
-            agent.store_transition(observation, action, reward,
-                                   observation_, int(terminated))
-            observation = observation_
-
-    print('terminated (Done) with random gameplay, game on.')
+    # while agent.mem_cntr < 10000:
+    #     terminated = False
+    #     observation, info = env.reset()
+    #     observation = preprocess(observation)
+    #     stacked_frames = None
+    #     observation = stack_frames(stacked_frames, observation, stack_size)
+    #     while not terminated:
+    #         action = np.random.choice([0, 1, 2])
+    #         action += 1
+    #         observation_, reward, terminated, truncated, info = env.step(action)
+    #         observation_ = stack_frames(stacked_frames, preprocess(observation_),
+    #                                     stack_size)
+    #         action -= 1
+    #         agent.store_transition(observation, action, reward,
+    #                                observation_, int(terminated))
+    #         observation = observation_
+    #
+    # print('terminated (Done) with random gameplay, game on.')
 
     for i in range(numGames):
         done = False
         if i % 10 == 0 and i > 0:
             avg_score = np.mean(scores[max(0, i-10): (i+1)])
             print('episode', i, 'score', score,
-                  'average_score %.3f' % avg_score,
+                  'avg score %.3f' % avg_score,
                   'epsilon %.3f' % agent.epsilon)
             agent.save_model()
         else:
@@ -92,8 +92,9 @@ if __name__ == '__main__':
                                    observation_, int(done))
             agent.learn()
             observation = observation_
-            score += reward
-
+            score = reward
+            # 'epsilon 0.846'
+            # 'epsilon 0.743'
         eps_history.append(agent.epsilon)
         scores.append(score)
 

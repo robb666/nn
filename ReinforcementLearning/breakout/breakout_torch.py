@@ -11,7 +11,7 @@ print('CUDA: ', T.cuda.is_available())
 
 class DeepQNetwork(nn.Module):
     def __init__(self, lr, input_dims, fc1_dims, fc2_dims,
-                 n_actions, chkpt_dir='./'):
+                 n_actions):
         super(DeepQNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -22,36 +22,23 @@ class DeepQNetwork(nn.Module):
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
         self.fc3 = nn.Linear(self.fc2_dims, self.n_actions)
 
-        self.optimizer = optim.Adam(self.parameters(), lr=lr)
-        self.loss = nn.MSELoss()
         self.device = T.device('cuda' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
-        self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, '_dqn')
 
     def forward(self, state):
         state = state.view(state.size(0), -1)
         # ic(state.shape)
         # ic(state.ndim)
-
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         actions = self.fc3(x)
 
         return actions
 
-    def save_checkpoint(self):
-        print('... saving checkpoint ...')
-        T.save(self.state_dict(), self.checkpoint_file)
-
-    def load_checkpoint(self):
-        print('... loading checkpoint ...')
-        self.load_state_dict(T.load(self.checkpoint_file))
-
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
-                 max_mem_size=10000, eps_end=0.05, eps_dec=5e-4):
+                 max_mem_size=10000, eps_end=0.05, eps_dec=5e-5):
         self.gamma = gamma
         self.epsilon = epsilon
         self.eps_min = eps_end
@@ -67,6 +54,12 @@ class Agent:
         self.Q_eval = DeepQNetwork(lr, n_actions=n_actions,
                                    input_dims=input_dims,
                                    fc1_dims=256, fc2_dims=256)
+        self.Q_next = DeepQNetwork(lr, n_actions=n_actions,
+                                   input_dims=input_dims,
+                                   fc1_dims=256, fc2_dims=256)
+        self.optimizer = optim.Adam(self.Q_eval.parameters(), lr=lr)
+        self.loss = nn.MSELoss()
+
         # ic(*input_dims)
         self.state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
@@ -99,7 +92,7 @@ class Agent:
         if self.mem_cntr < self.batch_size:
             return
 
-        self.Q_eval.optimizer.zero_grad()
+        self.optimizer.zero_grad()
 
         max_mem = min(self.mem_cntr, self.mem_size)
 
@@ -123,16 +116,31 @@ class Agent:
 
         q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]
 
-        loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
+        loss = self.loss(q_target, q_eval).to(self.Q_eval.device)
         loss.backward()
-        self.Q_eval.optimizer.step()
+        self.optimizer.step()
 
         self.iter_cntr += 1
         self.epsilon = self.epsilon - self.eps_dec \
             if self.epsilon > self.eps_min else self.eps_min
 
-    def save_model(self):
-        self.Q_eval.save_checkpoint()
+    def save_model(self) -> None:
+        print('... saving checkpoint ...')
+        T.save(
+            {
+                'epsilon': self.epsilon,
+                'q_eval_state_dict': self.Q_eval.state_dict(),
+                'q_next_state_dict': self.Q_next.state_dict(),
+                'optimizer_state_dict': self.optimizer.state_dict()
+            },
+            'checkpoints/_dqn.chkpt'
+        )
 
-    def load_model(self):
-        self.Q_eval.load_checkpoint()
+    def load_model(self) -> None:
+        print('... loading checkpoint ...')
+        checkpoint = T.load('checkpoints/_dqn.chkpt')
+        self.Q_eval.load_state_dict(checkpoint['q_eval_state_dict'])
+        self.Q_next.load_state_dict(checkpoint['q_next_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.epsilon = checkpoint['epsilon']
+

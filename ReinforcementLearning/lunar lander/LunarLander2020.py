@@ -1,5 +1,5 @@
-import gym
-# import gymnasium as gym
+# import gym
+import gymnasium as gym
 from simple_dqn_torch_2020 import Agent
 from ReinforcementLearning.util import plot_learning_curve
 import numpy as np
@@ -9,7 +9,7 @@ print(gym.__version__)
 if __name__ == '__main__':
     env = gym.make('LunarLander-v2')  #, render_mode="human")
     ic(env.observation_space)
-    load_checkpoint = True
+    load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
                   eps_end=0.01, input_dims=[8], lr=0.003)
     if load_checkpoint:

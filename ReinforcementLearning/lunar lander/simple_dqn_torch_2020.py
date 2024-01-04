@@ -17,13 +17,11 @@ class DeepQNetwork(nn.Module):
         self.fc1 = nn.Linear(*self.input_dims, self.fc1_dims)
         self.fc2 = nn.Linear(self.fc1_dims, self.fc2_dims)
         self.fc3 = nn.Linear(self.fc2_dims, self.n_actions)
-        self.optimizer = optim.Adam(self.parameters(), lr=lr)
-        self.loss = nn.MSELoss()
+        # self.optimizer = optim.Adam(self.parameters(), lr=lr)
+        # self.loss = nn.MSELoss()
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
         print(self.device)
         self.to(self.device)
-        self.checkpoint_dir = chkpt_dir
-        self.checkpoint_file = os.path.join(self.checkpoint_dir, '_dqn')
 
     def forward(self, state):
         # ic(state.shape)
@@ -34,13 +32,13 @@ class DeepQNetwork(nn.Module):
 
         return actions
 
-    def save_checkpoint(self):
-        print('... saving checkpoint ...')
-        T.save(self.state_dict(), self.checkpoint_file)
-
-    def load_checkpoint(self):
-        print('... loading checkpoint ...')
-        self.load_state_dict(T.load(self.checkpoint_file))
+    # def save_checkpoint(self):
+    #     print('... saving checkpoint ...')
+    #     T.save(self.state_dict(), self.checkpoint_file)
+    #
+    # def load_checkpoint(self):
+    #     print('... loading checkpoint ...')
+    #     self.load_state_dict(T.load(self.checkpoint_file))
 
 
 class Agent:
@@ -58,6 +56,8 @@ class Agent:
 
         self.Q_eval = DeepQNetwork(self.lr, n_actions=n_actions, input_dims=input_dims,
                                    fc1_dims=256, fc2_dims=256)
+        self.optimizer = optim.Adam(self.Q_eval.parameters(), lr=lr)
+        self.loss = nn.MSELoss()
 
         self.state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims),
@@ -116,8 +116,20 @@ class Agent:
 
         self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min else self.eps_min
 
-    def save_model(self):
-        self.Q_eval.save_checkpoint()
+    def save_model(self) -> None:
+        print('... saving checkpoint ...')
+        T.save(
+            {
+                'epsilon': self.epsilon,
+                'q_eval_state_dict': self.Q_eval.state_dict(),
+                'optimizer_state_dict': self.optimizer.state_dict()
+            },
+            'checkpoints/_dqn.chkpt'
+        )
 
-    def load_model(self):
-        self.Q_eval.load_checkpoint()
+    def load_model(self) -> None:
+        print('... loading checkpoint ...')
+        checkpoint = T.load('checkpoints/_dqn.chkpt')
+        self.Q_eval.load_state_dict(checkpoint['q_eval_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.epsilon = checkpoint['epsilon']
