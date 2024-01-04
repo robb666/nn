@@ -27,7 +27,9 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
 
 if __name__ == '__main__':
+    print(gym.envs.registration.registry.keys())
     env = gym.make('ALE/Breakout-v5', render_mode='human')
+
     ic(env)
     load_checkpoint = True
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.00025, input_dims=(180, 160, 4),
@@ -36,28 +38,28 @@ if __name__ == '__main__':
         agent.load_model()
     scores = []
     eps_history = []
-    numGames = 200  # było 100, 200, 200
+    numGames = 760  # było 19240
     stack_size = 4
     score = 0
 
-    # while agent.mem_cntr < 10000:
-    #     terminated = False
-    #     observation, info = env.reset()
-    #     observation = preprocess(observation)
-    #     stacked_frames = None
-    #     observation = stack_frames(stacked_frames, observation, stack_size)
-    #     while not terminated:
-    #         action = np.random.choice([0, 1, 2])
-    #         action += 1
-    #         observation_, reward, terminated, truncated, info = env.step(action)
-    #         observation_ = stack_frames(stacked_frames, preprocess(observation_),
-    #                                     stack_size)
-    #         action -= 1
-    #         agent.store_transition(observation, action, reward,
-    #                                observation_, int(terminated))
-    #         observation = observation_
-    #
-    # print('terminated (Done) with random gameplay, game on.')
+    while agent.mem_cntr < 10000:
+        terminated = False
+        observation, info = env.reset()
+        observation = preprocess(observation)
+        stacked_frames = None
+        observation = stack_frames(stacked_frames, observation, stack_size)
+        while not terminated:
+            action = np.random.choice([0, 1, 2])
+            action += 1
+            observation_, reward, terminated, truncated, info = env.step(action)
+            observation_ = stack_frames(stacked_frames, preprocess(observation_),
+                                        stack_size)
+            action -= 1
+            agent.store_transition(observation, action, reward,
+                                   observation_, int(terminated))
+            observation = observation_
+
+    print('terminated (Done) with random gameplay, game on.')
 
     for i in range(numGames):
         done = False
@@ -70,12 +72,12 @@ if __name__ == '__main__':
         else:
             print('episode: ', i, 'score', score)
         observation, info = env.reset()
-        ic(observation.shape)
+        # ic(observation.shape)
 
         observation = preprocess(observation)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
-        ic(observation.shape)
+        # ic(observation.shape)
 
         while not done:
             action = agent.choose_action(observation)
