@@ -35,7 +35,7 @@ class DeepQNetwork(nn.Module):
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
-                 max_mem_size=100000, eps_end=0.01, eps_dec=5e-4):
+                 max_mem_size=100000, eps_end=0.005, eps_dec=5e-5):
         self.gamma = gamma
         self.epsilon = epsilon
         self.eps_min = eps_end
@@ -121,7 +121,7 @@ class Agent:
 
     def load_model(self) -> None:
         print('... loading checkpoint ...')
-        checkpoint = T.load('checkpoints/_dqn.chkpt')
+        checkpoint = T.load('checkpoints/_dqn_last.chkpt')
         self.Q_eval.load_state_dict(checkpoint['q_eval_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         self.epsilon = checkpoint['epsilon']
