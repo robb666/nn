@@ -45,7 +45,7 @@ if __name__ == '__main__':
         print('starting game ', i + 1, 'epsilon: %.4f' % brain.EPSILON)
         done = False
         observation, info = env.reset()
-        print(np.array2string(observation))
+        # print(np.array2string(observation))
         # print(observation)
 
         # print('OBSERVATION LEN: \n', observation)
@@ -66,10 +66,10 @@ if __name__ == '__main__':
             score += reward
             frames.append(np.sum(observation_[15:200, 30:125], axis=2))
 
-            scale_factor = 3 # You can adjust this value to make it larger or smaller
-            resized_image = cv2.resize(observation_[15:200, 30:125], None, fx=scale_factor, fy=scale_factor)
-            cv2.imshow('observation', resized_image)
-            cv2.waitKey(0)
+            # scale_factor = 3 # You can adjust this value to make it larger or smaller
+            # resized_image = cv2.resize(observation_[15:200, 30:125], None, fx=scale_factor, fy=scale_factor)
+            # cv2.imshow('observation', resized_image)
+            # cv2.waitKey(0)
 
             if done and info['lives'] == 0:
                 reward = -100

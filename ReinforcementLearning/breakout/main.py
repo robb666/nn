@@ -28,7 +28,7 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
 if __name__ == '__main__':
     print(gym.envs.registration.registry.keys())
-    env = gym.make('ALE/Breakout-v5', render_mode='human')
+    env = gym.make('ALE/Breakout-v5') #, render_mode='human')
 
     ic(env)
     load_checkpoint = True
