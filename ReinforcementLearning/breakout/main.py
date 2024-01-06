@@ -31,35 +31,36 @@ if __name__ == '__main__':
     env = gym.make('ALE/Breakout-v5') #, render_mode='human')
 
     ic(env)
-    load_checkpoint = True
+    load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.00025, input_dims=(180, 160, 4),
                   n_actions=3, batch_size=32)
     if load_checkpoint:
         agent.load_model()
     scores = []
     eps_history = []
-    numGames = 760  # było 19240
+    numGames = 40  # było 19240
     stack_size = 4
     score = 0
 
-    # while agent.mem_cntr < 10000:
-    #     terminated = False
-    #     observation, info = env.reset()
-    #     observation = preprocess(observation)
-    #     stacked_frames = None
-    #     observation = stack_frames(stacked_frames, observation, stack_size)
-    #     while not terminated:
-    #         action = np.random.choice([0, 1, 2])
-    #         action += 1
-    #         observation_, reward, terminated, truncated, info = env.step(action)
-    #         observation_ = stack_frames(stacked_frames, preprocess(observation_),
-    #                                     stack_size)
-    #         action -= 1
-    #         agent.store_transition(observation, action, reward,
-    #                                observation_, int(terminated))
-    #         observation = observation_
-    #
-    # print('terminated (Done) with random gameplay, game on.')
+    while agent.mem_cntr < 10000:
+        done = False
+        observation, info = env.reset()
+        observation = preprocess(observation)
+        stacked_frames = None
+        observation = stack_frames(stacked_frames, observation, stack_size)
+        while not done:
+            action = np.random.choice([0, 1, 2])
+            action += 1
+            observation_, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
+            observation_ = stack_frames(stacked_frames, preprocess(observation_),
+                                        stack_size)
+            action -= 1
+            agent.store_transition(observation, action, reward,
+                                   observation_, int(terminated))
+            observation = observation_
+
+    print('terminated (Done) with random gameplay, game on.')
 
     for i in range(numGames):
         done = False
@@ -92,14 +93,14 @@ if __name__ == '__main__':
                                    observation_, int(done))
             agent.learn()
             observation = observation_
-            score = reward
+            score += reward
             # 'epsilon 0.846'
             # 'epsilon 0.743'
         eps_history.append(agent.epsilon)
         scores.append(score)
 
     x = [i + 1 for i in range(numGames)]
-    plot_learning_curve(x, scores, eps_history, 'training_plot.jpg')
+    plot_learning_curve(x, scores, eps_history, 'plots/training_plot.jpg')
 
 
 

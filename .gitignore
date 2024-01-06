@@ -57,3 +57,6 @@ RedisAI/
 ReinforcementLearning/breakout/_dqn
 ReinforcementLearning/breakout/training_plot.jpg
 ReinforcementLearning/lunar lander/_dqn
+ReinforcementLearning/lunar lander/checkpoints
+*.jpg
+ReinforcementLearning/breakout/checkpoints
