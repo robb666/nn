@@ -32,14 +32,6 @@ class DeepQNetwork(nn.Module):
 
         return actions
 
-    # def save_checkpoint(self):
-    #     print('... saving checkpoint ...')
-    #     T.save(self.state_dict(), self.checkpoint_file)
-    #
-    # def load_checkpoint(self):
-    #     print('... loading checkpoint ...')
-    #     self.load_state_dict(T.load(self.checkpoint_file))
-
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
@@ -90,7 +82,7 @@ class Agent:
         if self.mem_cntr < self.batch_size:
             return
 
-        self.Q_eval.optimizer.zero_grad()
+        self.optimizer.zero_grad()
 
         max_mem = min(self.mem_cntr, self.mem_size)
         batch = np.random.choice(max_mem, self.batch_size, replace=False)
@@ -110,9 +102,9 @@ class Agent:
 
         q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]
 
-        loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
+        loss = self.loss(q_target, q_eval).to(self.Q_eval.device)
         loss.backward()
-        self.Q_eval.optimizer.step()
+        self.optimizer.step()
 
         self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min else self.eps_min
 
