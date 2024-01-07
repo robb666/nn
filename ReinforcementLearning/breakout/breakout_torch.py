@@ -38,7 +38,7 @@ class DeepQNetwork(nn.Module):
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
-                 max_mem_size=10000, eps_end=0.05, eps_dec=5e-5):
+                 max_mem_size=14000, eps_end=0.01, eps_dec=5e-4):
         self.gamma = gamma
         self.epsilon = epsilon
         self.eps_min = eps_end
@@ -111,7 +111,7 @@ class Agent:
         # state_batch = state_batch.view(state_batch.size(0), -1)
         # ic(state_batch.shape)
         q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-        q_next = self.Q_eval.forward(new_state_batch)
+        q_next = self.Q_next.forward(new_state_batch)
         q_next[terminal_batch] = 0.0
 
         q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]

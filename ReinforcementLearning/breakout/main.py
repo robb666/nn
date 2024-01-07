@@ -4,10 +4,11 @@ import numpy as np
 from ReinforcementLearning.util import plot_learning_curve
 # from gym import wrappers
 from icecream import ic
+import cv2
 
 
 def preprocess(observation):
-    # observation = observation / 255
+    observation = observation / 255
     return np.mean(observation[30:, :], axis=2).reshape(180, 160, 1)
 
 
@@ -27,8 +28,8 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
 
 if __name__ == '__main__':
-    print(gym.envs.registration.registry.keys())
-    env = gym.make('ALE/Breakout-v5') #, render_mode='human')
+    # print(gym.envs.registration.registry.keys())
+    env = gym.make('ALE/Breakout-v5', render_mode='human')
 
     ic(env)
     load_checkpoint = False
@@ -36,42 +37,37 @@ if __name__ == '__main__':
                   n_actions=3, batch_size=32)
     if load_checkpoint:
         agent.load_model()
+
     scores = []
     eps_history = []
     numGames = 40  # było 19240
     stack_size = 4
     score = 0
 
-    while agent.mem_cntr < 10000:
-        done = False
-        observation, info = env.reset()
-        observation = preprocess(observation)
-        stacked_frames = None
-        observation = stack_frames(stacked_frames, observation, stack_size)
-        while not done:
-            action = np.random.choice([0, 1, 2])
-            action += 1
-            observation_, reward, terminated, truncated, info = env.step(action)
-            done = terminated or truncated
-            observation_ = stack_frames(stacked_frames, preprocess(observation_),
-                                        stack_size)
-            action -= 1
-            agent.store_transition(observation, action, reward,
-                                   observation_, int(terminated))
-            observation = observation_
+    # while agent.mem_cntr < 10000:
+    #     done = False
+    #     observation, info = env.reset()
+    #     observation = preprocess(observation)
+    #     stacked_frames = None
+    #     observation = stack_frames(stacked_frames, observation, stack_size)
+    #     while not done:
+    #         action = np.random.choice([0, 1, 2])
+    #         action += 1
+    #         observation_, reward, terminated, truncated, info = env.step(action)
+    #         done = terminated or truncated
+    #         observation_ = stack_frames(stacked_frames, preprocess(observation_),
+    #                                     stack_size)
+    #         action -= 1
+    #         agent.store_transition(observation, action, reward,
+    #                                observation_, int(done))
+    #         observation = observation_
+    #
+    # print('terminated (Done) with random gameplay, game on.')
 
-    print('terminated (Done) with random gameplay, game on.')
-
+    n_steps = 0
     for i in range(numGames):
         done = False
-        if i % 10 == 0 and i > 0:
-            avg_score = np.mean(scores[max(0, i-10): (i+1)])
-            print('episode', i, 'score', score,
-                  'avg score %.3f' % avg_score,
-                  'epsilon %.3f' % agent.epsilon)
-            agent.save_model()
-        else:
-            print('episode: ', i, 'score', score)
+
         observation, info = env.reset()
         # ic(observation.shape)
 
@@ -80,24 +76,41 @@ if __name__ == '__main__':
         observation = stack_frames(stacked_frames, observation, stack_size)
         # ic(observation.shape)
 
+        # scale_factor = 3
+        # resized_image = cv2.resize(observation[0], None, fx=scale_factor, fy=scale_factor)
+        # cv2.imshow('observation', resized_image)
+        # cv2.waitKey(0)
+
+        score = 0
         while not done:
             action = agent.choose_action(observation)
             action += 1
             observation_, reward, terminated, truncated, info = env.step(action)
             done = terminated or truncated
+            n_steps += 1
             observation_ = stack_frames(stacked_frames, preprocess(observation_),
                                         stack_size)
+            score += reward
             action -= 1
 
             agent.store_transition(observation, action, reward,
                                    observation_, int(done))
-            agent.learn()
             observation = observation_
-            score += reward
-            # 'epsilon 0.846'
-            # 'epsilon 0.743'
-        scores.append(score)
+            if n_steps % 4 == 0:
+                agent.learn()
+
+        if i % 12 == 0 and i > 0:
+            avg_score = np.mean(scores[-100:])
+            print('episode: ', i, 'score', score,
+                  'avg score %.3f' % avg_score,
+                  'epsilon %.3f' % agent.epsilon,
+                  'step: ', n_steps)
+            agent.save_model()
+        else:
+            print('episode: ', i, 'score', score)
+
         eps_history.append(agent.epsilon)
+        scores.append(score)
 
         avg_score = np.mean(scores[-100:])
 
