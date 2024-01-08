@@ -23,7 +23,10 @@ def getWays(amount, coins):
     return matrix[- 1][- 1]
 
 
-amount = 4
-coins = [1, 2, 3]
+# amount = 4
+# coins = [1, 2, 3]
+
+amount = 11
+coins = [1, 5, 6, 8]
 
 print(getWays(amount, coins))

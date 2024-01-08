@@ -23,17 +23,24 @@ def np_get_coins_value(amount, coins, matrix):
     coins_value = []
     for coin in reversed(coins):
         for col in range(amount, -1, -1):
+            if sum(coins_value) == amount:
+                return f'\nYou need minimum {matrix[-1][-1]} coins of {coins_value} to get {amount}'
             if matrix[coin_idx][col - coin] + 1 > matrix[coin_idx][col] == matrix[coin_idx - 1][col]:
                 if matrix[coin_idx - 1][col - coins[coins.index(coin) - 1]] == 1:
                     coins_value.append(coins[coins.index(coin) - 1])
+                    coin_idx -= 1
                     break
-            if sum(coins_value) == amount:
-                break
-    return f'You need minimum {matrix[-1][-1]} coins of {coins_value}'
+            else:
+                coins_value.append(coins[coins.index(coin) - 1])
+            coin_idx -= 1
 
+
+# amount = 4
+# coins = [1, 2, 3]
 
 amount = 11
 coins = [1, 5, 6, 8]
 
 matrix = np_get_min_coins(amount, coins)
+print(matrix)
 print(np_get_coins_value(amount, coins, matrix))
