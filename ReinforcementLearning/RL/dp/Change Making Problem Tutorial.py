@@ -27,14 +27,20 @@ def change_making(coins, change):
     return matrix[-1][-1]
 
 
-x = round((2 % 1.89) * 100)
+# x = round((2 % 1.89) * 100)
 # print(x)
-print(change_making([1, 2, 5, 10], x))
+# print(change_making([1, 2, 5, 10], x))
 
 
 # coins = [1, 2, 5, 10, 20, 50]
 # for c in range(1, len(coins) + 1):
 #     print(3 - coins[c - 1])
+
+
+change = 11
+coins = [1, 5, 6, 8]
+
+print(change_making(coins, change))
 
 
 """greedy approach"""
@@ -43,7 +49,7 @@ def num_coins(cents):
     count = 0
     for coin in coins:
         while cents >= coin:
-            print(coin)
+            # print(coin)
             cents = cents - coin
             count = count + 1
     return count
