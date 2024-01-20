@@ -1,6 +1,6 @@
-import gym
+import gymnasium as gym
 from LunarLander_v3_AC import Agent
-from util import plot_learning_curve
+from ReinforcementLearning.util import plot_learning_curve
 import numpy as np
 
 if __name__ == '__main__':

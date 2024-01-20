@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     scores = []
     eps_history = []
-    numGames = 40  # było 19240
+    numGames = 4  # było 19240
     stack_size = 4
     score = 0
 
@@ -71,14 +71,16 @@ if __name__ == '__main__':
         observation, info = env.reset()
         # ic(observation.shape)
 
+
         observation = preprocess(observation)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
-        # ic(observation.shape)
+        ic(observation.shape)
+
 
         # scale_factor = 3
         # resized_image = cv2.resize(observation[0], None, fx=scale_factor, fy=scale_factor)
-        # cv2.imshow('observation', resized_image)
+        # cv2.imshow('observation', observation[0])
         # cv2.waitKey(0)
 
         score = 0
@@ -99,7 +101,7 @@ if __name__ == '__main__':
             if n_steps % 4 == 0:
                 agent.learn()
 
-        if i % 12 == 0 and i > 0:
+        if i % 2 == 0 and i > 0:
             avg_score = np.mean(scores[-100:])
             print('episode: ', i, 'score', score,
                   'avg score %.3f' % avg_score,

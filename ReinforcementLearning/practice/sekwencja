@@ -1,0 +1,9 @@
+obserwacja --> stan --> akcja (numer akcji) --> środowisko (numer akcji w środowisku) --> emisja kolejnego stanu i nagrody -->
+step += 1 -->
+score += reward -->
+zapamiętanie obu stanów, akcji i nagrody ->
+stary stan = nowy stan
+--> proces nauki:
+    pobranie partii z pamięci stanów, akcji i nagród -->
+    ??? -->
+    przepuszczenie przez neural network -->

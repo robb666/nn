@@ -38,7 +38,7 @@ class DeepQNetwork(nn.Module):
 
 class Agent:
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions,
-                 max_mem_size=14000, eps_end=0.01, eps_dec=5e-4):
+                 max_mem_size=500, eps_end=0.01, eps_dec=5e-4):
         self.gamma = gamma
         self.epsilon = epsilon
         self.eps_min = eps_end
@@ -54,9 +54,9 @@ class Agent:
         self.Q_eval = DeepQNetwork(lr, n_actions=n_actions,
                                    input_dims=input_dims,
                                    fc1_dims=256, fc2_dims=256)
-        self.Q_next = DeepQNetwork(lr, n_actions=n_actions,
-                                   input_dims=input_dims,
-                                   fc1_dims=256, fc2_dims=256)
+        # self.Q_next = DeepQNetwork(lr, n_actions=n_actions,
+        #                            input_dims=input_dims,
+        #                            fc1_dims=256, fc2_dims=256)
         self.optimizer = optim.Adam(self.Q_eval.parameters(), lr=lr)
         self.loss = nn.MSELoss()
 
@@ -69,8 +69,9 @@ class Agent:
 
     def store_transition(self, state, action, reward, state_, terminal):
         index = self.mem_cntr % self.mem_size
-        # ic(index)
+        print(index)
         self.state_memory[index] = state
+        print(self.state_memory)
         self.new_state_memory[index] = state_
         self.reward_memory[index] = reward
         self.action_memory[index] = action
@@ -102,16 +103,16 @@ class Agent:
 
         state_batch = T.tensor(self.state_memory[batch]).to(self.Q_eval.device)
         new_state_batch = T.tensor(self.new_state_memory[batch]).to(self.Q_eval.device)
-
-        action_batch = self.action_memory[batch]
         reward_batch = T.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
         terminal_batch = T.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)
+
+        action_batch = self.action_memory[batch]
         # ic(state_batch.shape, batch_index, action_batch)
 
         # state_batch = state_batch.view(state_batch.size(0), -1)
         # ic(state_batch.shape)
         q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-        q_next = self.Q_next.forward(new_state_batch)
+        q_next = self.Q_eval.forward(new_state_batch)
         q_next[terminal_batch] = 0.0
 
         q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]
@@ -130,7 +131,7 @@ class Agent:
             {
                 'epsilon': self.epsilon,
                 'q_eval_state_dict': self.Q_eval.state_dict(),
-                'q_next_state_dict': self.Q_next.state_dict(),
+                # 'q_next_state_dict': self.Q_next.state_dict(),
                 'optimizer_state_dict': self.optimizer.state_dict()
             },
             'checkpoints/_dqn.chkpt'
@@ -140,7 +141,7 @@ class Agent:
         print('... loading checkpoint ...')
         checkpoint = T.load('checkpoints/_dqn.chkpt')
         self.Q_eval.load_state_dict(checkpoint['q_eval_state_dict'])
-        self.Q_next.load_state_dict(checkpoint['q_next_state_dict'])
+        # self.Q_next.load_state_dict(checkpoint['q_next_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         self.epsilon = checkpoint['epsilon']
 
