@@ -16,8 +16,7 @@ class Agent:
         self.mouse = MouseController()
         self.pol_chars = {'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż', 'Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż'}
 
-        self.actions = ['enter', 'tab', 'tab_up', 'up', 'down', 'back', 'forth', 'esc',
-                        # 'close_tab',
+        self.actions = ['enter', 'tab', 'tab_up', 'up', 'down', 'back', 'forth', 'esc', 'change_tab',  # 'close_tab',
                         'copy_paste', 'type_randomly', 'click_kb', 'mouse_right', 'mouse_left', 'mouse_down',
                         'mouse_up', 'click', 'delete', 'wait_0', 'wait_1']
 
@@ -56,6 +55,10 @@ class Agent:
 
     def esc(self):
         self.kb.tap(Key.esc)
+
+    def change_tab(self):
+        with self.kb.pressed(Key.ctrl):
+            self.kb.tap(Key.tab)
 
     # def close_tab(self):
     #     with self.kb.pressed(Key.ctrl):
