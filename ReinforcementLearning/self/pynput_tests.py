@@ -15,17 +15,17 @@ class Agent:
         self.kb = Controller()
         self.mouse = MouseController()
         self.pol_chars = {'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż', 'Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż'}
-
         self.actions = ['enter', 'tab', 'tab_up', 'up', 'down', 'back', 'forth', 'esc', 'change_tab',  # 'close_tab',
                         'copy_paste', 'type_randomly', 'click_kb', 'mouse_right', 'mouse_left', 'mouse_down',
                         'mouse_up', 'click', 'delete', 'wait_0', 'wait_1']
+        self.data = details
 
     def choose_and_execute_action(self):
         action_name = random.choice(self.actions)
         print(action_name)
         action = getattr(self, action_name)
         if action_name in ['type_randomly', 'copy_paste']:
-            action("Example text")
+            action(random.choice(self.data))  # TODO <-- single detail
         else:
             action()
 
@@ -82,6 +82,9 @@ class Agent:
     def click_kb(self):
         self.kb.tap(Key.space)
 
+    def mouse_middle(self):
+        pass  # Middle of the screen
+
     def mouse_right(self, x=20, y=0):
         self.mouse.move(x, y)
 
@@ -114,16 +117,16 @@ class Agent:
     #             self.kb.tap(key)
 
 
-# data = ['6062815954', 'robert.try12@gmail.com']
+data = ['6062815954', 'robert.try12@gmail.com']
 
 sleep(4)
 
 
-A = Agent(details=None)
+A = Agent(details=data)
 
 for _ in range(10):
     A.choose_and_execute_action()
-
+    sleep(.2)
 
 
 # for _ in range(20):
