@@ -15,4 +15,11 @@ class GridWorld(object):
         self.addMagicSquares(magicSquares)
         self.agentPosition = 0
 
-    def addMagicSquares(self, magicSqares):pass
+    def addMagicSquares(self, magicSqares):
+        self.magicSquares = magicSqares
+        i = 2
+        for square in magicSqares:
+            x = square // self.m
+            y = square % self.n
+            self.grid[x][y] = i
+            i += 1

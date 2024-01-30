@@ -15,13 +15,13 @@ class Agent:
         self.kb = Controller()
         self.mouse = MouseController()
         self.pol_chars = {'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż', 'Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż'}
-        self.actions = ['enter', 'tab', 'tab_up', 'up', 'down', 'back', 'forth', 'esc', 'change_tab',  # 'close_tab',
-                        'copy_paste', 'type_randomly', 'click_kb', 'mouse_right', 'mouse_left', 'mouse_down',
-                        'mouse_up', 'click', 'delete', 'wait_0', 'wait_1']
+        self.action_space = ['enter', 'tab', 'tab_up', 'up', 'down', 'back', 'forth', 'esc', 'change_tab',  # 'close_tab',
+                             'copy_paste', 'type_randomly', 'click_kb', 'mouse_right', 'mouse_left', 'mouse_down',
+                             'mouse_up', 'click', 'delete', 'wait_0', 'wait_1']
         self.data = details
 
     def choose_and_execute_action(self):
-        action_name = random.choice(self.actions)
+        action_name = random.choice(self.action_space)
         print(action_name)
         action = getattr(self, action_name)
         if action_name in ['type_randomly', 'copy_paste']:
