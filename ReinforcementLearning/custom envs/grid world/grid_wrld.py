@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class GridWorld(object):
     def __init__(self, m, n, magicSquares):
         self.grid = np.zeros((m,n))
@@ -99,10 +100,12 @@ class GridWorld(object):
     def actionSpaceSample(self):
         return np.random.choice(self.possibleActions)
 
+
 def maxAction(Q, state, actions):
     values = np.array([Q[state,a] for a in actions])
     action = np.argmax(values)
     return actions[action]
+
 
 if __name__ == '__main__':
     # map magic squares to their connecting square
