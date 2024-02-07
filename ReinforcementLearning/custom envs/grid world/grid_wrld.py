@@ -1,15 +1,17 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 
+
 class GridWorld(object):
     def __init__(self, m, n, magicSquares):
-        self.grid = np.zeros((m,n))
+        self.grid = np.zeros((m, n))
         self.m = m
         self.n = n
-        self.stateSpace = [i for i in range(self.m*self.n)]
+        self.stateSpace = [i for i in range(self.m * self.n)]
         self.stateSpace.remove(80)
-        self.stateSpacePlus = [i for i in range(self.m*self.n)]
+        self.stateSpacePlus = [i for i in range(self.m * self.n)]
         self.actionSpace = {'U': -self.m, 'D': self.m,
                             'L': -1, 'R': 1}
         self.possibleActions = ['U', 'D', 'L', 'R']
@@ -50,7 +52,7 @@ class GridWorld(object):
         if newState not in self.stateSpacePlus:
             return True
         # if we're trying to wrap around to next row
-        elif oldState % self.m == 0 and newState  % self.m == self.m - 1:
+        elif oldState % self.m == 0 and newState % self.m == self.m - 1:
             return True
         elif oldState % self.m == self.m - 1 and newState % self.m == 0:
             return True
@@ -74,40 +76,46 @@ class GridWorld(object):
 
     def reset(self):
         self.agentPosition = 0
-        self.grid = np.zeros((self.m,self.n))
+        self.grid = np.zeros((self.m, self.n))
         self.addMagicSquares(self.magicSquares)
         return self.agentPosition
 
     def render(self):
-        print('------------------------------------------')
         for row in self.grid:
             for col in row:
                 if col == 0:
                     print('-', end='\t')
+                    # sleep(.5)
                 elif col == 1:
                     print('X', end='\t')
+                    # sleep(.5)
                 elif col == 2:
                     print('Ain', end='\t')
+                    # sleep(.5)
                 elif col == 3:
                     print('Aout', end='\t')
+                    # sleep(.5)
                 elif col == 4:
                     print('Bin', end='\t')
+                    # sleep(.5)
                 elif col == 5:
                     print('Bout', end='\t')
+                    # sleep(.5)
             print('\n')
-        print('------------------------------------------')
+        print('-------------------------------------------')
 
     def actionSpaceSample(self):
         return np.random.choice(self.possibleActions)
 
 
 def maxAction(Q, state, actions):
-    values = np.array([Q[state,a] for a in actions])
+    values = np.array([Q[state, a] for a in actions])
     action = np.argmax(values)
     return actions[action]
 
 
 if __name__ == '__main__':
+
     # map magic squares to their connecting square
     magicSquares = {18: 54, 63: 14}
     env = GridWorld(9, 9, magicSquares)
@@ -123,6 +131,7 @@ if __name__ == '__main__':
 
     numGames = 50_000
     totalRewards = np.zeros(numGames)
+
     for i in range(numGames):
         if i % 5000 == 0:
             print('starting game ', i)
@@ -130,15 +139,14 @@ if __name__ == '__main__':
         epRewards = 0
         observation = env.reset()
         while not done:
+            env.render()
             rand = np.random.random()
-            action = maxAction(Q, observation, env.possibleActions) if rand < (1 - EPS) \
-                                                    else env.actionSpaceSample()
+            action = maxAction(Q, observation, env.possibleActions) if rand < (1 - EPS) else env.actionSpaceSample()
             observation_, reward, done, info = env.step(action)
             epRewards += reward
 
             action_ = maxAction(Q, observation_, env.possibleActions)
-            Q[observation, action] = Q[observation, action] + ALPHA*(reward +
-                        GAMMA*Q[observation_, action_] - Q[observation, action])
+            Q[observation, action] = Q[observation, action] + ALPHA * (reward + GAMMA * Q[observation_, action_] - Q[observation, action])
             observation = observation_
         if EPS - 2 / numGames > 0:
             EPS -= 2 / numGames
