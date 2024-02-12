@@ -10,16 +10,16 @@ S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
 
 def reward(s, s_prim):
 	if s == 8 and s_prim == 9:
-		return 1
+		return 2
 	else:
-		return 0
+		return 1
 
 
 def step(s):
 	if s == 8:
 		return 9
 	else:
-		return random.choice([i for i in S_prim if i not in [8]])
+		return random.choice(S_prim)
 
 
 def policy_evaluation(theta, gamma):
@@ -30,7 +30,7 @@ def policy_evaluation(theta, gamma):
 			v = value_dict[s]
 			s_prim = step(s)
 			r = reward(s, s_prim)
-			value_dict[s] = r + gamma * value_dict.get(s_prim, 0)
+			value_dict[s] = r + gamma * value_dict[s_prim]
 			delta = max(delta, abs(v - value_dict[s]))
 			# print(delta)
 		if delta < theta:
@@ -38,10 +38,25 @@ def policy_evaluation(theta, gamma):
 	return value_dict
 
 
-theta = .001
+def policy_improvement(S, policy):
+	for s in S:
+		old_action = policy[s]
+		s_prim = step(s)
+		r = reward(s, s_prim)
+		policy[s] = max(r + gamma * policy[s_prim])
+		if old_action >= policy[s]:
+			return policy
+		else:
+			policy_evaluation(theta, gamma)
+
+
+theta = .01
 gamma = .9
 
-ic(policy_evaluation(theta, gamma))
+policy = policy_evaluation(theta, gamma)
+policy_improvement(S, policy)
+
+print(policy)
 
 
 
