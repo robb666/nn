@@ -10,6 +10,8 @@ S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
 
 def reward(s, s_prim):
 	if s == 8 and s_prim == 9:
+		return 3
+	elif s == 7 and s_prim == 9:
 		return 2
 	else:
 		return 1
@@ -17,6 +19,8 @@ def reward(s, s_prim):
 
 def step(s):
 	if s == 8:
+		return 9
+	elif s == 7:
 		return 9
 	else:
 		return random.choice(S_prim)
@@ -50,13 +54,13 @@ def policy_improvement(S, policy):
 			policy_evaluation(theta, gamma)
 
 
-theta = .01
+theta = .001
 gamma = .9
 
 policy = policy_evaluation(theta, gamma)
-policy_improvement(S, policy)
+# policy_improvement(S, policy)
 
-print(policy)
+ic(policy)
 
 
 
