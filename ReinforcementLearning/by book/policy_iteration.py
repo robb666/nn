@@ -4,63 +4,90 @@ from typing import Dict
 from icecream import ic
 
 
+class PolicyIter:
+
+	def __init__(self, policy, S, S_prime, theta, gamma):
+		self.policy = policy
+		self.S = S
+		self.S_prime = S_prime
+		self.theta = theta
+		self.gamma = gamma
+		self.value_dict: Dict[int, float] = {s: 0.0 for s in S}
+		self.action_def = {'L': -1, 'R': 1}
+		self.actions = ['L', 'R']
+
+	def reward(self, s, a):
+		if s == 8 and a == 'R':
+			return 3
+		elif s == 6 and a == 'L':
+			return 2
+		else:
+			return 1
+
+	# def action(self, s):
+	# 	if random.choice(self.S) not in {2}:
+	# 		max_a = max([s for s in S])
+	# 		return max(self.action_def[s])
+	# 	else:
+	# 		return random.choice(self.actions)
+
+	def step(self, s, a):
+		next_s_idx = (self.S.index(s) + self.action_def[a]) % len(self.S)
+		return self.S[next_s_idx]
+
+		# if s == 8:
+		# 	return 9
+		# elif s == 6:
+		# 	return 5
+		# else:
+		# 	return random.choice(self.policy[s])
+
+	def policy_evaluation(self):
+		# self.value_dict: Dict[int, float] = {s: 0.0 for s in S}
+		while True:
+			delta = 0
+			for s in self.S:
+				v = self.value_dict[s]
+
+				a = self.policy[s]
+				# a = self.action(s)
+
+				s_prime = self.step(s, a)
+				# s_prim = self.step(s)
+
+				self.value_dict[s] = self.reward(s, a) + self.gamma * self.value_dict[s_prime]
+				delta = max(delta, abs(v - self.value_dict[s]))
+				# print(delta)
+			if delta < theta:
+				break
+		return self.value_dict
+		# return self.policy
+
+	def policy_improvement(self):
+		for s in S:
+			old_action = self.policy[s]
+			s_prime = self.step(s, old_action)
+			r = self.reward(s, old_action)
+			self.policy[s] = max(r + gamma * self.value_dict[s_prime])
+			if old_action >= policy[s]:
+				return policy
+			else:
+				self.policy_evaluation()
+
+
 S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
+policy = {move: random.choice(['L', 'R']) for move in S}
+# print(policy)
 
-
-def reward(s, s_prim):
-	if s == 8 and s_prim == 9:
-		return 3
-	elif s == 7 and s_prim == 9:
-		return 2
-	else:
-		return 1
-
-
-def step(s):
-	if s == 8:
-		return 9
-	elif s == 7:
-		return 9
-	else:
-		return random.choice(S_prim)
-
-
-def policy_evaluation(theta, gamma):
-	value_dict: Dict[int, float] = {s: 0.0 for s in S}
-	while True:
-		delta = 0
-		for s in S:
-			v = value_dict[s]
-			s_prim = step(s)
-			r = reward(s, s_prim)
-			value_dict[s] = r + gamma * value_dict[s_prim]
-			delta = max(delta, abs(v - value_dict[s]))
-			# print(delta)
-		if delta < theta:
-			break
-	return value_dict
-
-
-def policy_improvement(S, policy):
-	for s in S:
-		old_action = policy[s]
-		s_prim = step(s)
-		r = reward(s, s_prim)
-		policy[s] = max(r + gamma * policy[s_prim])
-		if old_action >= policy[s]:
-			return policy
-		else:
-			policy_evaluation(theta, gamma)
-
-
-theta = .001
+theta = .01
 gamma = .9
 
-policy = policy_evaluation(theta, gamma)
-# policy_improvement(S, policy)
+policy_iter = PolicyIter(policy, S, S_prim, theta, gamma)
+value_dict = policy_iter.policy_evaluation()
 
-ic(policy)
+ic(value_dict)
+# print(value_dict)
 
 
 
