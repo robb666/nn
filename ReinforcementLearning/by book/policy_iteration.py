@@ -5,7 +5,6 @@ from icecream import ic
 
 
 class PolicyIter:
-
 	def __init__(self, policy, S, theta, gamma):
 		self.policy = policy
 		self.S = S
@@ -69,6 +68,7 @@ S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 # S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
 policy = {move: random.choice(['L', 'R']) for move in S}
 
+ic(policy)
 
 theta = .01
 gamma = .9
