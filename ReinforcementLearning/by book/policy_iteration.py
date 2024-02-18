@@ -45,19 +45,23 @@ class PolicyIter:
 				s_prime = self.step(s, a)
 				self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
 				delta = max(delta, abs(v - self.value_dict[s]))
-			if delta < theta:
+			if delta < self.theta:
 				break
 		return self.value_dict
 
 	def policy_improvement(self):
-		for s in S:
+		for s in self.S:
 			action_values = {}
+			old_action = self.policy[s]
 			for a in self.actions:
 				s_prime = self.step(s, a)
 				r = self.reward(s, a, s_prime)
 				action_value = r + self.gamma * self.value_dict[s_prime]
 				action_values[a] = action_value
 			self.policy[s] = max(action_values, key=action_values.get)
+			if self.policy[s] != old_action:
+				self.policy_evaluation()
+				self.policy_improvement()
 		return self.policy
 
 
@@ -71,11 +75,16 @@ gamma = .9
 
 policy_iter = PolicyIter(policy, S, theta, gamma)
 
-for _ in range(33):
-	value_dict = policy_iter.policy_evaluation()
-	improved_policy = policy_iter.policy_improvement()
+value_dict = policy_iter.policy_evaluation()
+improved_policy = policy_iter.policy_improvement()
 
-	ic(improved_policy, value_dict)
+ic(improved_policy, value_dict)
+
+# for _ in range(33):
+# 	value_dict = policy_iter.policy_evaluation()
+# 	improved_policy = policy_iter.policy_improvement()
+#
+# 	ic(improved_policy, value_dict)
 
 
 
