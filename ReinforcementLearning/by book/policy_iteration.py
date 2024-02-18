@@ -6,20 +6,21 @@ from icecream import ic
 
 class PolicyIter:
 
-	def __init__(self, policy, S, S_prime, theta, gamma):
+	def __init__(self, policy, S, theta, gamma):
 		self.policy = policy
 		self.S = S
-		self.S_prime = S_prime
+		# self.S_prime = S_prime
 		self.theta = theta
 		self.gamma = gamma
 		self.value_dict: Dict[int, float] = {s: 0.0 for s in S}
+		# self.value_dict = {s: 0.0 for s in S}
 		self.action_def = {'L': -1, 'R': 1}
 		self.actions = ['L', 'R']
 
-	def reward(self, s, a):
-		if s == 8 and a == 'R':
+	def reward(self, s, a, s_prime):
+		if s == 8 and a == 'R' and s_prime == 9:
 			return 3
-		elif s == 6 and a == 'L':
+		elif s == 6 and a == 'L' and s_prime == 5:
 			return 2
 		else:
 			return 1
@@ -48,58 +49,55 @@ class PolicyIter:
 			delta = 0
 			for s in self.S:
 				v = self.value_dict[s]
-
 				a = self.policy[s]
-				# a = self.action(s)
-
 				s_prime = self.step(s, a)
-				# s_prim = self.step(s)
-
-				self.value_dict[s] = self.reward(s, a) + self.gamma * self.value_dict[s_prime]
+				self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
 				delta = max(delta, abs(v - self.value_dict[s]))
 				# print(delta)
 			if delta < theta:
 				break
+		# ic(self.policy)
 		return self.value_dict
 		# return self.policy
 
 	def policy_improvement(self):
+		new_policy = {}
 		for s in S:
-			old_action = self.policy[s]
-			s_prime = self.step(s, old_action)
-			r = self.reward(s, old_action)
-			self.policy[s] = max(r + gamma * self.value_dict[s_prime])
-			if old_action >= policy[s]:
-				return policy
-			else:
-				self.policy_evaluation()
+			action_values = {}
+			for a in self.actions:
+				s_prime = self.step(s, a)
+				r = self.reward(s, a, s_prime)
+				action_value = r + self.gamma * self.value_dict[s_prime]
+				action_values[a] = action_value
+			self.policy[s] = max(action_values, key=action_values.get)
+			self.value_dict[s] = max([action_values[s] for s in action_values])
+		return new_policy
 
 
 S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
+# S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
 policy = {move: random.choice(['L', 'R']) for move in S}
-# print(policy)
+
 
 theta = .01
 gamma = .9
 
-policy_iter = PolicyIter(policy, S, S_prim, theta, gamma)
+policy_iter = PolicyIter(policy, S, theta, gamma)
 value_dict = policy_iter.policy_evaluation()
 
-ic(value_dict)
-# print(value_dict)
+ic(policy, value_dict)
+
+improved_policy = policy_iter.policy_improvement()
+# # improved_policy = policy_iter.policy_improvement_II()
+#
+ic(improved_policy)
 
 
+for _ in range(3):
+	value_dict = policy_iter.policy_evaluation()
+	improved_policy = policy_iter.policy_improvement()
 
-
-
-
-
-
-
-
-
-
+	ic(policy, value_dict)
 
 
 

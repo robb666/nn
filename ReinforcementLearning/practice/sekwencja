@@ -7,3 +7,13 @@ stary stan = nowy stan
     pobranie partii z pamięci stanów, akcji i nagród -->
     ??? -->
     przepuszczenie przez neural network -->
+
+
+
+
+----------------------------
+
+
+Nagrody tworzą system wartości, według którego to systemu wartości kształtowana jest polityka odpowiadająca za akcje.
+
+Każdy cel to suma skumulowanych nagród.
