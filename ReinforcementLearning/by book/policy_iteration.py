@@ -36,15 +36,7 @@ class PolicyIter:
 		next_s_idx = (self.S.index(s) + self.action_def[a]) % len(self.S)
 		return self.S[next_s_idx]
 
-		# if s == 8:
-		# 	return 9
-		# elif s == 6:
-		# 	return 5
-		# else:
-		# 	return random.choice(self.policy[s])
-
 	def policy_evaluation(self):
-		# self.value_dict: Dict[int, float] = {s: 0.0 for s in S}
 		while True:
 			delta = 0
 			for s in self.S:
@@ -53,15 +45,11 @@ class PolicyIter:
 				s_prime = self.step(s, a)
 				self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
 				delta = max(delta, abs(v - self.value_dict[s]))
-				# print(delta)
 			if delta < theta:
 				break
-		# ic(self.policy)
 		return self.value_dict
-		# return self.policy
 
 	def policy_improvement(self):
-		new_policy = {}
 		for s in S:
 			action_values = {}
 			for a in self.actions:
@@ -70,8 +58,7 @@ class PolicyIter:
 				action_value = r + self.gamma * self.value_dict[s_prime]
 				action_values[a] = action_value
 			self.policy[s] = max(action_values, key=action_values.get)
-			self.value_dict[s] = max([action_values[s] for s in action_values])
-		return new_policy
+		return self.policy
 
 
 S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -83,21 +70,12 @@ theta = .01
 gamma = .9
 
 policy_iter = PolicyIter(policy, S, theta, gamma)
-value_dict = policy_iter.policy_evaluation()
 
-ic(policy, value_dict)
-
-improved_policy = policy_iter.policy_improvement()
-# # improved_policy = policy_iter.policy_improvement_II()
-#
-ic(improved_policy)
-
-
-for _ in range(3):
+for _ in range(33):
 	value_dict = policy_iter.policy_evaluation()
 	improved_policy = policy_iter.policy_improvement()
 
-	ic(policy, value_dict)
+	ic(improved_policy, value_dict)
 
 
 
