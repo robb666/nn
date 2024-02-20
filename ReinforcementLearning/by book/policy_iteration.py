@@ -1,4 +1,4 @@
-import numpy as np
+
 import random
 from typing import Dict
 from icecream import ic
@@ -68,7 +68,7 @@ S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 # S_prim = [1, 2, 3, 4, 5, 6, 7, 9, 10]
 policy = {move: random.choice(['L', 'R']) for move in S}
 
-ic(policy)
+# ic(policy)
 
 theta = .01
 gamma = .9
@@ -80,11 +80,13 @@ improved_policy = policy_iter.policy_improvement()
 
 ic(improved_policy, value_dict)
 
-# for _ in range(33):
-# 	value_dict = policy_iter.policy_evaluation()
-# 	improved_policy = policy_iter.policy_improvement()
-#
-# 	ic(improved_policy, value_dict)
+
+
+
+
+
+
+
 
 
 

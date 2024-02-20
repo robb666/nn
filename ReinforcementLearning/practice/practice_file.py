@@ -1,4 +1,6 @@
+import numpy as np
 
-f = (10 + 1) % 10
+
+f = (np.array([10]) + 2) % 10
 
 print(f)
