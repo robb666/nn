@@ -95,9 +95,6 @@ ic(improved_policy, value_dict)
 
 
 
-
-
-
 # Leszek Józwik
 # Ja miałem fajną sytuację: Kurator podzielił przedmioty, ja miałem odrabiać lekcje z 3 przedmiotów, żona pozostałe.
 # Dzieci miały lepsze wyniki z moich przedmiotów (geografia, historia itd) żona miała gorsze mimo, że jest nauczycielem matematyki,
