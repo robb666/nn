@@ -2,7 +2,7 @@ import random
 
 
 def coin_trail():
-	heads = 0_0_0_0
+	heads = 0_0
 	for i in range(100):
 		if random.random() <= 0.5:
 			heads += 1

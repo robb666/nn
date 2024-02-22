@@ -22,10 +22,10 @@ class ValueIteration:
 		if s == 6 and a == 'L' and s_prime == 5:
 			return 2
 		else:
-			return 1
+			return random.uniform(0.98, 1.02)
 
 	def iteration(self):
-		for i in range(100):
+		while True:
 			delta = 0.0
 			for s in self.S:
 				v = self.value_dict[s]
@@ -37,8 +37,9 @@ class ValueIteration:
 				self.value_dict[s] = max([action_values[a] for a in self.actions])
 				delta = max(delta, abs(v - self.value_dict[s]))
 				self.policy[s] = max(action_values, key=action_values.get)
-				if delta < self.theta:
-					return self.policy
+			if delta < self.theta:
+				ic(self.value_dict)
+				return self.policy
 
 
 S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

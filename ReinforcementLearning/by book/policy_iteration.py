@@ -22,7 +22,7 @@ class PolicyIter:
 		elif s == 6 and a == 'L' and s_prime == 5:
 			return 2
 		else:
-			return 1
+			return random.uniform(0.98, 1.02)
 
 	# def action(self, s):
 	# 	if random.choice(self.S) not in {2}:
