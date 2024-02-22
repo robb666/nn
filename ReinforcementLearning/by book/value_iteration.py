@@ -14,7 +14,6 @@ class ValueIteration:
 
 	def step(self, s, a):
 		next_state = (self.S.index(s) + self.action_def[a]) % len(self.S)
-		# print(next_state)
 		return self.S[next_state]
 
 	def reward(self, s, a, s_prime):
@@ -26,29 +25,20 @@ class ValueIteration:
 			return 1
 
 	def iteration(self):
-		# while True:
 		for i in range(100):
 			delta = 0.0
-			for enu, s in enumerate(self.S):
+			for s in self.S:
 				v = self.value_dict[s]
 				action_values = {}
 				for a in self.actions:
-					new_value = 0.0
-					# a = self.policy[s]
 					s_prime = self.step(s, a)
 					r = self.reward(s, a, s_prime)
-
-					new_value += r + self.gamma * self.value_dict[s_prime]
-
-					action_values[a] = new_value
+					action_values[a] = r + self.gamma * self.value_dict[s_prime]
 				self.value_dict[s] = max([action_values[a] for a in self.actions])
-				print(v, self.value_dict[s])
 				delta = max(delta, abs(v - self.value_dict[s]))
-			# return self.value_dict
-				# if delta < self.theta:
-				# 	break
-		return self.value_dict
-
+				self.policy[s] = max(action_values, key=action_values.get)
+				if delta < self.theta:
+					return self.policy
 
 
 S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
