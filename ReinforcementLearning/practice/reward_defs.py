@@ -25,4 +25,5 @@ def stochastic_reward(state, action):
 	reward = np.random.normal(mean, variability)
 	return reward
 
+
 print(stochastic_reward('state1', 'action2'))
