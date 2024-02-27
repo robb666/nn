@@ -9,11 +9,11 @@ class Locations:
 	loc_2 = loc_2 if loc_2 <= 20 else 20  # max 20 cars at each location
 
 
-class RequestsPerDay:
-	# loc_1 = np.random.poisson(lam=3.0)
-	loc_1 = 1
-	# loc_2 = np.random.poisson(lam=4.0)
-	loc_2 = 0
+# class RequestsPerDay:
+# 	# loc_1 = np.random.poisson(lam=3.0)
+# 	loc_1 = 1
+# 	# loc_2 = np.random.poisson(lam=4.0)
+# 	loc_2 = 0
 
 
 # class ReturnsPerDay:
@@ -21,14 +21,15 @@ class RequestsPerDay:
 # 		self.loc_1 = np.random.poisson(lam=3.0)
 # 		self.loc_2 = np.random.poisson(lam=2.0)
 
-
+# 6marca
 class RentalBusiness:
 	def __init__(self):
 		self.day = 1
-		self.moved_1_2 = 0
-		self.moved_2_1 = 0
 		self.rent_at_1 = self.check_availability(Locations.loc_1, np.random.poisson(lam=3.0))
 		self.rent_at_2 = self.check_availability(Locations.loc_2, np.random.poisson(lam=4.0))
+		self.moved = 0
+		# self.moved_1_2 = 0
+		# self.moved_2_1 = 0
 		self.available: int = 0
 		ic(self.rent_at_1)
 		self.actions_def = {
@@ -80,15 +81,16 @@ class RentalBusiness:
 
 ic(Locations.loc_1)
 ic(Locations.loc_2)
-
 RB = RentalBusiness()
+ic(RB.day)
 
 for _ in range(3):
 	RB.requests()
+	ic(Locations.loc_1)
 	# on the next day
 	RB.returns()
+	ic(RB.day)
 	# move cars
-
 	# RB.move_cars('first', 'second', quantity)
 	# RB.move_cars('second', 'first', quantity)
 	ic(Locations.loc_1)
@@ -97,4 +99,5 @@ ic()
 ic(Locations.loc_1)
 ic(Locations.loc_2)
 ic(RB.total())
-ic(RB.timestep())
+ic(RB.day)
+print(Locations.loc_1, Locations.loc_2)
