@@ -3,7 +3,7 @@ from icecream import ic
 
 
 class Locations:
-	loc_1 = 1
+	loc_1 = 3
 	loc_1 = loc_1 if loc_1 <= 20 else 20  # max 20 cars at each location
 	loc_2 = 1
 	loc_2 = loc_2 if loc_2 <= 20 else 20  # max 20 cars at each location
@@ -27,10 +27,10 @@ class RentalBusiness:
 		self.day = 1
 		self.moved_1_2 = 0
 		self.moved_2_1 = 0
-		# self.rent_at_1 = self.check_availability(Locations.loc_1, RequestsPerDay.loc_1)
-		# self.rent_at_2 = self.check_availability(Locations.loc_2, RequestsPerDay.loc_2)
+		self.rent_at_1 = self.check_availability(Locations.loc_1, np.random.poisson(lam=3.0))
+		self.rent_at_2 = self.check_availability(Locations.loc_2, np.random.poisson(lam=4.0))
 		self.available: int = 0
-		# ic(self.rent_at_2)
+		ic(self.rent_at_1)
 		self.actions_def = {
 			# '1': self.move_cars('first', 'second', self.rent_at_2),
 			# '2': self.move_cars('second', 'first', self.rent_at_1)
@@ -42,19 +42,11 @@ class RentalBusiness:
 		return self.day
 
 	def check_availability(self, cars_at_location, cars_num):
-		# if cars_at_location and self.day:  # available immediately
-		ic(cars_num)
-		cars_num = cars_num if cars_num < cars_at_location else cars_at_location
-		if self.day >= 2:  # available the next day
-		# 	print('returned + moved', Locations.loc_1, self.moved_1_2)
-			return cars_num + self.moved_1_2
-		# self.timestep()
-		return cars_num
+		return cars_num if cars_num < cars_at_location else cars_at_location
 
 	def requests(self):
-		# Locations.loc_1 -= np.random.poisson(lam=3.0)
-		Locations.loc_1 -= self.check_availability(Locations.loc_1, np.random.poisson(lam=3.0))
-		Locations.loc_2 -= self.check_availability(Locations.loc_2, np.random.poisson(lam=4.0))
+		Locations.loc_1 -= self.rent_at_1
+		Locations.loc_2 -= self.rent_at_2
 
 	def returns(self):
 		self.timestep()
@@ -91,13 +83,18 @@ ic(Locations.loc_2)
 
 RB = RentalBusiness()
 
-
-
 for _ in range(3):
 	RB.requests()
+	# on the next day
 	RB.returns()
+	# move cars
+
+	# RB.move_cars('first', 'second', quantity)
+	# RB.move_cars('second', 'first', quantity)
 	ic(Locations.loc_1)
 
 ic()
 ic(Locations.loc_1)
 ic(Locations.loc_2)
+ic(RB.total())
+ic(RB.timestep())
