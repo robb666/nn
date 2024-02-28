@@ -11,8 +11,8 @@ class RentalBusiness:
 		self.THETA = theta
 		self.GAMMA = gamma
 		self.day = 1
-		self.location1 = 15
-		self.location2 = 15
+		self.location1 = 10
+		self.location2 = 10
 		self.moved = 0
 		self.amount = 0
 		self.available: int = 0
@@ -23,7 +23,7 @@ class RentalBusiness:
 		self.actions = ['1', '2']
 
 	def timestep(self):
-		sleep(.5)
+		# sleep(.5)
 		self.day += 1
 		return self.day
 
@@ -77,7 +77,7 @@ class RentalBusiness:
 	def policy_action(self):
 		if self.location1 > self.location2:
 			# ic(self.policy['2'])
-			self.actions_def['2']()
+			self.actions_def['1']()
 
 	# def policy_evaluation(self):
 	# 	while True:
@@ -100,7 +100,7 @@ class RentalBusiness:
 		return self.amount
 
 
-policy = {'1': 1,  '2': 2}
+policy = {'1': 1,  '2': 0}
 
 THETA = .01
 GAMMA = .9
@@ -112,7 +112,7 @@ ic(RB.location1)
 ic(RB.location2)
 
 
-for _ in range(5):
+for _ in range(10):
 	ic(RB.day)
 	ic('requests')
 	RB.requests()
