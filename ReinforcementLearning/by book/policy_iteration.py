@@ -57,7 +57,7 @@ class PolicyIter:
 				r = self.reward(s, a, s_prime)
 				action_value = r + self.gamma * self.value_dict[s_prime]
 				action_values[a] = action_value
-			self.policy[s] = max(action_values, key=action_values.get)
+			self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
 			if self.policy[s] != old_action:
 				self.policy_evaluation()
 				self.policy_improvement()

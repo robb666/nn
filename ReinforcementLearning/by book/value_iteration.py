@@ -43,7 +43,7 @@ class ValueIteration:
 
 
 S = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-policy = {move: random.choice(['L', 'R']) for move in S}
+# policy = {move: random.choice(['L', 'R']) for move in S}
 theta = .01
 gamma = .9
 
