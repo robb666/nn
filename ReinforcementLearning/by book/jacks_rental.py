@@ -6,14 +6,13 @@ from time import sleep
 
 # 6marca
 class RentalBusiness:
-
 	def __init__(self, policy, THETA, GAMMA):
 		self.policy = policy
 		self.THETA = THETA
 		self.GAMMA = GAMMA
 		self.day = 1
-		self.location1 = 10
-		self.location2 = 10
+		self.location1 = 15
+		self.location2 = 15
 		self.moved = 0
 		self.amount = 0
 		self.available: int = 0
@@ -31,30 +30,36 @@ class RentalBusiness:
 		return self.day
 
 	def max_cars(self, max_cars):
+		ic(max_cars if max_cars <= 20 else 20, max_cars)
 		return max_cars if max_cars <= 20 else 20  # max 20 cars at each location
 
 	def check_availability(self, cars_at_location, demand):
 		if demand > self.location1 or demand > self.location2:
 			ic('sys.exit')
 			sys.exit()
-		return demand if demand < cars_at_location else cars_at_location
+		return True if demand < cars_at_location else cars_at_location
 
 	def requests(self):
-		available_at_1 = self.check_availability(self.location1, np.random.poisson(lam=3.0))
-		ic(available_at_1)
-		self.location1 -= available_at_1
-		self.total(rented_cars=available_at_1)
-		available_at_2 = self.check_availability(self.location2, np.random.poisson(lam=4.0))
-		ic(available_at_2)
-		self.location2 -= available_at_2
-		self.total(rented_cars=available_at_2)
+		demand_at_1 = np.random.poisson(lam=3.0)
+		available_at_1 = self.check_availability(self.location1, demand_at_1)
+		ic(demand_at_1, available_at_1)
+		if available_at_1 is True:
+			self.location1 -= demand_at_1
+			self.total(rented_cars=available_at_1)
+
+		demand_at_2 = np.random.poisson(lam=4.0)
+		available_at_2 = self.check_availability(self.location2, demand_at_2)
+		ic(demand_at_2, available_at_2)
+		if available_at_2 is True:
+			self.location2 -= demand_at_2
+			self.total(rented_cars=available_at_2)
 
 	def returns(self):
 		self.timestep()
 		self.location1 += np.random.poisson(lam=3.0)
-		self.max_cars(self.location1)
+		self.location1 = self.max_cars(self.location1)
 		self.location2 += np.random.poisson(lam=2.0)
-		self.max_cars(self.location2)
+		self.location2 = self.max_cars(self.location2)
 
 	def move_cars(self, from_: str, to_: str, quantity: int):
 		cars_num = quantity if quantity <= 5 else 5
@@ -62,6 +67,7 @@ class RentalBusiness:
 			self.available = self.check_availability(self.location1, cars_num)
 			self.location1 -= self.available
 			self.location2 += self.available
+			self.location2 = self.max_cars(self.location2)
 			self.total(moved_cars=self.available)
 			# return self.available * cost
 
@@ -69,13 +75,14 @@ class RentalBusiness:
 			self.available = self.check_availability(self.location2, cars_num)
 			self.location2 -= self.available
 			self.location1 += self.available
+			self.location1 = self.max_cars(self.location1)
 			self.total(moved_cars=self.available)
 			# return self.available * cost
 
 	def policy_action(self):
 		if self.location1 > self.location2:
-			ic(self.policy['1'])
-			self.actions_def['1']('first', 'second', self.policy['1'])
+			ic(self.policy['2'])
+			self.actions_def['2']('second', 'first', self.policy['2'])
 
 	# def policy_evaluation(self):
 	# 	while True:
@@ -98,7 +105,7 @@ class RentalBusiness:
 		return self.amount
 
 
-policy = {'1': 1,  '2': 0}
+policy = {'1': 1,  '2': 2}
 
 theta = .01
 gamma = .9
@@ -112,8 +119,8 @@ ic(RB.location2)
 
 for _ in range(5):
 	ic(RB.day)
-	RB.requests()
 	ic('requests')
+	RB.requests()
 	ic(RB.location1)
 	ic(RB.location2)
 
@@ -124,8 +131,8 @@ for _ in range(5):
 	ic(RB.location2)
 
 	ic('moves')
-	RB.policy_action()
 	# move cars
+	RB.policy_action()
 	# RB.move_cars('first', 'second', quantity)
 	# RB.move_cars('second', 'first', quantity)
 	ic(RB.location1)
