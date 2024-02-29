@@ -78,6 +78,9 @@ class RentalBusiness:
 		if self.location1 > self.location2:
 			# ic(self.policy['2'])
 			self.actions_def['1']()
+		if self.location1 < self.location2:
+			# ic(self.policy['2'])
+			self.actions_def['2']()
 
 	# def policy_evaluation(self):
 	# 	while True:
