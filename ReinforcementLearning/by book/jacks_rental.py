@@ -1,25 +1,26 @@
 import numpy as np
 from icecream import ic
 import sys
+from typing import Dict
 from time import sleep
 
 
 # 6marca
 class RentalBusiness:
-	def __init__(self, policy, theta, gamma):
-		self.policy = policy
+	def __init__(self, theta=.01, gamma=.9, cars_num_1=10, cars_num_2=10):
+		self.policy = {s: [a for a in range(20)] for s in (1, 2)}
+		print(self.policy)
 		self.THETA = theta
 		self.GAMMA = gamma
 		self.day = 1
-		self.location1 = 10
-		self.location2 = 10
-		self.moved = 0
+		self.location1 = cars_num_1
+		self.location2 = cars_num_2
+		self.value_dict: Dict[int, float] = {s: 0. for s in (1, 2)}
+		print(self.value_dict)
+		# self.moved = 0
 		self.amount = 0
 		self.available: int = 0
-		self.actions_def = {
-			'1': self.move_cars_1,
-			'2': self.move_cars_2
-		}
+		self.actions_def = {'1': self.move_cars_1, '2': self.move_cars_2}
 		self.actions = ['1', '2']
 
 	def timestep(self):
@@ -34,7 +35,8 @@ class RentalBusiness:
 	def check_availability(self, cars_at_location, demand):
 		if demand > self.location1 or demand > self.location2:
 			ic('sys.exit')
-			sys.exit()
+			# sys.exit()
+			return self.amount
 		return demand if demand < cars_at_location else cars_at_location
 
 	def requests(self):
@@ -78,17 +80,18 @@ class RentalBusiness:
 		if self.location1 > self.location2:
 			# ic(self.policy['2'])
 			self.actions_def['1']()
-		if self.location1 < self.location2:
-			# ic(self.policy['2'])
-			self.actions_def['2']()
+		# if self.location1 < self.location2:
+		# 	# ic(self.policy['2'])
+		# 	self.actions_def['2']()
 
 	# def policy_evaluation(self):
 	# 	while True:
 	# 		delta = 0
-	# 		for s in self.S:
+	# 		for s in self.policy:
 	# 			v = self.value_dict[s]
-	# 			a = self.policy[s]
-	# 			s_prime = self.step(s, a)
+	# 			for a in self.policy[s]:
+	# 				# a = self.policy[s]
+	# 				s_prime = self.step(s, a)
 	# 			self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
 	# 			delta = max(delta, abs(v - self.value_dict[s]))
 	# 		if delta < self.theta:
@@ -103,45 +106,49 @@ class RentalBusiness:
 		return self.amount
 
 
-policy = {'1': 1,  '2': 0}
+# policy = {s: [a for a in range(20)] for s in (1, 2)}
+#
+# THETA = .01
+# GAMMA = .9
+#
+# cars_loc_1, cars_loc_2 = 10, 10
 
-THETA = .01
-GAMMA = .9
-
-
-RB = RentalBusiness(policy, GAMMA, THETA)
+RB = RentalBusiness()
 
 ic(RB.location1)
 ic(RB.location2)
 
 
-for _ in range(10):
-	ic(RB.day)
-	ic('requests')
-	RB.requests()
-	ic(RB.location1)
-	ic(RB.location2)
+def is_business_slow():
+	while True:
+		ic(RB.day)
+		ic(RB.amount)
+		ic('requests')
+		RB.requests()
+		ic(RB.location1)
+		ic(RB.location2)
 
-	# on the next day
-	ic('returns')
-	RB.returns()  # changes day/state
-	ic(RB.location1)
-	ic(RB.location2)
+		# on the next day
+		ic('returns')
+		RB.returns()  # changes day/state
+		ic(RB.location1)
+		ic(RB.location2)
 
-	ic('moves')
-	# move cars
-	RB.policy_action()
-	# RB.move_cars('first', 'second', quantity)
-	# RB.move_cars('second', 'first', quantity)
-	ic(RB.location1)
-	ic(RB.location2)
+		ic('moves')
+		# move cars
+		RB.policy_action()
+		# RB.move_cars('first', 'second', quantity)
+		# RB.move_cars('second', 'first', quantity)
+		ic(RB.location1)
+		ic(RB.location2)
 
-ic()
-ic(RB.location1)
-ic(RB.location2)
-ic(RB.actions_def['1']())
-# ic(RB.actions_def['2'])
-ic(RB.total())
-ic(RB.day)
-ic(RB.location1, RB.location2)
+		ic('FINITO')
+	return RB.amount
 
+
+arr = []
+for _ in range(50):
+	lets_check = is_business_slow()
+	arr.append(lets_check)
+
+print(max(arr))
