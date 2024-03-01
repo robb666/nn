@@ -22,6 +22,7 @@ class RentalBusiness:
 		self.available: int = 0
 		self.actions_def = {'1': self.move_cars_1, '2': self.move_cars_2}
 		self.actions = ['1', '2']
+		self.total_amount = []
 
 	def timestep(self):
 		# sleep(.5)
@@ -35,8 +36,9 @@ class RentalBusiness:
 	def check_availability(self, cars_at_location, demand):
 		if demand > self.location1 or demand > self.location2:
 			ic('sys.exit')
-			# sys.exit()
-			return self.amount
+			self.total_amount.append(self.amount)
+			ic(self.total_amount)
+			return 'False'
 		return demand if demand < cars_at_location else cars_at_location
 
 	def requests(self):
@@ -143,12 +145,16 @@ def is_business_slow():
 		ic(RB.location2)
 
 		ic('FINITO')
-	return RB.amount
+
 
 
 arr = []
 for _ in range(50):
 	lets_check = is_business_slow()
-	arr.append(lets_check)
+	if RB.total_amount:
+		arr.append(RB.total_amount)
+		print(max(arr))
+	# if lets_check == 'False':
+	# 	break
 
-print(max(arr))
+
