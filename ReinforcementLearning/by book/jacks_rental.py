@@ -3,29 +3,29 @@ from icecream import ic
 import sys
 from typing import Dict
 from time import sleep
+import random
 
 
 # 6marca
 class RentalBusiness:
-	def __init__(self, theta=.01, gamma=.9, cars_num_1=10, cars_num_2=10):
-		self.policy = {s: [a for a in range(20)] for s in (1, 2)}
-		print(self.policy)
+	def __init__(self, policy, theta=.01, gamma=.9, cars_num_1=10, cars_num_2=10):
+		self.policy = policy
+		ic(self.policy)
 		self.THETA = theta
 		self.GAMMA = gamma
 		self.day = 1
 		self.location1 = cars_num_1
 		self.location2 = cars_num_2
-		self.value_dict: Dict[int, float] = {s: 0. for s in (1, 2)}
+		self.value_dict: Dict[int, float] = {s: 0. for s in range(1, 21)}
 		print(self.value_dict)
 		# self.moved = 0
 		self.amount = 0
 		self.available: int = 0
 		self.actions_def = {'1': self.move_cars_1, '2': self.move_cars_2}
 		self.actions = ['1', '2']
-		self.total_amount = []
 
 	def timestep(self):
-		# sleep(.5)
+		sleep(.5)
 		self.day += 1
 		return self.day
 
@@ -36,9 +36,7 @@ class RentalBusiness:
 	def check_availability(self, cars_at_location, demand):
 		if demand > self.location1 or demand > self.location2:
 			ic('sys.exit')
-			self.total_amount.append(self.amount)
-			ic(self.total_amount)
-			return 'False'
+			sys.exit()
 		return demand if demand < cars_at_location else cars_at_location
 
 	def requests(self):
@@ -70,7 +68,7 @@ class RentalBusiness:
 		self.location2 = self.max_cars(self.location2)
 		self.total(moved_cars=self.available)
 
-	def move_cars_2(self, quantity: int = 1):
+	def move_cars_2(self, quantity: int = 2):
 		cars_num = quantity if quantity <= 5 else 5
 		self.available = self.check_availability(self.location2, cars_num)
 		self.location2 -= self.available
@@ -86,19 +84,19 @@ class RentalBusiness:
 		# 	# ic(self.policy['2'])
 		# 	self.actions_def['2']()
 
-	# def policy_evaluation(self):
-	# 	while True:
-	# 		delta = 0
-	# 		for s in self.policy:
-	# 			v = self.value_dict[s]
-	# 			for a in self.policy[s]:
-	# 				# a = self.policy[s]
-	# 				s_prime = self.step(s, a)
-	# 			self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
-	# 			delta = max(delta, abs(v - self.value_dict[s]))
-	# 		if delta < self.theta:
-	# 			break
-	# 	return self.value_dict
+	def policy_evaluation(self):
+		while True:
+			delta = 0
+			for s in self.policy:
+				v = self.value_dict[s]
+				for a in self.policy[s]:
+					# a = self.policy[s]
+					s_prime = self.step(s, a)
+					self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
+				delta = max(delta, abs(v - self.value_dict[s]))
+			if delta < self.theta:
+				break
+		return self.value_dict
 
 	def total(self, rented_cars=0, moved_cars=0):
 		if rented_cars:
@@ -108,53 +106,43 @@ class RentalBusiness:
 		return self.amount
 
 
-# policy = {s: [a for a in range(20)] for s in (1, 2)}
-#
+policy = {s: random.choice([a for a in range(6)]) for s in range(1, 21)}
+
 # THETA = .01
 # GAMMA = .9
 #
 # cars_loc_1, cars_loc_2 = 10, 10
 
-RB = RentalBusiness()
+RB = RentalBusiness(policy)
 
 ic(RB.location1)
 ic(RB.location2)
 
 
-def is_business_slow():
-	while True:
-		ic(RB.day)
-		ic(RB.amount)
-		ic('requests')
-		RB.requests()
-		ic(RB.location1)
-		ic(RB.location2)
+while True:
+	ic(RB.day)
+	ic(RB.amount)
+	ic('requests')
+	RB.requests()
+	ic(RB.location1)
+	ic(RB.location2)
 
-		# on the next day
-		ic('returns')
-		RB.returns()  # changes day/state
-		ic(RB.location1)
-		ic(RB.location2)
+	# on the next day
+	ic('returns')
+	RB.returns()  # changes day/state
+	ic(RB.location1)
+	ic(RB.location2)
 
-		ic('moves')
-		# move cars
-		RB.policy_action()
-		# RB.move_cars('first', 'second', quantity)
-		# RB.move_cars('second', 'first', quantity)
-		ic(RB.location1)
-		ic(RB.location2)
+	ic('moves')
+	# move cars
+	RB.policy_action()
+	# RB.move_cars('first', 'second', quantity)
+	# RB.move_cars('second', 'first', quantity)
+	ic(RB.location1)
+	ic(RB.location2)
 
-		ic('FINITO')
-
+	ic('FINITO')
 
 
-arr = []
-for _ in range(50):
-	lets_check = is_business_slow()
-	if RB.total_amount:
-		arr.append(RB.total_amount)
-		print(max(arr))
-	# if lets_check == 'False':
-	# 	break
 
 
