@@ -80,11 +80,11 @@ class RentalBusiness:
 		# self.location2 = self.max_cars(self.location2)
 		# return self.location1, 1
 
-		if state > 10 and self.location2 < 6:
-			state -= action
-			self.location1 -= action
-			self.location2 += action
-			self.total(moved_cars=action)
+		if self.location1 > 10 and self.location2 < 6:
+			state -= 2
+			self.location1 -= 2
+			self.location2 += 2
+			self.total(moved_cars=2)
 			return self.location1, 1
 
 		else:
@@ -140,7 +140,7 @@ class RentalBusiness:
 					action_values[a] = action_value
 				# ic(self.policy)
 				self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
-				if (self.policy[s] != old_action).any():
+				if self.policy[s] != old_action:
 					self.policy_evaluation()
 					self.policy_improvement()
 		return self.policy
