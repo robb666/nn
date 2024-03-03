@@ -130,7 +130,7 @@ class RentalBusiness:
 	def policy_improvement(self):
 		for row in self.S:
 			for s in row:
-
+				s = s + 1
 				action_values = {}
 				old_action = self.policy[s]
 				for a in self.actions:
@@ -148,7 +148,8 @@ class RentalBusiness:
 
 # policy = {s: random.choice([*range(-5, 6)]) for s in range(1, 21)}
 
-policy = np.zeros((20, 20))
+# policy = np.zeros((20, 20))
+policy = {s + row: 0. for s in range(1, 21) for row in range(381)}
 
 S = np.zeros((20, 20), dtype=int)
 ic(S)
