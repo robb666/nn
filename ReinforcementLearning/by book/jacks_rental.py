@@ -81,10 +81,10 @@ class RentalBusiness:
 		# return self.location1, 1
 
 		if self.location1 > 10 and self.location2 < 6:
-			state -= 2
-			self.location1 -= 2
-			self.location2 += 2
-			self.total(moved_cars=2)
+			state -= action
+			self.location1 -= action
+			self.location2 += action
+			self.total(moved_cars=action)
 			return self.location1, 1
 
 		else:
@@ -116,10 +116,11 @@ class RentalBusiness:
 			delta = 0
 			for row in self.S:
 				for s in row:
-					s = s + 1
+					s = s
 					v = self.value_dict[s]
 					a = self.policy[s]
 					s_prime, r = self.step(s, a)
+					print(s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
 				if delta < self.THETA:
@@ -130,7 +131,7 @@ class RentalBusiness:
 	def policy_improvement(self):
 		for row in self.S:
 			for s in row:
-				s = s + 1
+				s = s
 				action_values = {}
 				old_action = self.policy[s]
 				for a in self.actions:
@@ -138,7 +139,7 @@ class RentalBusiness:
 					# r = self.reward(s, a, s_prime)
 					action_value = r + self.GAMMA * self.value_dict[s_prime]
 					action_values[a] = action_value
-				# ic(self.policy)
+				# ic(action_values[a])
 				self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
 				if self.policy[s] != old_action:
 					self.policy_evaluation()
@@ -149,8 +150,8 @@ class RentalBusiness:
 # policy = {s: random.choice([*range(-5, 6)]) for s in range(1, 21)}
 
 # policy = np.zeros((20, 20))
-policy = {s + row: 0. for s in range(1, 21) for row in range(381)}
-
+policy = {s + row: random.choice([* range(-5, 6)]) for s in range(1, 21) for row in range(381)}
+print(policy)
 S = np.zeros((20, 20), dtype=int)
 ic(S)
 # THETA = .01
