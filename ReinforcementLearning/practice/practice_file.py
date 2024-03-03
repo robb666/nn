@@ -1,16 +1,52 @@
 import numpy as np
 import sys
 
-policy = {s: [i for i in range(20)] for s in (1, 2)}
 
+a = 5
+b = 5
 
-# s_a = {}
-# for i in range(2):
-# 	for j in range(20):
-# 		s_a[i] = j
+avail = -5
 
-print(policy)
+a -= avail
+b += avail
+
+print(a)
+print(b)
 
 
 # f = (np.array([10]) + 2) % 10
 # print(f)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
