@@ -4,7 +4,6 @@ import sys
 from typing import Dict
 from time import sleep
 import random
-import numpy as np
 
 
 np.set_printoptions(linewidth=100)
@@ -22,7 +21,7 @@ class RentalBusiness:
 		self.location1 = cars_num_1
 		self.location2 = cars_num_2
 		self.value_dict: Dict[int, float] = {s + row: 0. for s in range(1, 21) for row in range(381)}
-		# ic(self.value_dict)/
+		# ic(self.value_dict)
 		# self.moved = 0
 		self.amount = 0
 		self.available: int = 0
@@ -42,7 +41,7 @@ class RentalBusiness:
 		if demand > self.location1 or demand > self.location2:
 			ic('sys.exit: 0 cars at location')
 			# return False
-			sys.exit()
+			# sys.exit()
 		return demand if demand < cars_at_location else cars_at_location
 
 	def requests(self):
@@ -67,18 +66,6 @@ class RentalBusiness:
 		self.location2 = self.max_cars(self.location2)
 
 	def step(self, state: int, action: int):
-		# cars_num = action if action <= 5 else 5
-		# self.available = self.check_availability(state, action)
-
-		# if self.available == 0:
-		# 	return state, -1
-		# else:
-		# self.location1 -= self.available
-		# self.location2 += self.available
-		# self.total(moved_cars=abs(self.available))
-		# self.location1 = self.max_cars(self.location1)
-		# self.location2 = self.max_cars(self.location2)
-		# return self.location1, 1
 
 		if self.location1 > 10 and self.location2 < 6:
 			state -= action
@@ -88,8 +75,7 @@ class RentalBusiness:
 			return self.location1, 1
 
 		else:
-			return self.location1, 0
-
+			return self.location1, -1
 
 	def total(self, rented_cars=0, moved_cars=0):
 		if rented_cars:
@@ -98,29 +84,15 @@ class RentalBusiness:
 			self.amount -= moved_cars * 2  # cost
 		return self.amount
 
-	# def move_cars_2(self, quantity: int = 2):
-	# 	cars_num = quantity if quantity <= 5 else 5
-	# 	self.available = self.check_availability(self.location2, cars_num)
-	# 	self.location2 -= self.available
-	# 	self.location1 += self.available
-	# 	self.location1 = self.max_cars(self.location1)
-	# 	self.total(moved_cars=self.available)
-
-
-	# def reward(self, s, a, s_prime):
-	# 	if s + a and a == move_1_2(1):
-	# 		return -1
-
 	def policy_evaluation(self):
 		while True:
 			delta = 0
-			for row in self.S:
-				for s in row:
-					s = s
+			for row in range(len(self.S[0])):
+				for s in range(1, row):
 					v = self.value_dict[s]
 					a = self.policy[s]
 					s_prime, r = self.step(s, a)
-					print(s_prime)
+					# print(s, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
 				if delta < self.THETA:
@@ -129,38 +101,37 @@ class RentalBusiness:
 			return self.value_dict
 
 	def policy_improvement(self):
-		for row in self.S:
-			for s in row:
-				s = s
+		for row in range(len(self.S[0])):
+			for s in range(1, row):
 				action_values = {}
 				old_action = self.policy[s]
 				for a in self.actions:
 					s_prime, r = self.step(s, a)
-					# r = self.reward(s, a, s_prime)
 					action_value = r + self.GAMMA * self.value_dict[s_prime]
 					action_values[a] = action_value
 				# ic(action_values[a])
 				self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
+				self.S[row, s] = self.policy[s]
+				# print(self.value_dict)
 				if self.policy[s] != old_action:
 					self.policy_evaluation()
 					self.policy_improvement()
 		return self.policy
 
 
-# policy = {s: random.choice([*range(-5, 6)]) for s in range(1, 21)}
-
-# policy = np.zeros((20, 20))
 policy = {s + row: random.choice([* range(-5, 6)]) for s in range(1, 21) for row in range(381)}
 print(policy)
-S = np.zeros((20, 20), dtype=int)
+S = np.zeros((21, 21), dtype=int)
+
+idx = 20
+for i in range(S.shape[1]):
+	S[i, 0] = idx
+	S[-1, i] = i
+	idx -= 1
+
 ic(S)
-# THETA = .01
-# GAMMA = .9
-#
-# cars_loc_1, cars_loc_2 = 10, 10
 
 RB = RentalBusiness(S, policy)
-
 
 
 ic(RB.location1)
@@ -195,7 +166,3 @@ while True:
 	ic('FINITO')
 
 
-value_dict = RB.policy_evaluation()
-improved_policy = RB.policy_improvement()
-
-ic(improved_policy, value_dict)

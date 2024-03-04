@@ -18,7 +18,8 @@ print(b)
 # print(f)
 
 
-
+mul = 1 / 20
+print(mul)
 
 
 
