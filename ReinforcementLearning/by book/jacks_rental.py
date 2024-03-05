@@ -41,7 +41,7 @@ class RentalBusiness:
 		if demand > self.location1 or demand > self.location2:
 			ic('sys.exit: 0 cars at location')
 			# return False
-			# sys.exit()
+			sys.exit()
 		return demand if demand < cars_at_location else cars_at_location
 
 	def requests(self):
@@ -68,9 +68,9 @@ class RentalBusiness:
 	def step(self, state: int, action: int):
 
 		if self.location1 > 10 and self.location2 < 6:
-			state -= action
-			self.location1 -= action
-			self.location2 += action
+			state -= 1
+			self.location1 -= 1
+			self.location2 += 1
 			self.total(moved_cars=action)
 			return self.location1, 1
 
@@ -87,17 +87,18 @@ class RentalBusiness:
 	def policy_evaluation(self):
 		while True:
 			delta = 0
-			for row in range(len(self.S[0])):
-				for s in range(1, row):
+			for cars_loc1 in range(self.S.shape[1]):
+				for s in self.S[:, cars_loc1]:
+					print(s)
 					v = self.value_dict[s]
 					a = self.policy[s]
 					s_prime, r = self.step(s, a)
 					# print(s, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
-				if delta < self.THETA:
-					break
-			# print(self.value_dict)
+					if delta < self.THETA:
+						break
+				# print(self.value_dict)
 			return self.value_dict
 
 	def policy_improvement(self):
@@ -112,7 +113,7 @@ class RentalBusiness:
 				# ic(action_values[a])
 				self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
 				self.S[row, s] = self.policy[s]
-				# print(self.value_dict)
+				# print(self.S)
 				if self.policy[s] != old_action:
 					self.policy_evaluation()
 					self.policy_improvement()
