@@ -25,8 +25,8 @@ arr = np.array([[20,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 
 i = 0
 for row in arr[:-1, 1:]:
-	for s in row:
-		print(s)
+	# for s in row:
+		print(row)
 		i += 1
 print(i)
 

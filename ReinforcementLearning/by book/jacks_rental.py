@@ -6,7 +6,7 @@ from time import sleep
 import random
 
 
-np.set_printoptions(linewidth=100)
+np.set_printoptions(linewidth=200)
 
 
 # 6marca
@@ -95,6 +95,7 @@ class RentalBusiness:
 		return self.amount
 
 	def policy_evaluation(self):
+
 		while True:
 			delta = 0
 			for s in self.S[:-1, 0]:
@@ -132,12 +133,23 @@ class RentalBusiness:
 policy = {s + row: random.choice([* range(-5, 6)]) for s in range(1, 21) for row in range(381)}
 print(policy)
 S = np.zeros((21, 21), dtype=int)
-
 idx = 20
 for i in range(S.shape[1]):
 	S[i, 0] = idx
 	S[-1, i] = i
 	idx -= 1
+
+p = 1
+for i in range(S.shape[1]):
+	for j in range(1, 400 + 1):
+		S[i:-1, 1:j + 1] = policy[j]
+		# p += 1
+
+
+# for row in S[:-1, 1:]:
+# 	for s in row:
+# 		for p in policy:
+# 			S[idx:-1, 1:] = p
 
 ic(S)
 
