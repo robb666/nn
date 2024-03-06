@@ -67,13 +67,23 @@ class RentalBusiness:
 
 	def step(self, state: int, action: int):
 
-		if self.location1 > 10 and self.location2 < 6:
-			state -= 1
-			self.location1 -= 1
-			self.location2 += 1
+		if self.location1 >= 15 and self.location2 <= 5:
+			self.location1 -= 5
+			self.location2 += 5
+			self.total(moved_cars=action)
+			return self.location1, 2
+
+		elif self.location1 >= 10 and self.location2 <= 5:
+			self.location1 -= 4
+			self.location2 += 4
 			self.total(moved_cars=action)
 			return self.location1, 1
 
+		elif self.location1 >= 8 and self.location2 <= 3:
+			self.location1 -= 3
+			self.location2 += 3
+			self.total(moved_cars=action)
+			return self.location1, .5
 		else:
 			return self.location1, -1
 
@@ -87,18 +97,17 @@ class RentalBusiness:
 	def policy_evaluation(self):
 		while True:
 			delta = 0
-			for cars_loc1 in range(self.S.shape[1]):
-				for s in self.S[:, cars_loc1]:
-					print(s)
-					v = self.value_dict[s]
-					a = self.policy[s]
-					s_prime, r = self.step(s, a)
-					# print(s, s_prime)
-					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
-					delta = max(delta, abs(v - self.value_dict[s]))
-					if delta < self.THETA:
-						break
-				# print(self.value_dict)
+			for s in self.S[:-1, 0]:
+				# print(s)
+				v = self.value_dict[s]
+				a = self.policy[s]
+				s_prime, r = self.step(s, a)
+				# print(s, s_prime)
+				self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
+				delta = max(delta, abs(v - self.value_dict[s]))
+				if delta < self.THETA:
+					break
+			# print(self.value_dict)
 			return self.value_dict
 
 	def policy_improvement(self):
