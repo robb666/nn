@@ -95,7 +95,6 @@ class RentalBusiness:
 		return self.amount
 
 	def policy_evaluation(self):
-
 		while True:
 			delta = 0
 			for s in self.S[:-1, 0]:
@@ -139,11 +138,12 @@ for i in range(S.shape[1]):
 	S[-1, i] = i
 	idx -= 1
 
-p = 1
-for i in range(S.shape[1]):
-	for j in range(1, 400 + 1):
-		S[i:-1, 1:j + 1] = policy[j]
-		# p += 1
+i = 1
+for row_idx, row in enumerate(S[:-1, 1:], start=0):
+	for col_idx, _ in enumerate(row, start=1):
+		S[row_idx, col_idx] = policy[i]
+		i += 1
+print(S)
 
 
 # for row in S[:-1, 1:]:

@@ -23,15 +23,16 @@ arr = np.array([[20,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 			    [ 1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
 			    [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]])
 
-i = 0
-for row in arr[:-1, 1:]:
-	# for s in row:
-		print(row)
+
+policy = {5: -5, 6: -4, 7: -3}
+
+i = 1
+for row_idx, row in enumerate(arr[:-1, 1:], start=0):
+	for col_idx, _ in enumerate(row, start=1):
+		arr[row_idx, col_idx] = policy.get(i, 0)
 		i += 1
-print(i)
 
-
-
+print(arr)
 
 
 
@@ -54,7 +55,7 @@ print(i)
 #
 # mul = 1 / 20
 # print(mul)
-#
+
 
 
 
