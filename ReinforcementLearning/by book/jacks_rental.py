@@ -65,27 +65,15 @@ class RentalBusiness:
 		self.location2 += returned_at_2
 		self.location2 = self.max_cars(self.location2)
 
-	def step(self, state: int, action: int):
-
-		if self.location1 >= 15 and self.location2 <= 5:
-			self.location1 -= 5
-			self.location2 += 5
-			self.total(moved_cars=action)
-			return self.location1, 2
-
-		elif self.location1 >= 10 and self.location2 <= 5:
-			self.location1 -= 4
-			self.location2 += 4
+	def step(self, state, action: int):
+		print(state, self.S[state[0]][state[1]], action)
+		next_state = self.S[state[0]][state[1]] + action
+		print(next_state)
+		if state == 1:
+			self.location1 -= action
+			self.location2 += action
 			self.total(moved_cars=action)
 			return self.location1, 1
-
-		elif self.location1 >= 8 and self.location2 <= 3:
-			self.location1 -= 3
-			self.location2 += 3
-			self.total(moved_cars=action)
-			return self.location1, .5
-		else:
-			return self.location1, -1
 
 	def total(self, rented_cars=0, moved_cars=0):
 		if rented_cars:
@@ -97,18 +85,19 @@ class RentalBusiness:
 	def policy_evaluation(self):
 		while True:
 			delta = 0
-			for s in self.S[:-1, 0]:
-				# print(s)
-				v = self.value_dict[s]
-				a = self.policy[s]
-				s_prime, r = self.step(s, a)
-				# print(s, s_prime)
-				self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
-				delta = max(delta, abs(v - self.value_dict[s]))
-				if delta < self.THETA:
-					break
-			# print(self.value_dict)
-			return self.value_dict
+			for row in self.S[:-1, 1:]:
+				for s in row:
+					# print(s)
+					v = self.value_dict[s]
+					a = self.policy[s]
+					s_prime, r = self.step((row[s], s), a)
+					# print(s, s_prime)
+					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
+					delta = max(delta, abs(v - self.value_dict[s]))
+			if delta < self.THETA:
+				break
+		# print(self.value_dict)
+		return self.value_dict
 
 	def policy_improvement(self):
 		for row in range(len(self.S[0])):
@@ -141,16 +130,8 @@ for i in range(S.shape[1]):
 i = 1
 for row_idx, row in enumerate(S[:-1, 1:], start=0):
 	for col_idx, _ in enumerate(row, start=1):
-		S[row_idx, col_idx] = policy[i]
+		S[row_idx, col_idx] = i
 		i += 1
-print(S)
-
-
-# for row in S[:-1, 1:]:
-# 	for s in row:
-# 		for p in policy:
-# 			S[idx:-1, 1:] = p
-
 ic(S)
 
 RB = RentalBusiness(S, policy)
