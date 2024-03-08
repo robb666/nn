@@ -67,6 +67,7 @@ class RentalBusiness:
 
 	def step(self, state, action: int):
 		print(state, self.S[state[0]][state[1]], action)
+		print(self.S[self.location1][self.location2])
 		next_state = self.S[state[0]][state[1]] + action
 		print(next_state)
 		if state == 1:
@@ -90,7 +91,7 @@ class RentalBusiness:
 					# print(s)
 					v = self.value_dict[s]
 					a = self.policy[s]
-					s_prime, r = self.step((row[s], s), a)
+					s_prime, r = self.step((s - 1, s), a)
 					# print(s, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
