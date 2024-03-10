@@ -36,12 +36,10 @@ for row_idx, row in enumerate(arr[:-1, 1:]):
 
 arr[:-1, 1:] = arr[:-1, 1:][::-1]
 
-
 for row_idx, row in enumerate(arr[:-1, 1:]):
 	for col_idx, s in enumerate(row, start=1):
 		print(arr[row_idx, 0], col_idx)
 		print(arr[row_idx, col_idx])
-
 
 print(arr)
 

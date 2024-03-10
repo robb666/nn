@@ -115,17 +115,19 @@ class RentalBusiness:
 		return self.value_dict
 
 	def policy_improvement(self):
-		for row in range(len(self.S[0])):
-			for s in range(1, row):
+		# for row in range(len(self.S[0])):
+		# 	for s in range(1, row):
+		for row_idx, row in enumerate(self.S[:-1, 1:]):
+			for col_idx, s in enumerate(row, start=1):
 				action_values = {}
 				old_action = self.policy[s]
 				for a in self.actions:
-					s_prime, r = self.step(s, a)
+					s_prime, r = self.step((row_idx, col_idx), a)
 					action_value = r + self.GAMMA * self.value_dict[s_prime]
 					action_values[a] = action_value
 				# ic(action_values[a])
 				self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
-				self.S[row, s] = self.policy[s]
+				# self.S[row, s] = self.policy[s]
 				# print(self.S)
 				if self.policy[s] != old_action:
 					self.policy_evaluation()
