@@ -9,9 +9,8 @@ import random
 np.set_printoptions(linewidth=200)
 
 
-# 6marca
 class RentalBusiness:
-	def __init__(self, S, policy, theta=.1, gamma=.9, cars_num_1=10, cars_num_2=10):
+	def __init__(self, S, policy, theta=.01, gamma=.9, cars_num_1=10, cars_num_2=10):
 		self.S = S
 		self.policy = policy
 		# ic(self.policy)
