@@ -34,6 +34,8 @@ for row_idx, row in enumerate(arr[:-1, 1:]):
 		arr[row_idx, col_idx] = i
 		i += 1
 
+arr[:-1, 1:] = arr[:-1, 1:][::-1]
+
 
 for row_idx, row in enumerate(arr[:-1, 1:]):
 	for col_idx, s in enumerate(row, start=1):
@@ -42,7 +44,6 @@ for row_idx, row in enumerate(arr[:-1, 1:]):
 
 
 print(arr)
-
 
 
 

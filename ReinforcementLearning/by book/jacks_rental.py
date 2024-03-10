@@ -66,9 +66,10 @@ class RentalBusiness:
 		self.location2 = self.max_cars(self.location2)
 
 	def step(self, state: tuple, action: int):
+		print('state: ', state)
 		loc_1 = self.S[state[0], 0]
 		loc_2 = state[1]
-		print((loc_1, loc_2), self.S[state[0]][state[1]], action)
+		print((loc_1, loc_2), self.S[state[0], state[1]], action)
 
 		if loc_1 - action > 0:
 			loc_1 -= action
@@ -101,10 +102,11 @@ class RentalBusiness:
 			delta = 0
 			for row_idx, row in enumerate(self.S[:-1, 1:]):
 				for col_idx, s in enumerate(row, start=1):
+					print('--->', row_idx, col_idx)
 					v = self.value_dict[s]
 					a = self.policy[s]
 					s_prime, r = self.step((row_idx, col_idx), a)
-					# print(s, s_prime)
+					print(s, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
 			if delta < self.THETA:
@@ -131,7 +133,7 @@ class RentalBusiness:
 		return self.policy
 
 
-policy = {s + row: random.choice([* range(-5, 6)]) for s in range(1, 21) for row in range(381)}
+policy = {s + row: random.choice([*range(-5, 6)]) for s in range(1, 21) for row in range(381)}
 print(policy)
 S = np.zeros((21, 21), dtype=int)
 idx = 20
@@ -145,6 +147,9 @@ for row_idx, row in enumerate(S[:-1, 1:], start=0):
 	for col_idx, _ in enumerate(row, start=1):
 		S[row_idx, col_idx] = i
 		i += 1
+
+S[:-1, 1:] = S[:-1, 1:][::-1]
+
 ic(S)
 
 RB = RentalBusiness(S, policy)
