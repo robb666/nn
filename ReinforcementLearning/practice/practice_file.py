@@ -1,6 +1,8 @@
 import numpy as np
 import sys
 
+np.set_printoptions(linewidth=200)
+
 arr = np.array([[20,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
 			    [19,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
 			    [18,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
@@ -26,15 +28,20 @@ arr = np.array([[20,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 
 policy = {5: -5, 6: -4, 7: -3}
 
-# i = 1
-# for row_idx, row in enumerate(arr[:-1, 1:], start=0):
-# 	for col_idx, _ in enumerate(row, start=1):
-# 		arr[row_idx, col_idx] = policy.get(i, 0)
-# 		i += 1
-# print(arr)
+i = 1
+for row_idx, row in enumerate(arr[:-1, 1:]):
+	for col_idx, _ in enumerate(row, start=1):
+		arr[row_idx, col_idx] = i
+		i += 1
 
-print(arr[1][0])
 
+for row_idx, row in enumerate(arr[:-1, 1:]):
+	for col_idx, s in enumerate(row, start=1):
+		print(arr[row_idx, 0], col_idx)
+		print(arr[row_idx, col_idx])
+
+
+print(arr)
 
 
 
@@ -57,27 +64,6 @@ print(arr[1][0])
 #
 # mul = 1 / 20
 # print(mul)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -38,9 +38,9 @@ class RentalBusiness:
 		return max_cars if max_cars <= 20 else 20  # max 20 cars at each location
 
 	def check_availability(self, cars_at_location, demand):
-		if demand > self.location1 or demand > self.location2:
+		# if demand > self.location1 or demand > self.location2:
+		if demand > cars_at_location:
 			ic('sys.exit: 0 cars at location')
-			# return False
 			sys.exit()
 		return demand if demand < cars_at_location else cars_at_location
 
@@ -65,16 +65,29 @@ class RentalBusiness:
 		self.location2 += returned_at_2
 		self.location2 = self.max_cars(self.location2)
 
-	def step(self, state, action: int):
-		print(state, self.S[state[0]][state[1]], action)
-		print(self.S[self.location1][self.location2])
-		next_state = self.S[state[0]][state[1]] + action
-		print(next_state)
-		if state == 1:
-			self.location1 -= action
-			self.location2 += action
-			self.total(moved_cars=action)
-			return self.location1, 1
+	def step(self, state: tuple, action: int):
+		loc_1 = self.S[state[0], 0]
+		loc_2 = state[1]
+		print((loc_1, loc_2), self.S[state[0]][state[1]], action)
+
+		if loc_1 - action > 0:
+			loc_1 -= action
+			loc_1 = self.max_cars(loc_1)
+		else:
+			next_state = self.S[-loc_1 - 1][loc_2]
+			return next_state, 0
+
+		if loc_2 + action > 0:
+			loc_2 += action
+			loc_2 = self.max_cars(loc_2)
+		else:
+			next_state = self.S[-loc_1 - 1][loc_2]
+			return next_state, 0
+
+		next_state = self.S[-loc_1 - 1][loc_2]
+		print((loc_1, loc_2), next_state)
+		self.total(moved_cars=action)
+		return next_state, 1
 
 	def total(self, rented_cars=0, moved_cars=0):
 		if rented_cars:
@@ -86,12 +99,11 @@ class RentalBusiness:
 	def policy_evaluation(self):
 		while True:
 			delta = 0
-			for row in self.S[:-1, 1:]:
-				for s in row:
-					# print(s)
+			for row_idx, row in enumerate(self.S[:-1, 1:]):
+				for col_idx, s in enumerate(row, start=1):
 					v = self.value_dict[s]
 					a = self.policy[s]
-					s_prime, r = self.step((s - 1, s), a)
+					s_prime, r = self.step((row_idx, col_idx), a)
 					# print(s, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
