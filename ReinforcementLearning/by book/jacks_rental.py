@@ -85,9 +85,13 @@ class RentalBusiness:
 			return next_state, 0
 
 		next_state = self.S[-loc_1 - 1][loc_2]
-		print((loc_1, loc_2), next_state)
 		self.total(moved_cars=action)
-		return next_state, 1
+
+		if loc_1 == loc_2:
+			return next_state, .6
+
+		else:
+			return next_state, .4
 
 	def total(self, rented_cars=0, moved_cars=0):
 		if rented_cars:
