@@ -65,10 +65,10 @@ class RentalBusiness:
 		self.location2 = self.max_cars(self.location2)
 
 	def step(self, state: tuple, action: int):
-		print('state: ', state)
+		# print('state: ', state)
 		loc_1 = self.S[state[0], 0]
 		loc_2 = state[1]
-		print((loc_1, loc_2), self.S[state[0], state[1]], action)
+		# print((loc_1, loc_2), self.S[state[0], state[1]], action)
 
 		if loc_1 - action > 0:
 			loc_1 -= action
@@ -105,16 +105,16 @@ class RentalBusiness:
 			delta = 0
 			for row_idx, row in enumerate(self.S[:-1, 1:]):
 				for col_idx, s in enumerate(row, start=1):
-					print('--->', row_idx, col_idx)
+					# print('--->', row_idx, col_idx)
 					v = self.value_dict[s]
 					a = self.policy[s]
 					s_prime, r = self.step((row_idx, col_idx), a)
-					print(s, s_prime)
+					# print(s, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
 			if delta < self.THETA:
 				break
-		# print(self.value_dict)
+		print(self.value_dict)
 		return self.value_dict
 
 	def policy_improvement(self):
@@ -135,6 +135,7 @@ class RentalBusiness:
 				if self.policy[s] != old_action:
 					self.policy_evaluation()
 					self.policy_improvement()
+		print(self.policy)
 		return self.policy
 
 
