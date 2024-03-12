@@ -13,14 +13,14 @@ class RentalBusiness:
 	def __init__(self, S, policy, theta=.01, gamma=.9, cars_num_1=10, cars_num_2=10):
 		self.S = S
 		self.policy = policy
-		# ic(self.policy)
+		# print(self.policy)
 		self.THETA = theta
 		self.GAMMA = gamma
 		self.day = 1
 		self.location1 = cars_num_1
 		self.location2 = cars_num_2
 		self.value_dict: Dict[int, float] = {s + row: 0. for s in range(1, 21) for row in range(381)}
-		# ic(self.value_dict)
+		# print(self.value_dict)
 		# self.moved = 0
 		self.amount = 0
 		self.available: int = 0
@@ -33,24 +33,24 @@ class RentalBusiness:
 		return self.day
 
 	def max_cars(self, max_cars):
-		# ic(max_cars if max_cars <= 20 else 20, max_cars)
+		# print(max_cars if max_cars <= 20 else 20, max_cars)
 		return max_cars if max_cars <= 20 else 20  # max 20 cars at each location
 
 	def check_availability(self, cars_at_location, demand):
 		# if demand > self.location1 or demand > self.location2:
 		if demand > cars_at_location:
-			ic('sys.exit: 0 cars at location')
+			print('sys.exit: 0 cars at location')
 			sys.exit()
 		return demand if demand < cars_at_location else cars_at_location
 
 	def requests(self):
 		available_at_1 = self.check_availability(self.location1, np.random.poisson(lam=3.0))
-		# ic(available_at_1)
+		# print(available_at_1)
 		self.location1 -= available_at_1
 		self.total(rented_cars=available_at_1)
 
 		available_at_2 = self.check_availability(self.location2, np.random.poisson(lam=4.0))
-		# ic(available_at_2)
+		# print(available_at_2)
 		self.location2 -= available_at_2
 		self.total(rented_cars=available_at_2)
 
@@ -109,17 +109,16 @@ class RentalBusiness:
 					v = self.value_dict[s]
 					a = self.policy[s]
 					s_prime, r = self.step((row_idx, col_idx), a)
-					# print(s, s_prime)
+					# print(s, a, s_prime)
 					self.value_dict[s] = r + self.GAMMA * self.value_dict[s_prime]
 					delta = max(delta, abs(v - self.value_dict[s]))
 			if delta < self.THETA:
 				break
-		print(self.value_dict)
+		# print(self.value_dict)
 		return self.value_dict
 
 	def policy_improvement(self):
-		# for row in range(len(self.S[0])):
-		# 	for s in range(1, row):
+		new_S = self.S.copy()
 		for row_idx, row in enumerate(self.S[:-1, 1:]):
 			for col_idx, s in enumerate(row, start=1):
 				action_values = {}
@@ -128,14 +127,16 @@ class RentalBusiness:
 					s_prime, r = self.step((row_idx, col_idx), a)
 					action_value = r + self.GAMMA * self.value_dict[s_prime]
 					action_values[a] = action_value
-				# ic(action_values[a])
+				# print(action_values[a])
 				self.policy[s] = max(action_values, key=action_values.get)  # policy extraction
-				# self.S[row, s] = self.policy[s]
-				# print(self.S)
+
+				new_S[row_idx, col_idx] = self.policy[s]
+				print(new_S)
+
 				if self.policy[s] != old_action:
 					self.policy_evaluation()
 					self.policy_improvement()
-		print(self.policy)
+		# print(self.policy)
 		return self.policy
 
 
@@ -156,29 +157,29 @@ for row_idx, row in enumerate(S[:-1, 1:], start=0):
 
 S[:-1, 1:] = S[:-1, 1:][::-1]
 
-ic(S)
+print(S)
 
 RB = RentalBusiness(S, policy)
 
 
-ic(RB.location1)
-ic(RB.location2)
+print(RB.location1)
+print(RB.location2)
 
 
 while True:
-	ic(RB.day)
-	ic(RB.amount)
-	ic('requests')
+	print(RB.day)
+	print(RB.amount)
+	print('requests')
 	RB.requests()
-	ic(RB.location1)
-	ic(RB.location2)
+	print(RB.location1)
+	print(RB.location2)
 
-	ic('returns')
+	print('returns')
 	RB.returns()  # changes day/state
-	ic(RB.location1)
-	ic(RB.location2)
+	print(RB.location1)
+	print(RB.location2)
 
-	ic('moves')
+	print('moves')
 	# move cars
 	RB.policy_evaluation()
 	RB.policy_improvement()
@@ -187,9 +188,9 @@ while True:
 	# on the next day
 	# RB.move_cars('first', 'second', quantity)
 	# RB.move_cars('second', 'first', quantity)
-	ic(RB.location1)
-	ic(RB.location2)
+	print(RB.location1)
+	print(RB.location2)
 
-	ic('FINITO')
+	print('FINITO')
 
 
