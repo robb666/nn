@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Python File",
+            "type": "shell",
+            "command": "/home/oobx/Pulpit/PROJEKTY/nn/ReinforcementLearning/env/bin/python3.11",
+            "args": [
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Run the current file"
+        }
+    ]
+}
