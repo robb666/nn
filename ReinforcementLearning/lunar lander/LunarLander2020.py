@@ -1,7 +1,7 @@
 # import gym
 import gymnasium as gym
 from simple_dqn_torch_2020 import Agent
-from ReinforcementLearning.util import plot_learning_curve
+from util import plot_learning_curve
 import numpy as np
 from icecream import ic
 print(gym.__version__)
