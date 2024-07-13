@@ -7,21 +7,24 @@ from icecream import ic
 print(gym.__version__)
 
 if __name__ == '__main__':
-    env = gym.make('LunarLander-v2')  #, render_mode="human")
-    ic(env.observation_space)
+    env = gym.make('LunarLander-v2', render_mode="human")
+    ic(env.observation_space.high)
     load_checkpoint = True
+    
     agent = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
                   eps_end=0.001, input_dims=[8], lr=0.0002)
+    
     if load_checkpoint:
         agent.load_model()
     scores, eps_history = [], []
     n_games = 15000  # 15000 for gymnasium
+    
     for i in range(n_games):
         score = 0
         done = False
         observation, info = env.reset()  # gymnasium
         # observation = env.reset()
-        # ic(observation)
+        ic(observation)
 
         while not done:
             # env.render()
@@ -44,7 +47,7 @@ if __name__ == '__main__':
             print('episode ', i, 'score %.2f' % score,
                   'average score %.2f' % avg_score,
                   'epsilon %.2f' % agent.epsilon)
-            agent.save_model()
+            # agent.save_model()
 
     x = [i + 1 for i in range(n_games)]
     filename = 'plots/lunar_lander_gymnasium_last_500_lr_0005_eps_dec_5e-5.png'
