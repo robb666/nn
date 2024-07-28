@@ -69,9 +69,9 @@ class Agent:
 
     def store_transition(self, state, action, reward, state_, terminal):
         index = self.mem_cntr % self.mem_size
-        print(index)
+        # print(index)
         self.state_memory[index] = state
-        print(self.state_memory)
+        # print(self.state_memory)
         self.new_state_memory[index] = state_
         self.reward_memory[index] = reward
         self.action_memory[index] = action

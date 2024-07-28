@@ -34,7 +34,7 @@ if __name__ == '__main__':
             # env.render()
             action = agent.choose_action(observation)
             observation_, reward, terminated, truncated, info = env.step(action)  # gymnasium
-            ic(reward)
+            ic(observation, observation_, reward)
             # observation_, reward, done, info = env.step(action)
             done = terminated or truncated  # gymnasium
 

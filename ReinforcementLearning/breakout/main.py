@@ -1,7 +1,7 @@
 import gymnasium as gym
 from breakout_torch import DeepQNetwork, Agent
 import numpy as np
-from ReinforcementLearning.util import plot_learning_curve
+# from ReinforcementLearning.util import plot_learning_curve
 # from gym import wrappers
 from icecream import ic
 import cv2
@@ -9,6 +9,9 @@ import cv2
 
 def preprocess(observation):
     observation = observation / 255
+    # ic(observation.shape)
+    # cv2.imshow('observation', observation)
+    # cv2.waitKey(1)
     return np.mean(observation[30:, :], axis=2).reshape(180, 160, 1)
 
 
@@ -24,14 +27,18 @@ def stack_frames(stacked_frames, frame, buffer_size):
 
     stacked_frames = stacked_frames.reshape(1, *frame.shape[0:2], buffer_size)
     # ic(stacked_frames.shape, type(stacked_frames))
+    ic(stacked_frames.shape)
+    cv2.imshow('observation', stacked_frames[-1])
+    cv2.waitKey(1)
     return stacked_frames
+
 
 
 if __name__ == '__main__':
     # print(gym.envs.registration.registry.keys())
     env = gym.make('ALE/Breakout-v5', render_mode='human')
 
-    ic(env)
+    # ic(env)
     load_checkpoint = False
     agent = Agent(gamma=0.99, epsilon=1.0, lr=0.0001, input_dims=(180, 160, 4),
                   n_actions=3, batch_size=32)
@@ -75,7 +82,7 @@ if __name__ == '__main__':
         observation = preprocess(observation)
         stacked_frames = None
         observation = stack_frames(stacked_frames, observation, stack_size)
-        ic(observation.shape)
+        # ic(observation.shape)
 
 
         # scale_factor = 3
@@ -101,13 +108,13 @@ if __name__ == '__main__':
             if n_steps % 4 == 0:
                 agent.learn()
 
-        if i % 2 == 0 and i > 0:
+        if i % 100 == 0 and i > 0:
             avg_score = np.mean(scores[-100:])
             print('episode: ', i, 'score', score,
                   'avg score %.3f' % avg_score,
                   'epsilon %.3f' % agent.epsilon,
                   'step: ', n_steps)
-            agent.save_model()
+            # agent.save_model()
         else:
             print('episode: ', i, 'score', score)
 
