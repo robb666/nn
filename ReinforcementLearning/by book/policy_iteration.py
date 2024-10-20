@@ -40,6 +40,7 @@ class PolicyIter:
 			delta = 0
 			for s in self.S:
 				v = self.value_dict[s]
+				print(v)
 				a = self.policy[s]
 				s_prime = self.step(s, a)
 				self.value_dict[s] = self.reward(s, a, s_prime) + self.gamma * self.value_dict[s_prime]
