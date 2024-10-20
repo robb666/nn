@@ -31,7 +31,7 @@ The StatQuest/data/FashionMNIST/raw/train-images-idx3-ubyte.gz
 The StatQuest/data/FashionMNIST/raw/train-labels-idx1-ubyte
 The StatQuest/data/FashionMNIST/raw/train-labels-idx1-ubyte.gz
 *.vocab
-*.txt
+
 Machine Learning With PyTorch and Scikit-Learn/aclImdb/test/labeledBow.feat
 *.feat
 Machine Learning With PyTorch and Scikit-Learn/aclImdb_v1.tar.gz

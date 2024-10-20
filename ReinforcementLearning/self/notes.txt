@@ -1,0 +1,9 @@
+plan gry:
+
+- wyćwiczyć na polach, następnie;
+
+	jeżeli znajdzie, niech wypełni;
+	
+		- if pesel enter pesel
+		- if pojemność enter pojemność
+		- itd.
